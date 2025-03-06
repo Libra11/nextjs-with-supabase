@@ -1,3 +1,9 @@
+/**
+ * Author: Libra
+ * Date: 2025-03-06 20:38:10
+ * LastEditors: Libra
+ * Description: 
+*/
 /*
 	jsrepo 1.39.3
 	Installed from https://reactbits.dev/ts/tailwind/
@@ -136,7 +142,7 @@ const Threads: React.FC<ThreadsProps> = ({
   ...rest
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationFrameId = useRef<number>();
+  const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -219,7 +225,7 @@ const Threads: React.FC<ThreadsProps> = ({
     animationFrameId.current = requestAnimationFrame(update);
 
     return () => {
-      if (animationFrameId.current)
+      if (animationFrameId.current !== null)
         cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener("resize", resize);
       if (enableMouseInteraction) {
