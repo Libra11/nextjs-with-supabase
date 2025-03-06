@@ -1,3 +1,9 @@
+/*
+ * @Author: Libra
+ * @Date: 2025-03-06 10:57:58
+ * @LastEditors: Libra
+ * @Description:
+ */
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -9,7 +15,6 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const origin = requestUrl.origin;
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
-
   if (code) {
     const supabase = await createClient();
     await supabase.auth.exchangeCodeForSession(code);
@@ -20,5 +25,5 @@ export async function GET(request: Request) {
   }
 
   // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/protected`);
+  return NextResponse.redirect(`${origin}/dashboard`);
 }

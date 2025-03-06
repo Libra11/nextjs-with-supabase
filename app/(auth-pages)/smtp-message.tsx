@@ -1,3 +1,9 @@
+/**
+ * Author: Libra
+ * Date: 2025-03-06 10:57:58
+ * LastEditors: Libra
+ * Description:
+ */
 import { ArrowUpRight, InfoIcon } from "lucide-react";
 import Link from "next/link";
 
