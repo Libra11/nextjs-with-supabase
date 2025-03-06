@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Libra";
+  src: url("../assets/fonts/Libra.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Libra-en";
+  src: url("../assets/fonts/Libra-en.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+body {
+  font-family: "Libra-en", "Libra", sans-serif;
+  font-weight: 100;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -32,7 +50,7 @@
   }
 
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 0 0% 6%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;

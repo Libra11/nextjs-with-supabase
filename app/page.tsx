@@ -1,180 +1,104 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
+"use client";
+import LetterGlitch from "@/components/blocks/Backgrounds/LetterGlitch/LetterGlitch";
+import GradientText from "@/components/blocks/TextAnimations/GradientText/GradientText";
+import { Typewriter } from "@/components/ui/typewriter-text";
+import { Satisfy, Saira } from "next/font/google";
+import { useEffect, useRef, useState } from "react";
+import VariableProximity from "@/components/blocks/TextAnimations/VariableProximity/VariableProximity";
+import Marquee from "react-fast-marquee";
+import { icons } from "@/icons.config";
 
-export default async function Home() {
-  const supabase = await createClient();
+const satisfy = Satisfy({
+  subsets: ["latin"],
+  weight: ["400"],
+});
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const saira = Saira({
+  subsets: ["latin"],
+  weight: ["400"],
+});
+
+export default function Home() {
+  const containerRef = useRef(null);
+  const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    Promise.all(
+      Object.entries(icons).map(async ([name, importFn]: any) => {
+        const icon = await importFn();
+        return [name, icon.default] as const;
+      })
+    ).then((loadedPairs) => {
+      setLoadedIcons(Object.fromEntries(loadedPairs));
+    });
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* 前台导航栏 */}
-      <nav className="w-full border-b border-b-foreground/10 bg-background">
-        <div className="container mx-auto flex justify-between items-center p-4">
-          <div className="flex items-center gap-6">
-            <Link href="/" className="text-xl font-bold">
-              前台系统
-            </Link>
-            <div className="hidden md:flex items-center gap-6">
-              <Link href="/products" className="hover:text-primary">
-                产品
-              </Link>
-              <Link href="/services" className="hover:text-primary">
-                服务
-              </Link>
-              <Link href="/about" className="hover:text-primary">
-                关于我们
-              </Link>
-            </div>
+    <div className="w-full h-full pt-16 max-w-[1200px] mx-auto">
+      <div className="flex justify-between items-center">
+        <div className="w-[560px]">
+          <div
+            className={`${satisfy.className} text-4xl font-bold flex items-center gap-2 justify-start italic`}
+          >
+            <span className="text-5xl font-bold">A</span>
+            <GradientText
+              colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+              animationSpeed={3}
+              showBorder={false}
+              className="font-bold text-5xl"
+            >
+              creative developer
+            </GradientText>
           </div>
-          <div className="flex items-center gap-4">
-            {user ? (
-              <div className="flex items-center gap-4">
-                <Link
-                  href="/dashboard"
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-                >
-                  进入后台
-                </Link>
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Link
-                  href="/sign-in"
-                  className="px-4 py-2 border border-input rounded-md hover:bg-accent hover:text-accent-foreground"
-                >
-                  登录
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-                >
-                  注册
-                </Link>
-              </div>
-            )}
-            <ThemeSwitcher />
+          <Typewriter
+            text={["<Developer />"]}
+            speed={100}
+            loop={true}
+            className={`${saira.className} text-2xl font-medium my-4 block text-green-500`}
+          />
+          <div
+            ref={containerRef}
+            style={{ position: "relative" }}
+            className="text-lg text-gray-500"
+          >
+            <VariableProximity
+              label={
+                "我是Libra，一个创意开发者，我擅长设计impactful,mission-focused websites，驱动结果和实现业务目标。"
+              }
+              className={"variable-proximity-demo"}
+              fromFontVariationSettings="'wght' 400, 'opsz' 9"
+              toFontVariationSettings="'wght' 1000, 'opsz' 40"
+              containerRef={containerRef}
+              radius={100}
+              falloff="linear"
+            />
           </div>
         </div>
-      </nav>
-
-      {/* 前台内容 */}
-      <div className="flex-1">
-        <section className="py-24 bg-gradient-to-b from-background to-muted">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              欢迎来到我们的平台
-            </h1>
-            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-              这是前台系统的首页，提供产品展示和用户服务
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/products"
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-              >
-                浏览产品
-              </Link>
-              <Link
-                href="/sign-up"
-                className="px-6 py-3 border border-input rounded-md hover:bg-accent hover:text-accent-foreground"
-              >
-                立即注册
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* 更多前台内容 */}
-        <section className="py-16 bg-background">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-12 text-center">我们的服务</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="border rounded-lg p-6 hover:shadow-md transition-shadow"
-                >
-                  <h3 className="text-xl font-semibold mb-3">
-                    服务项目 {item}
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    这里是服务项目的详细描述，展示服务的特点和优势。
-                  </p>
-                  <Link
-                    href={`/services/${item}`}
-                    className="text-primary hover:underline"
-                  >
-                    了解更多
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <div className="w-[600px] h-[300px]">
+          <LetterGlitch
+            glitchSpeed={50}
+            centerVignette={true}
+            outerVignette={true}
+            smooth={true}
+            glitchColors={["#2b4539", "#61dca3", "#61b3dc"]}
+          />
+        </div>
       </div>
-
-      {/* 前台页脚 */}
-      <footer className="w-full border-t border-t-foreground/10 py-8 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">关于我们</h3>
-              <p className="text-sm text-muted-foreground">
-                我们是一家专注于提供高质量服务的公司，致力于为客户创造价值。
-              </p>
+      <div className="relative mt-16">
+        <div className="absolute left-0 w-32 h-full bg-gradient-to-r from-[hsl(var(--background))] to-transparent z-10"></div>
+        <div className="absolute right-0 w-32 h-full bg-gradient-to-l from-[hsl(var(--background))] to-transparent z-10"></div>
+        <Marquee>
+          {Object.entries(loadedIcons).map(([icon, IconComponent]) => (
+            <div
+              key={icon}
+              className="mx-4 flex items-center gap-2 bg-gray-900 rounded-full px-5 py-2"
+            >
+              <IconComponent className="w-6 h-6" />
+              <span className="text-sm">{icon}</span>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">服务</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/services/1" className="hover:text-primary">
-                    服务项目 1
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/services/2" className="hover:text-primary">
-                    服务项目 2
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/services/3" className="hover:text-primary">
-                    服务项目 3
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">联系我们</h3>
-              <ul className="space-y-2 text-sm">
-                <li>联系电话: 123-456-7890</li>
-                <li>电子邮件: contact@example.com</li>
-                <li>地址: 某某市某某区某某路88号</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">关注我们</h3>
-              <div className="flex gap-4">
-                <a href="#" className="hover:text-primary">
-                  微信
-                </a>
-                <a href="#" className="hover:text-primary">
-                  微博
-                </a>
-                <a href="#" className="hover:text-primary">
-                  抖音
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="mt-8 pt-4 border-t border-t-foreground/10 text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} 公司名称. 保留所有权利.</p>
-          </div>
-        </div>
-      </footer>
+          ))}
+        </Marquee>
+      </div>
     </div>
   );
 }
