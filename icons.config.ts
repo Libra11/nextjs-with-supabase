@@ -7,7 +7,11 @@
 const icons: Record<string, any> = {};
 
 if (typeof window !== "undefined") {
-  const context = require.context("@/assets/svgs/skills", false, /\.svg$/);
+  const context = (require as any).context(
+    "@/assets/svgs/skills",
+    false,
+    /\.svg$/
+  );
 
   context.keys().forEach((key: string) => {
     const iconName = key.replace(/^\.\//, "").replace(/\.svg$/, "");

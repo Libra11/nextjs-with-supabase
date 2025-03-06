@@ -142,7 +142,7 @@ export default function SplashCursor({
       const isWebGL2 = "drawBuffers" in gl;
 
       let supportLinearFiltering = false;
-      let halfFloat = null;
+      let halfFloat: any = null;
 
       if (isWebGL2) {
         // For WebGL2
