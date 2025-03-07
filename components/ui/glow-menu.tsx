@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 interface MenuItem {
   icon: LucideIcon | React.FC;
@@ -104,7 +105,8 @@ export const MenuBar = forwardRef<HTMLDivElement, MenuBarProps>(
 
             return (
               <motion.li key={item.label} className="relative">
-                <button
+                <Link
+                  href={item.href}
                   onClick={() => onItemClick?.(item.label)}
                   className="block w-full"
                 >
@@ -190,7 +192,7 @@ export const MenuBar = forwardRef<HTMLDivElement, MenuBarProps>(
                       </span>
                     </motion.div>
                   </motion.div>
-                </button>
+                </Link>
               </motion.li>
             );
           })}

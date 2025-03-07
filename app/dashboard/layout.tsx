@@ -6,17 +6,7 @@
  */
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { createClient } from "@/utils/supabase/server";
-import {
-  ArrowLeft,
-  BarChart3,
-  Home,
-  Layers,
-  ListChecks,
-  LogOut,
-  Settings,
-  User,
-  Users,
-} from "lucide-react";
+import { ArrowLeft, Home, Users, LogOut, User, FileText } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -70,44 +60,14 @@ export default async function DashboardLayout({
             <span>用户管理</span>
           </Link>
           <Link
-            href="/dashboard/products"
+            href="/dashboard/blogs"
             className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
           >
-            <Layers
+            <FileText
               size={20}
               className="text-muted-foreground group-hover:text-foreground"
             />
-            <span>产品管理</span>
-          </Link>
-          <Link
-            href="/dashboard/orders"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
-          >
-            <ListChecks
-              size={20}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-            <span>订单管理</span>
-          </Link>
-          <Link
-            href="/dashboard/analytics"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
-          >
-            <BarChart3
-              size={20}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-            <span>数据分析</span>
-          </Link>
-          <Link
-            href="/dashboard/settings"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
-          >
-            <Settings
-              size={20}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-            <span>系统设置</span>
+            <span>博客管理</span>
           </Link>
         </nav>
         <div className="mt-auto px-2">

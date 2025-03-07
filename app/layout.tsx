@@ -41,8 +41,7 @@ export default function RootLayout({
         >
           <div className="flex flex-col min-h-screen w-screen">
             <SplashCursor />
-            <CustomHeader />
-            <div className="flex-1 pt-16">{children}</div>
+            <div className="flex-1">{children}</div>
           </div>
         </ThemeProvider>
       </body>
