@@ -6,7 +6,6 @@ import { getTags, createTag } from "@/lib/blog";
 import { Tag } from "@/types/blog";
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { BlogNav } from "@/components/blog-nav";
 
 export default function TagsPage() {
   const [tags, setTags] = useState<Tag[]>([]);
@@ -44,7 +43,6 @@ export default function TagsPage() {
 
   return (
     <div className="space-y-6">
-      <BlogNav />
       <h1 className="text-2xl font-bold">标签管理</h1>
 
       <form onSubmit={handleCreateTag} className="flex gap-2">

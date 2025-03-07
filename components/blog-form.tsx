@@ -47,7 +47,7 @@ const formSchema = z.object({
 
 interface BlogFormProps {
   initialData?: BlogWithTags;
-  onSubmit: (data: Omit<UpdateBlogInput, "id">) => Promise<void>;
+  onSubmit: (data: CreateBlogInput | UpdateBlogInput) => Promise<void>;
 }
 
 export function BlogForm({ initialData, onSubmit }: BlogFormProps) {

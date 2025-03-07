@@ -6,7 +6,7 @@
  */
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { createClient } from "@/utils/supabase/server";
-import { ArrowLeft, Home, Users, LogOut, User, FileText } from "lucide-react";
+import { ArrowLeft, Home, LogOut, User, FileText, Tag } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -49,26 +49,28 @@ export default async function DashboardLayout({
             />
             <span>首页</span>
           </Link>
-          <Link
-            href="/dashboard/users"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
-          >
-            <Users
-              size={20}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-            <span>用户管理</span>
-          </Link>
-          <Link
-            href="/dashboard/blogs"
-            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
-          >
-            <FileText
-              size={20}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-            <span>博客管理</span>
-          </Link>
+          <div className="space-y-1 pt-2">
+            <Link
+              href="/dashboard/blogs"
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
+            >
+              <FileText
+                size={20}
+                className="text-muted-foreground group-hover:text-foreground"
+              />
+              <span>博客列表</span>
+            </Link>
+            <Link
+              href="/dashboard/tags"
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
+            >
+              <Tag
+                size={20}
+                className="text-muted-foreground group-hover:text-foreground"
+              />
+              <span>标签管理</span>
+            </Link>
+          </div>
         </nav>
         <div className="mt-auto px-2">
           <div className="border-t border-t-foreground/10 pt-4 pb-2 px-3">

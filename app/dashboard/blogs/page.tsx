@@ -1,5 +1,11 @@
 /**
  * Author: Libra
+ * Date: 2025-03-07 19:36:53
+ * LastEditors: Libra
+ * Description: 
+*/
+/**
+ * Author: Libra
  * Date: 2025-03-07 17:49:45
  * LastEditors: Libra
  * Description: 博客管理
@@ -22,7 +28,6 @@ import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { BlogNav } from "@/components/blog-nav";
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
@@ -52,7 +57,6 @@ export default function BlogsPage() {
 
   return (
     <div className="space-y-6">
-      <BlogNav />
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">博客管理</h1>
         <Link href="/dashboard/blogs/new">

@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-03-06 20:30:59
  * @LastEditors: Libra
- * @Description: 
+ * @Description:
  */
 import type { NextConfig } from "next";
 
@@ -30,6 +30,14 @@ const nextConfig: NextConfig = {
     fileLoaderRule.exclude = /\.svg$/i;
 
     return config;
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 };
 
