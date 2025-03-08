@@ -3,12 +3,6 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Libra";
-  src: url("../assets/fonts/Libra.ttf") format("truetype");
-  font-weight: 100;
-  font-style: normal;
-}
-@font-face {
   font-family: "Libra-en";
   src: url("../assets/fonts/Libra-en.ttf") format("truetype");
   font-weight: 100;
@@ -16,7 +10,7 @@
 }
 
 body {
-  font-family: "Libra-en", "Libra", sans-serif;
+  font-family: "Libra-en", sans-serif;
   font-weight: 100;
 }
 

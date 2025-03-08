@@ -1,3 +1,9 @@
+/*
+ * @Author: Libra
+ * @Date: 2025-03-06 20:30:59
+ * @LastEditors: Libra
+ * @Description:
+ */
 "use server";
 
 import { encodedRedirect } from "@/utils/utils";
@@ -30,6 +36,7 @@ export const signUpAction = async (formData: FormData) => {
   if (error) {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
+    return;
   } else {
     return encodedRedirect(
       "success",
