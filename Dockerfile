@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM registry.cn-beijing.aliyuncs.com/libra121/node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
