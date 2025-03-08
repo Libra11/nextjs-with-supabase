@@ -12,6 +12,7 @@ import {
   Home as HomeIcon,
   Settings,
   Bell,
+  Menu,
   User,
   LayoutDashboard,
 } from "lucide-react";
@@ -37,7 +38,7 @@ const menuItems = [
     iconColor: "text-orange-500",
   },
   {
-    icon: Settings,
+    icon: Menu,
     label: "简历",
     href: "/resume",
     gradient:
