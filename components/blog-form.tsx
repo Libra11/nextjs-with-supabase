@@ -36,6 +36,8 @@ import * as z from "zod";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useEffect, useState } from "react";
 import { getTags } from "@/lib/blog";
+import { uploadFile, getPublicUrl } from "@/lib/bucket";
+import Image from "next/image";
 
 const formSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
@@ -53,6 +55,8 @@ interface BlogFormProps {
 export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(initialData?.cover_image || "");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,6 +93,28 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
       });
     } catch (error) {
       console.error("提交表单失败:", error);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadLoading(true);
+      const data = await uploadFile(
+        "libra-bucket",
+        `covers/${Date.now()}-${file.name}`,
+        file,
+        { upsert: true }
+      );
+      const url = await getPublicUrl("libra-bucket", data.path);
+      setPreviewUrl(url);
+      form.setValue("cover_image", url);
+    } catch (error) {
+      console.error("上传失败:", error);
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -137,7 +163,26 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
             <FormItem>
               <FormLabel>封面图片</FormLabel>
               <FormControl>
-                <Input placeholder="请输入封面图片URL" {...field} />
+                <div className="space-y-4">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadLoading}
+                  />
+                  <Input type="hidden" {...field} />
+                  {previewUrl && (
+                    <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                      <Image
+                        src={previewUrl}
+                        alt="封面预览"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  {uploadLoading && <div>上传中...</div>}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
