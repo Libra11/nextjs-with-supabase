@@ -13,7 +13,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BlogContent from "@/components/blog-content";
-import { getSignedUrl } from "@/lib/bucket";
+import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 
 interface BlogPageProps {
@@ -21,8 +21,8 @@ interface BlogPageProps {
 }
 
 const getCoverImage = async (cover_image: string) => {
-  const url = await getSignedUrl(BUCKET_NAME, cover_image);
-  return url?.signedUrl || "";
+  const url = await getPublicUrl(BUCKET_NAME, cover_image);
+  return url || "";
 };
 
 export default async function BlogPage({ params }: BlogPageProps) {

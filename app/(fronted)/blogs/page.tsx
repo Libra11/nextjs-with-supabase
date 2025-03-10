@@ -9,7 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { getSignedUrl } from "@/lib/bucket";
+import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 
 export default async function BlogsPage() {
@@ -17,8 +17,8 @@ export default async function BlogsPage() {
   const blogs = await getBlogs();
 
   const getCoverImage = async (cover_image: string) => {
-    const url = await getSignedUrl(BUCKET_NAME, cover_image);
-    return url?.signedUrl || "";
+    const url = await getPublicUrl(BUCKET_NAME, cover_image);
+    return url || "";
   };
 
   // 预先获取所有图片的 URL
