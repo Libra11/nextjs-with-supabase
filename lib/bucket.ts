@@ -37,6 +37,13 @@ export async function uploadFile(
   }
 }
 
+export async function getSignedUrl(bucket: string, path: string) {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, 60);
+  return data;
+}
+
 export async function getPublicUrl(bucket: string, path: string) {
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;

@@ -13,16 +13,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BlogContent from "@/components/blog-content";
+import { getSignedUrl } from "@/lib/bucket";
+import { BUCKET_NAME } from "@/const";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
 }
+
+const getCoverImage = async (cover_image: string) => {
+  const url = await getSignedUrl(BUCKET_NAME, cover_image);
+  return url?.signedUrl || "";
+};
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { id } = await params;
   // 获取博客详情
   try {
     const blog = await getBlogById(parseInt(id));
+    const coverImageUrl = await getCoverImage(blog.cover_image || "");
 
     return (
       <div className="container max-w-4xl mx-auto px-4 py-12">
@@ -42,7 +50,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           {blog.cover_image && (
             <div className="relative w-full h-64 sm:h-80 md:h-96">
               <Image
-                src={blog.cover_image}
+                src={coverImageUrl}
                 alt={blog.title}
                 fill
                 priority

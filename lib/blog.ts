@@ -75,6 +75,7 @@ export async function createBlog(data: CreateBlogInput): Promise<BlogWithTags> {
     .single();
 
   if (blogError) {
+    console.log(blogError);
     throw new Error("创建博客失败");
   }
 

@@ -9,11 +9,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { getSignedUrl } from "@/lib/bucket";
+import { BUCKET_NAME } from "@/const";
 
 export default async function BlogsPage() {
   // 获取所有已发布的博客
   const blogs = await getBlogs();
-  const publishedBlogs = blogs;
+
+  const getCoverImage = async (cover_image: string) => {
+    const url = await getSignedUrl(BUCKET_NAME, cover_image);
+    return url?.signedUrl || "";
+  };
+
+  // 预先获取所有图片的 URL
+  const blogsWithUrls = await Promise.all(
+    blogs.map(async (blog) => ({
+      ...blog,
+      coverImageUrl: blog.cover_image
+        ? await getCoverImage(blog.cover_image)
+        : "",
+    }))
+  );
 
   // 提取内容摘要的辅助函数
   const getExcerpt = (content: string, maxLength = 150) => {
@@ -32,19 +48,19 @@ export default async function BlogsPage() {
         </p>
       </div>
 
-      {publishedBlogs.length === 0 ? (
+      {blogsWithUrls.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">暂无博客文章</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {publishedBlogs.map((blog) => (
+          {blogsWithUrls.map((blog) => (
             <Link href={`/blogs/${blog.id}`} key={blog.id} className="group">
               <div className="bg-card border rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md">
-                {blog.cover_image ? (
+                {blog.coverImageUrl ? (
                   <div className="relative w-full h-48 overflow-hidden">
                     <Image
-                      src={blog.cover_image}
+                      src={blog.coverImageUrl}
                       alt={blog.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"

@@ -36,8 +36,9 @@ import * as z from "zod";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useEffect, useState } from "react";
 import { getTags } from "@/lib/blog";
-import { uploadFile, getPublicUrl } from "@/lib/bucket";
+import { uploadFile, getSignedUrl } from "@/lib/bucket";
 import Image from "next/image";
+import { BUCKET_NAME } from "@/const";
 
 const formSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
@@ -102,15 +103,13 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
 
     try {
       setUploadLoading(true);
-      const data = await uploadFile(
-        "libra-bucket",
-        `covers/${Date.now()}-${file.name}`,
-        file,
-        { upsert: true }
-      );
-      const url = await getPublicUrl("libra-bucket", data.path);
-      setPreviewUrl(url);
-      form.setValue("cover_image", url);
+      const data = await uploadFile(BUCKET_NAME, `covers/${file.name}`, file, {
+        upsert: true,
+      });
+      const url = await getSignedUrl(BUCKET_NAME, data.path);
+      console.log(url, data);
+      setPreviewUrl(url?.signedUrl || "");
+      form.setValue("cover_image", data.path || "");
     } catch (error) {
       console.error("上传失败:", error);
     } finally {
