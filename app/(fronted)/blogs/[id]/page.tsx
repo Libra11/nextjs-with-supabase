@@ -31,6 +31,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   try {
     const blog = await getBlogById(parseInt(id));
     const coverImageUrl = await getCoverImage(blog.cover_image || "");
+    console.log(coverImageUrl);
 
     return (
       <div className="container max-w-4xl mx-auto px-4 py-12">

@@ -8,14 +8,7 @@
 
 import { MenuBar } from "@/components/ui/glow-menu";
 import { useState, useEffect } from "react";
-import {
-  Home as HomeIcon,
-  Settings,
-  Bell,
-  Menu,
-  User,
-  LayoutDashboard,
-} from "lucide-react";
+import { Home as HomeIcon, Bell, Menu, User } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -87,13 +80,6 @@ export function CustomHeader() {
       />
       <div className="flex items-center gap-2">
         <SearchBox />
-        <LayoutDashboard
-          className="w-6 h-6"
-          onClick={() => {
-            // go to dashboard
-            router.push("/dashboard");
-          }}
-        />
       </div>
     </div>
   );

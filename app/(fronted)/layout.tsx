@@ -4,8 +4,11 @@
  * LastEditors: Libra
  * Description: 前台布局
  */
-
+"use client";
 import { CustomHeader } from "@/components/custom-header";
+import { ToDashboard } from "@/components/ui/to-dashboard";
+import { PresenceAnimation } from "@/components/ui/presence-animation";
+import { AppProgressProvider as ProgressProvider } from "@bprogress/next";
 
 export default function FrontedLayout({
   children,
@@ -13,9 +16,22 @@ export default function FrontedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen w-screen">
+    <div className="flex flex-col min-h-screen w-screen relative">
       <CustomHeader />
-      <div className="flex-1">{children}</div>
+      <ToDashboard />
+
+      <PresenceAnimation>
+        <div className="flex-1">
+          <ProgressProvider
+            height="4px"
+            color="#fffd00"
+            options={{ showSpinner: false }}
+            shallowRouting
+          >
+            {children}
+          </ProgressProvider>
+        </div>
+      </PresenceAnimation>
     </div>
   );
 }

@@ -7,7 +7,6 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import { CustomHeader } from "@/components/custom-header";
 import SplashCursor from "@/components/blocks/Animations/SplashCursor/SplashCursor";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -41,7 +40,7 @@ export default function RootLayout({
         >
           <div className="flex flex-col min-h-screen w-screen">
             <SplashCursor />
-            <div className="flex-1">{children}</div>
+            {children}
           </div>
         </ThemeProvider>
       </body>
