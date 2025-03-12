@@ -41,7 +41,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-full pt-32 max-w-[1200px] mx-auto">
+    <div className="w-full h-fulls">
       <div className="flex justify-between items-center">
         <div className="w-[560px]">
           <div

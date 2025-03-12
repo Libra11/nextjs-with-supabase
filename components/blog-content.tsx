@@ -2,17 +2,18 @@
  * Author: Libra
  * Date: 2025-03-07 20:44:35
  * LastEditors: Libra
- * Description: 
-*/
+ * Description:
+ */
 "use client";
 
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
+import Loading from "@/app/(fronted)/loading";
 
 // 动态导入 Markdown 渲染组件，在客户端组件中使用
 const MarkdownContent = dynamic(() => import("@/components/markdown-content"), {
   ssr: false,
-  loading: () => <p className="text-muted-foreground">加载内容中...</p>,
+  loading: () => <Loading />,
 });
 
 interface BlogContentProps {
@@ -28,7 +29,7 @@ export default function BlogContent({ content }: BlogContentProps) {
   }, []);
 
   if (!mounted) {
-    return <p className="text-muted-foreground">加载内容中...</p>;
+    return <Loading />;
   }
 
   return (

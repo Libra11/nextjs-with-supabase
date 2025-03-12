@@ -21,7 +21,7 @@ export default function FrontedLayout({
       <ToDashboard />
 
       <PresenceAnimation>
-        <div className="flex-1">
+        <div className="flex-1 pt-32 max-w-[1200px] mx-auto">
           <ProgressProvider
             height="4px"
             color="#fffd00"

@@ -1,0 +1,74 @@
+/* Markdown 内容样式 */
+.markdown-content ul {
+  @apply list-disc pl-4 my-4;
+}
+
+.markdown-content ol {
+  @apply list-decimal pl-4 my-4;
+}
+
+.markdown-content .hljs {
+  @apply rounded-md;
+}
+
+.parent-container-of-pre {
+  display: grid; /* in order { overflow-x: auto; } works in child <pre> */
+}
+
+pre,
+pre code {
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.2;
+  tab-size: 2;
+  hyphens: none;
+}
+
+pre {
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+pre > code {
+  float: left;
+  min-width: 100%;
+}
+
+.code-line {
+  min-width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: -12px;
+  margin-right: -12px;
+  border-left: 4px solid transparent; /* prepare for highlighted code-lines */
+
+  display: inline-block;
+}
+
+.code-line.inserted {
+  background-color: green; /* inserted code-line (+) */
+}
+
+.code-line.deleted {
+  background-color: red; /* deleted code-line (-) */
+}
+
+.highlighted-code-line {
+  background-color: blue;
+  border-left: 4px solid blue;
+}
+
+.numbered-code-line::before {
+  content: attr(data-line-number);
+
+  margin-left: -8px;
+  margin-right: 16px;
+  width: 1rem;
+  color: #5c6370;
+  text-align: right;
+
+  display: inline-block;
+}

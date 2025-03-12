@@ -22,7 +22,9 @@ export async function getBlogs(): Promise<BlogWithTags[]> {
       *,
       tags (
         id,
-        name
+        name,
+        icon_name,
+        color
       )
     `
     )
@@ -43,7 +45,9 @@ export async function getBlogById(id: number): Promise<BlogWithTags> {
       *,
       tags (
         id,
-        name
+        name,
+        icon_name,
+        color
       )
     `
     )
@@ -185,14 +189,24 @@ export async function getTags(): Promise<Tag[]> {
   return tags;
 }
 
-export async function createTag(name: string): Promise<Tag> {
+export async function createTag(
+  name: string,
+  color?: string,
+  icon_name?: string
+): Promise<Tag> {
   if (!name) {
     throw new Error("标签名称不能为空");
   }
 
   const { data, error } = await supabase
     .from("tags")
-    .insert([{ name }])
+    .insert([
+      {
+        name,
+        color: color || "#6c757d", // 默认灰色
+        icon_name: icon_name || "tag", // 默认图标
+      },
+    ])
     .select()
     .single();
 
@@ -201,4 +215,83 @@ export async function createTag(name: string): Promise<Tag> {
   }
 
   return data;
+}
+
+export async function updateTag(
+  id: number,
+  name: string,
+  color?: string,
+  icon_name?: string
+): Promise<Tag> {
+  if (!id) {
+    throw new Error("标签ID不能为空");
+  }
+
+  if (!name) {
+    throw new Error("标签名称不能为空");
+  }
+
+  const { data, error } = await supabase
+    .from("tags")
+    .update({
+      name,
+      color: color || "#6c757d",
+      icon_name: icon_name || "tag",
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error("更新标签失败");
+  }
+
+  return data;
+}
+
+export async function deleteTag(id: number): Promise<void> {
+  if (!id) {
+    throw new Error("标签ID不能为空");
+  }
+
+  // 1. 首先检查标签是否被博客使用
+  const { data: usedTags, error: checkError } = await supabase
+    .from("blog_tags")
+    .select("*")
+    .eq("tag_id", id);
+
+  if (checkError) {
+    throw new Error("检查标签使用情况失败");
+  }
+
+  // 如果标签已被使用，先删除关联关系
+  if (usedTags && usedTags.length > 0) {
+    const { error: deleteRelError } = await supabase
+      .from("blog_tags")
+      .delete()
+      .eq("tag_id", id);
+
+    if (deleteRelError) {
+      throw new Error("删除标签关联关系失败");
+    }
+  }
+
+  // 2. 删除标签
+  const { error } = await supabase.from("tags").delete().eq("id", id);
+
+  if (error) {
+    throw new Error("删除标签失败");
+  }
+}
+
+export async function incrementBlogViewCount(id: number) {
+  const { data, error } = await supabase.rpc("increment_view_count_value", {
+    row_id: id,
+  }); // 调用函数，传入参数
+
+  if (error) {
+    console.error("更新失败:", error);
+  } else {
+    console.log("更新成功:", data);
+  }
 }

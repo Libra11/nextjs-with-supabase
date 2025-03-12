@@ -11,9 +11,8 @@ import { usePathname } from "next/navigation";
 export function PresenceAnimation({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const variants = {
-    initial: { opacity: 0, y: 50 },
-    enter: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -50 },
+    initial: { opacity: 0 },
+    enter: { opacity: 1 },
   };
 
   return (

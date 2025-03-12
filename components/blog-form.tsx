@@ -36,7 +36,7 @@ import * as z from "zod";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useEffect, useState } from "react";
 import { getTags } from "@/lib/blog";
-import { uploadFile, getSignedUrl } from "@/lib/bucket";
+import { uploadFile, getSignedUrl, getPublicUrl } from "@/lib/bucket";
 import Image from "next/image";
 import { BUCKET_NAME } from "@/const";
 
@@ -57,7 +57,7 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
   const [tags, setTags] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState(initialData?.cover_image || "");
+  const [previewUrl, setPreviewUrl] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,6 +71,11 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
   });
 
   useEffect(() => {
+    if (initialData?.cover_image) {
+      getPublicUrl(BUCKET_NAME, initialData.cover_image).then((url) => {
+        setPreviewUrl(url || "");
+      });
+    }
     loadTags();
   }, []);
 
@@ -106,9 +111,9 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
       const data = await uploadFile(BUCKET_NAME, `covers/${file.name}`, file, {
         upsert: true,
       });
-      const url = await getSignedUrl(BUCKET_NAME, data.path);
+      const url = await getPublicUrl(BUCKET_NAME, data.path);
       console.log(url, data);
-      setPreviewUrl(url?.signedUrl || "");
+      setPreviewUrl(url || "");
       form.setValue("cover_image", data.path || "");
     } catch (error) {
       console.error("上传失败:", error);

@@ -2,8 +2,8 @@
  * Author: Libra
  * Date: 2025-03-07 19:36:53
  * LastEditors: Libra
- * Description: 
-*/
+ * Description:
+ */
 /**
  * Author: Libra
  * Date: 2025-03-07 17:49:45
@@ -28,6 +28,7 @@ import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
+import { TagBadge } from "@/components/ui/tag-badge";
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
@@ -93,12 +94,11 @@ export default function BlogsPage() {
               <TableCell>
                 <div className="flex gap-1">
                   {blog.tags.map((tag) => (
-                    <span
+                    <TagBadge
                       key={tag.id}
-                      className="px-2 py-1 bg-gray-100 rounded-full text-xs"
-                    >
-                      {tag.name}
-                    </span>
+                      icon_name={tag.icon_name || ""}
+                      color={tag.color || ""}
+                    />
                   ))}
                 </div>
               </TableCell>
