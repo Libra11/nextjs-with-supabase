@@ -7,6 +7,7 @@
 export interface Blog {
   id: number;
   title: string;
+  description: string;
   content: string;
   created_at: string;
   updated_at: string;
@@ -29,6 +30,7 @@ export interface BlogWithTags extends Blog {
 
 export interface CreateBlogInput {
   title: string;
+  description: string;
   content: string;
   status: "draft" | "published";
   cover_image?: string;

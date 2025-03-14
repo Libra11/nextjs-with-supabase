@@ -79,7 +79,7 @@ export default async function BlogsPage() {
                   <p className="text-muted-foreground mb-4 text-sm">
                     {formatDate(blog.created_at)}
                   </p>
-                  <p className="text-sm mb-4">{getExcerpt(blog.content)}</p>
+                  <p className="text-sm mb-4">{blog.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {blog.tags.map((tag) => (
                       <Badge key={tag.id} variant="secondary">

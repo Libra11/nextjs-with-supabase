@@ -42,6 +42,7 @@ import { BUCKET_NAME } from "@/const";
 
 const formSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
+  description: z.string().min(1, "描述不能为空").max(200, "描述最多200字"),
   content: z.string().min(1, "内容不能为空"),
   status: z.enum(["draft", "published"]),
   cover_image: z.string().optional(),
@@ -63,6 +64,7 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: initialData?.title || "",
+      description: initialData?.description || "",
       content: initialData?.content || "",
       status: initialData?.status || "draft",
       cover_image: initialData?.cover_image || "",
@@ -136,6 +138,24 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
               <FormLabel>标题</FormLabel>
               <FormControl>
                 <Input placeholder="请输入博客标题" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>描述</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="请输入博客描述"
+                  className="min-h-[200px]"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -4,7 +4,11 @@
  * LastEditors: Libra
  * Description: 博客详情页
  */
-import { getBlogById, incrementBlogViewCount } from "@/lib/blog";
+import {
+  getBlogById,
+  getRecentBlogsByTagId,
+  incrementBlogViewCount,
+} from "@/lib/blog";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,7 +44,10 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   try {
     const blog = await getBlogById(parseInt(id));
-    console.log(blog);
+    const recentBlogs = await getRecentBlogsByTagId(
+      blog.tags[0].id,
+      parseInt(id)
+    );
     const coverImageUrl = blog.cover_image
       ? await getCoverImage(blog.cover_image)
       : "";
@@ -52,7 +59,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
     await incrementBlogViewCount(parseInt(id));
 
     return (
-      <div className="min-h-screen w-[1200px] mx-auto">
+      <div>
         {/* 顶部内容 */}
         <h1 className="relative mb-4 w-fit group">
           <span className="relative z-10 inline-block px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:scale-110">
@@ -147,49 +154,116 @@ export default async function BlogPage({ params }: BlogPageProps) {
               {/* 博客底部 */}
               <div className="mt-16 pt-6 border-t border-primary/10">
                 {/* 作者信息卡片 */}
-                <div className="bg-primary/5 rounded-2xl p-6 mb-8 transition-transform duration-300 hover:scale-[1.01] hover:shadow-md">
-                  <div className="flex items-center gap-4">
-                    <div className="rounded-full bg-gradient-to-br from-primary to-secondary h-16 w-16 flex items-center justify-center text-white text-xl font-bold">
-                      {"L"}
+                <div className="relative overflow-hidden p-8 rounded-2xl backdrop-blur-sm mb-12 group transition-all duration-500 border border-transparent hover:border-blue-500/30">
+                  {/* 背景渐变 */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+                  {/* 装饰性圆环 */}
+                  <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full border border-blue-500/10"></div>
+                  <div className="absolute -left-16 -bottom-16 w-48 h-48 rounded-full border border-purple-500/20"></div>
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div className="relative">
+                      <Link href="#" className="block relative group">
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center shadow-lg shadow-blue-500/30 transform group-hover:scale-110 transition-all duration-500">
+                          {/* 请将 src 替换为实际的头像图片路径 */}
+                          <Image
+                            src="http://47.121.140.196:3000/_next/image?url=http%3A%2F%2F47.121.140.196%3A8000%2Fstorage%2Fv1%2Fobject%2Fpublic%2Flibra-bucket%2Fcovers%2FDesktop%2520-%25207.png&w=3840&q=75"
+                            alt="作者头像"
+                            fill
+                            className="object-cover relative z-10"
+                          />
+                          {/* 渐变叠加层 */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-purple-500/30 mix-blend-overlay"></div>
+                        </div>
+                        <div className="absolute -inset-1.5 rounded-full blur-md bg-gradient-to-r from-blue-400 to-purple-500 opacity-30 animate-pulse"></div>
+                      </Link>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Libra</h3>
-                      <p className="text-sm text-muted-foreground">博客作者</p>
+
+                    <div className="flex-1 text-center md:text-left">
+                      <h3 className="text-2xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
+                        Libra
+                      </h3>
+                      <p className="text-md mb-4 text-muted-foreground">
+                        热爱技术，分享生活
+                      </p>
+                      <p className="text-muted-foreground italic relative">
+                        感谢您阅读我的文章。如果您喜欢这篇文章，请考虑分享或关注我的更多内容。
+                        <span className="absolute -left-2 top-0 text-4xl font-serif opacity-10 text-blue-500">
+                          "
+                        </span>
+                        <span className="absolute -right-2 bottom-0 text-4xl font-serif text-purple-500">
+                          "
+                        </span>
+                      </p>
                     </div>
                   </div>
-                  <p className="mt-4 text-muted-foreground">
-                    感谢您阅读我的文章。如果您喜欢这篇文章，请考虑分享或关注我的更多内容。
-                  </p>
                 </div>
 
                 {/* 相关推荐 */}
-                <h3 className="text-2xl font-bold mb-4">您可能还喜欢</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {[1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="group p-4 rounded-xl border border-primary/10 bg-card/50 hover:bg-primary/5 transition-all duration-300 hover:shadow-md"
-                    >
-                      <h4 className="font-semibold group-hover:text-primary transition-colors">
-                        相关文章标题 {i}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                        这是相关文章的简短描述...
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <h3 className="text-2xl font-bold mb-8 relative w-fit">
+                  <span className="relative z-10 inline-block px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
+                    您可能还喜欢
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-sm"></span>
+                  <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 to-purple-500"></span>
+                </h3>
 
-                {/* 回到列表 */}
-                <div className="text-center">
-                  <Link href="/blogs">
-                    <Button
-                      variant="default"
-                      className="rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 px-8"
-                    >
-                      浏览更多文章
-                    </Button>
-                  </Link>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                  {recentBlogs.map((blog) => (
+                    <Link href={`/blogs/${blog.id}`} key={blog.id}>
+                      <div className="group relative overflow-hidden p-6 rounded-xl backdrop-blur-sm transition-all duration-300 border border-transparent hover:border-blue-500/20 hover:shadow-md">
+                        {/* 简化的背景渐变 */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
+
+                        <div className="relative z-10">
+                          <h4 className="text-xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500/90 to-purple-500/90">
+                            {blog.title}
+                          </h4>
+
+                          <p className="text-muted-foreground mb-3 text-sm line-clamp-2">
+                            {blog.description}
+                          </p>
+
+                          {blog.tags && blog.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-3">
+                              {blog.tags.slice(0, 2).map((tag) => (
+                                <span
+                                  key={tag.id}
+                                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                                  style={{
+                                    backgroundColor: `${tag.color || "#6c757d"}10`,
+                                    color: tag.color || "#6c757d",
+                                  }}
+                                >
+                                  {tag.name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* 简化的阅读提示 */}
+                          <div className="mt-4 flex justify-end">
+                            <span className="inline-flex items-center text-sm font-medium text-blue-500 group-hover:translate-x-1 transition-transform duration-300">
+                              阅读文章
+                              <svg
+                                className="w-4 h-4 ml-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                                ></path>
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>

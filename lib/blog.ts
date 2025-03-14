@@ -62,7 +62,7 @@ export async function getBlogById(id: number): Promise<BlogWithTags> {
 }
 
 export async function createBlog(data: CreateBlogInput): Promise<BlogWithTags> {
-  const { title, content, status, cover_image, tags } = data;
+  const { title, description, content, status, cover_image, tags } = data;
 
   // 创建博客
   const { data: blog, error: blogError } = await supabase
@@ -70,6 +70,7 @@ export async function createBlog(data: CreateBlogInput): Promise<BlogWithTags> {
     .insert([
       {
         title,
+        description,
         content,
         status,
         cover_image,
@@ -106,13 +107,14 @@ export async function updateBlog(
   id: number,
   data: Omit<UpdateBlogInput, "id">
 ): Promise<BlogWithTags> {
-  const { title, content, status, cover_image, tags } = data;
+  const { title, description, content, status, cover_image, tags } = data;
 
   // 更新博客
   const { data: blog, error: blogError } = await supabase
     .from("blogs")
     .update({
       title,
+      description,
       content,
       status,
       cover_image,
@@ -294,4 +296,56 @@ export async function incrementBlogViewCount(id: number) {
   } else {
     console.log("更新成功:", data);
   }
+}
+
+// 根据 id(tag_id) 获取最近的两篇博客，排除指定blogId
+export async function getRecentBlogsByTagId(
+  tagId: number,
+  excludeBlogId?: number
+): Promise<BlogWithTags[]> {
+  // 先获取具有特定标签的博客ID
+  const { data: blogTags, error: blogTagsError } = await supabase
+    .from("blog_tags")
+    .select("blog_id")
+    .eq("tag_id", tagId);
+
+  if (blogTagsError || !blogTags || blogTags.length === 0) {
+    console.error("获取标签关联博客失败:", blogTagsError);
+    return [];
+  }
+
+  // 获取博客ID数组
+  const blogIds = blogTags.map((item) => item.blog_id);
+
+  // 创建基础查询
+  let query = supabase
+    .from("blogs")
+    .select(
+      `
+      *,
+      tags (
+        id,
+        name,
+        icon_name,
+        color
+      )
+    `
+    )
+    .in("id", blogIds)
+    .order("created_at", { ascending: false });
+
+  // 如果有需要排除的博客ID，添加过滤条件
+  if (excludeBlogId) {
+    query = query.neq("id", excludeBlogId);
+  }
+
+  // 限制结果数量
+  const { data: blogs, error } = await query.limit(2);
+
+  if (error) {
+    console.error("获取相关博客失败:", error);
+    return [];
+  }
+
+  return blogs;
 }
