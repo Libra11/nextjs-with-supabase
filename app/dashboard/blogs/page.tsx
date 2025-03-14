@@ -40,7 +40,7 @@ export default function BlogsPage() {
   const loadBlogs = async () => {
     try {
       const data = await getBlogs();
-      setBlogs(data);
+      setBlogs(data.blogs);
     } catch (error) {
       console.error("加载博客列表失败:", error);
     }

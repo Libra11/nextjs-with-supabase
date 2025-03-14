@@ -120,6 +120,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                 alt={blog.title}
                 fill
                 priority
+                sizes="full"
                 className="object-cover"
               />
               <div className="bg-gradient-to-r from-primary/40 to-secondary/40 mix-blend-multiply"></div>
@@ -170,6 +171,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                             src="http://47.121.140.196:3000/_next/image?url=http%3A%2F%2F47.121.140.196%3A8000%2Fstorage%2Fv1%2Fobject%2Fpublic%2Flibra-bucket%2Fcovers%2FDesktop%2520-%25207.png&w=3840&q=75"
                             alt="作者头像"
                             fill
+                            sizes="100px"
                             className="object-cover relative z-10"
                           />
                           {/* 渐变叠加层 */}

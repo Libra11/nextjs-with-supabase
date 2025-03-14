@@ -10,8 +10,8 @@ import { MenuBar } from "@/components/ui/glow-menu";
 import { useState, useEffect } from "react";
 import { Home as HomeIcon, Bell, Menu, User } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { AnimatedLogo } from "@/components/ui/animated-logo";
 
 const menuItems = [
   {
@@ -62,7 +62,25 @@ export function CustomHeader() {
   const router = useRouter();
 
   useEffect(() => {
-    const currentMenuItem = menuItems.find((item) => item.href === pathname);
+    // 处理根路径特殊情况
+    if (pathname === "/") {
+      setActiveItem("主页");
+      return;
+    }
+
+    // 使用startsWith而不是全等比较，这样子路径也能正确匹配
+    // 先查找最长匹配，避免短路径误匹配
+    const sortedItems = [...menuItems].sort(
+      (a, b) => b.href.length - a.href.length
+    );
+    const currentMenuItem = sortedItems.find(
+      (item) =>
+        // 确保是路径开始部分匹配，且为完整路径段落匹配
+        // 例如：/blogs 匹配 /blogs/123，但 /blo 不匹配 /blogs
+        pathname.startsWith(item.href) &&
+        (pathname === item.href || pathname.charAt(item.href.length) === "/")
+    );
+
     if (currentMenuItem) {
       setActiveItem(currentMenuItem.label);
     }
@@ -73,14 +91,8 @@ export function CustomHeader() {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 w-full py-3 px-5 flex justify-between">
-      <Image
-        src="/logo.svg"
-        alt="logo"
-        width={60}
-        height={60}
-        className="w-12 h-12"
-      />
+    <div className="fixed top-0 left-0 z-50 w-full py-3 px-5 flex justify-between items-center">
+      <AnimatedLogo href="/" className="ml-1" />
       <MenuBar
         items={menuItems}
         activeItem={activeItem}

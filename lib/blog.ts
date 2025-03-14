@@ -14,11 +14,14 @@ import {
 
 const supabase = createClient();
 
-export async function getBlogs(): Promise<BlogWithTags[]> {
-  const { data: blogs, error } = await supabase
-    .from("blogs")
-    .select(
-      `
+// 修改获取博客函数，支持分页
+export async function getBlogs(
+  page = 1,
+  pageSize = 6,
+  filters: { tagId?: number; status?: string } = {}
+): Promise<{ blogs: BlogWithTags[]; count: number }> {
+  let query = supabase.from("blogs").select(
+    `
       *,
       tags (
         id,
@@ -26,15 +29,35 @@ export async function getBlogs(): Promise<BlogWithTags[]> {
         icon_name,
         color
       )
-    `
-    )
-    .order("created_at", { ascending: false });
+    `,
+    { count: "exact" }
+  );
+
+  // 如果提供了标签 ID 进行筛选
+  if (filters.tagId) {
+    query = query.eq("tags.id", filters.tagId);
+  }
+
+  // 如果提供了状态进行筛选
+  if (filters.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  // 计算分页的范围
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const {
+    data: blogs,
+    error,
+    count,
+  } = await query.order("created_at", { ascending: false }).range(from, to);
 
   if (error) {
     throw new Error("获取博客列表失败");
   }
 
-  return blogs;
+  return { blogs: blogs || [], count: count || 0 };
 }
 
 export async function getBlogById(id: number): Promise<BlogWithTags> {
