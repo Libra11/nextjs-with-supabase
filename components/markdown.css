@@ -1,74 +1,386 @@
 /* Markdown 内容样式 */
 .markdown-content ul {
-  @apply list-disc pl-4 my-4;
+  @apply pl-4 my-4 ml-4;
+  @apply space-y-2;
+}
+
+.markdown-content ul li::marker {
+  @apply !hidden;
 }
 
 .markdown-content ol {
-  @apply list-decimal pl-4 my-4;
+  @apply list-decimal pl-4 my-4 ml-4;
+  @apply space-y-2;
+  counter-reset: item;
+}
+
+.markdown-content ol li {
+  @apply relative pl-2;
+  counter-increment: item;
+}
+
+.markdown-content ol li::marker {
+  @apply !hidden;
+}
+
+.markdown-content p code {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500;
+}
+
+.markdown-content del {
+  @apply relative text-gray-400;
+  @apply after:absolute after:left-0 after:right-0 after:top-1/2;
+  @apply after:h-[2px] after:-translate-y-1/2;
+  @apply after:bg-gradient-to-r after:from-purple-500 after:to-blue-500;
+  @apply after:transform after:origin-left;
+  @apply after:animate-[strike_1s_ease-in-out_forwards];
+}
+
+@keyframes strike {
+  0% {
+    transform: scaleX(0) translateY(-50%);
+  }
+  100% {
+    transform: scaleX(1) translateY(-50%);
+  }
+}
+
+.markdown-content li {
+  @apply text-gray-200 w-fit;
+  @apply transition-all duration-300;
+  @apply hover:translate-x-2;
+  @apply hover:text-blue-400;
+  @apply cursor-pointer;
+  @apply backdrop-blur-sm;
+  @apply rounded px-2 py-1;
+  @apply bg-primary/5;
+  @apply shadow-[inset_0_0_5px_rgba(59,130,246,0.5)];
 }
 
 .markdown-content .hljs {
-  @apply rounded-md;
+  @apply rounded-b-md bg-transparent p-0;
 }
 
+.markdown-content blockquote {
+  @apply pl-4 py-2 my-6 border-l-4 bg-primary/5 rounded-r-lg;
+  @apply border-primary/20;
+  @apply relative;
+  @apply transition-all duration-300;
+  border-image: linear-gradient(
+      to bottom,
+      theme(colors.blue.500) 0%,
+      theme(colors.purple.500) 100%
+    )
+    1;
+  @apply hover:bg-blue-500/10;
+}
+
+.markdown-content blockquote::before {
+  content: '"';
+  @apply absolute -top-4 left-4;
+  @apply text-6xl font-serif;
+  background: linear-gradient(
+    90deg,
+    theme(colors.blue.500/20) 0%,
+    theme(colors.purple.500/20) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.markdown-content blockquote::after {
+  content: '"';
+  @apply absolute -bottom-8 right-4;
+  @apply text-6xl font-serif;
+  background: linear-gradient(
+    90deg,
+    theme(colors.blue.500/20) 0%,
+    theme(colors.purple.500/20) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.markdown-content blockquote p {
+  @apply text-primary/80 italic;
+  @apply relative z-10;
+}
+
+/* 代码块容器样式 */
 .parent-container-of-pre {
-  display: grid; /* in order { overflow-x: auto; } works in child <pre> */
+  @apply relative;
 }
 
-pre,
-pre code {
-  direction: ltr;
-  text-align: left;
-  white-space: pre;
-  word-spacing: normal;
-  word-break: normal;
-  line-height: 1.2;
-  tab-size: 2;
-  hyphens: none;
-}
-
+/* 代码块基础样式 */
 pre {
-  padding: 0.5rem 1rem;
-  overflow-x: auto;
+  @apply relative overflow-x-auto;
+  @apply bg-[#1a1b26]/90 backdrop-blur-md;
+  @apply transition-all duration-500;
+  @apply my-4;
 }
 
-pre > code {
-  float: left;
-  min-width: 100%;
+/* 代码块顶部工具栏 */
+.code-header {
+  @apply flex items-center justify-between;
+  @apply px-4 py-3;
+  @apply bg-[#1a1b26]/95 backdrop-blur-md;
+  @apply border-b border-blue-500/10;
+  @apply rounded-t-xl;
+  @apply transition-all duration-300;
 }
 
+/* 窗口按钮组 */
+.window-controls {
+  @apply flex items-center gap-2;
+}
+
+.window-control {
+  @apply w-3 h-3 rounded-full;
+  @apply transition-all duration-300;
+  @apply relative;
+  @apply flex items-center justify-center;
+}
+
+/* 窗口按钮悬停效果 */
+.window-control::before {
+  content: "";
+  @apply absolute inset-0;
+  @apply rounded-full;
+  @apply opacity-0 scale-0;
+  @apply transition-all duration-300;
+}
+
+.window-control:hover::before {
+  @apply opacity-100 scale-150;
+  @apply animate-ping;
+}
+
+.window-control.close {
+  @apply bg-red-500;
+}
+.window-control.close::before {
+  @apply bg-red-500/50;
+}
+
+.window-control.minimize {
+  @apply bg-yellow-500;
+}
+.window-control.minimize::before {
+  @apply bg-yellow-500/50;
+}
+
+.window-control.maximize {
+  @apply bg-green-500;
+}
+.window-control.maximize::before {
+  @apply bg-green-500/50;
+}
+
+/* 复制按钮样式 */
+.copy-button {
+  @apply p-1.5 rounded-lg;
+  @apply text-gray-400 hover:text-white;
+  @apply transition-all duration-300;
+  @apply bg-white/5 hover:bg-white/10;
+  @apply border border-transparent hover:border-white/20;
+  @apply flex items-center gap-2;
+}
+
+/* 代码行样式 */
 .code-line {
-  min-width: 100%;
-  padding-left: 12px;
-  padding-right: 12px;
-  margin-left: -12px;
-  margin-right: -12px;
-  border-left: 4px solid transparent; /* prepare for highlighted code-lines */
-
-  display: inline-block;
+  @apply min-w-full px-4 relative inline-block leading-5;
+  @apply transition-all duration-200;
+  @apply border-l-4 border-transparent;
+  @apply hover:bg-white/5;
 }
 
+/* 行号样式 */
+.numbered-code-line::before {
+  content: attr(data-line-number);
+  @apply inline-block;
+  @apply w-[2em] mr-4 -ml-2;
+  @apply text-gray-500 text-right;
+  @apply select-none;
+  @apply transition-colors duration-200;
+  @apply opacity-50 group-hover:opacity-100;
+}
+
+/* 语言标签 */
+.code-language {
+  @apply absolute right-4 top-3;
+  @apply px-2 py-1 rounded-md;
+  @apply text-xs font-mono;
+  @apply bg-white/5;
+  @apply text-gray-400;
+  @apply border border-white/10;
+}
+
+/* 添加动画关键帧 */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px theme(colors.blue.500/50);
+  }
+  50% {
+    box-shadow: 0 0 20px theme(colors.purple.500/50);
+  }
+  100% {
+    box-shadow: 0 0 5px theme(colors.blue.500/50);
+  }
+}
+
+.animate-gradient {
+  animation: gradient 15s ease infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* 代码高亮样式优化 */
+.highlighted-code-line {
+  @apply bg-blue-500/10 border-l-4 border-blue-500;
+  @apply relative overflow-hidden;
+}
+
+.highlighted-code-line::after {
+  content: "";
+  @apply absolute inset-0;
+  @apply bg-gradient-to-r from-blue-500/20 to-transparent;
+  @apply animate-pulse;
+}
+
+/* 插入/删除行样式优化 */
 .code-line.inserted {
-  background-color: green; /* inserted code-line (+) */
+  @apply bg-green-500/10 border-l-4 border-green-500;
+  @apply relative overflow-hidden;
 }
 
 .code-line.deleted {
-  background-color: red; /* deleted code-line (-) */
+  @apply bg-red-500/10 border-l-4 border-red-500;
+  @apply relative overflow-hidden;
 }
 
-.highlighted-code-line {
-  background-color: blue;
-  border-left: 4px solid blue;
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  @apply relative font-bold mt-8 mb-4 first:mt-0 w-fit pl-4 pr-8 py-3;
+  @apply transition-all duration-300;
+  @apply hover:pr-12 hover:pl-8;
 }
 
-.numbered-code-line::before {
-  content: attr(data-line-number);
+.markdown-content h1::before,
+.markdown-content h2::before,
+.markdown-content h3::before,
+.markdown-content h4::before,
+.markdown-content h5::before,
+.markdown-content h6::before {
+  @apply content-[''] absolute left-0 top-0 w-full h-full -z-10 opacity-20;
+  background: linear-gradient(
+    90deg,
+    theme(colors.blue.500) 0%,
+    theme(colors.purple.500) 50%,
+    transparent 100%
+  );
+}
 
-  margin-left: -8px;
-  margin-right: 16px;
-  width: 1rem;
-  color: #5c6370;
-  text-align: right;
+/* 表格样式 */
+.markdown-content table {
+  @apply w-full my-6 border-collapse;
+  @apply bg-primary/5 backdrop-blur-sm;
+  @apply overflow-hidden;
+  @apply shadow-[0_0_15px_rgba(59,130,246,0.2)];
+}
 
-  display: inline-block;
+.markdown-content th {
+  @apply bg-gradient-to-r from-blue-500/20 to-purple-500/20;
+  @apply px-4 py-3 text-left font-bold;
+  @apply border-b border-primary/20;
+  @apply transition-all duration-300;
+}
+
+.markdown-content td {
+  @apply px-4 py-3;
+  @apply border-b border-primary/10;
+  @apply transition-all duration-300;
+}
+
+.markdown-content tr {
+  @apply transition-all duration-300;
+}
+
+.markdown-content tr:hover {
+  @apply bg-blue-500/10;
+}
+
+.markdown-content tr:hover td {
+  @apply translate-x-2;
+}
+
+.markdown-content thead tr {
+  @apply relative;
+}
+
+.markdown-content thead tr::after {
+  content: "";
+  @apply absolute bottom-0 left-0 w-full h-[2px];
+  @apply bg-gradient-to-r from-blue-500 to-purple-500;
+  @apply transform scale-x-0;
+  @apply transition-transform duration-300;
+  @apply origin-left;
+}
+
+.markdown-content thead tr:hover::after {
+  @apply scale-x-100;
+}
+
+/* 链接样式 */
+.markdown-content a {
+  @apply relative inline-block;
+  @apply text-blue-500;
+  @apply transition-all duration-300;
+  @apply hover:text-purple-500;
+}
+
+.markdown-content a::before {
+  content: "";
+  @apply absolute -bottom-0 left-0;
+  @apply w-full h-[2px];
+  @apply bg-gradient-to-r from-blue-500 to-purple-500;
+  @apply transform scale-x-0;
+  @apply transition-transform duration-300;
+  @apply origin-left;
+}
+
+.markdown-content a::after {
+  content: "→";
+  @apply ml-1 opacity-0;
+  @apply transform translate-x-2;
+  @apply transition-all duration-300;
+}
+
+.markdown-content a:hover::before {
+  @apply scale-x-100;
+}
+
+.markdown-content a:hover::after {
+  @apply opacity-100 translate-x-0;
+}
+
+.markdown-content a:active {
+  @apply scale-95;
 }

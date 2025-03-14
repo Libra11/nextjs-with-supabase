@@ -6,14 +6,14 @@
  */
 import { getBlogById, incrementBlogViewCount } from "@/lib/blog";
 import { formatDate } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   Eye,
   Calendar,
   RefreshCw,
-  Tag as TagIcon,
+  Clock,
+  BookOpenText,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,6 +22,7 @@ import BlogContent from "@/components/blog-content";
 import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 import { TagBadge } from "@/components/ui/tag-badge";
+import readingTime from "reading-time";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
@@ -32,37 +33,20 @@ const getCoverImage = async (cover_image: string) => {
   return url || "";
 };
 
-// 技能图标列表，用于处理不存在的图标
-const SKILL_ICONS = [
-  "prisma",
-  "supabase",
-  "nextjs",
-  "tailwindcss",
-  "typescript",
-  "webpack",
-  "React",
-  "Vue",
-  "docker",
-  "electron",
-  "git",
-  "http",
-  "javascript",
-  "nestjs",
-  "Nodejs",
-  "PostgreSQL",
-  "CSS",
-  "Figma",
-  "HTML",
-];
-
 export default async function BlogPage({ params }: BlogPageProps) {
   const { id } = await params;
+  let readTime = "";
+  let wordCount = 0;
 
   try {
     const blog = await getBlogById(parseInt(id));
+    console.log(blog);
     const coverImageUrl = blog.cover_image
       ? await getCoverImage(blog.cover_image)
       : "";
+    const stats = readingTime(blog.content);
+    readTime = stats.text;
+    wordCount = stats.words;
 
     // 增加博客观看次数
     await incrementBlogViewCount(parseInt(id));
@@ -70,7 +54,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
     return (
       <div className="min-h-screen w-[1200px] mx-auto">
         {/* 顶部内容 */}
-        <h1 className="mb-4 drop-shadow-lg">{blog.title}</h1>
+        <h1 className="relative mb-4 w-fit group">
+          <span className="relative z-10 inline-block px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300 group-hover:scale-110">
+            {blog.title}
+          </span>
+          <span className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-sm group-hover:blur-md transition-all duration-300"></span>
+          <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 to-purple-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
+          <span className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+        </h1>
         <div className="flex justify-between items-center mb-8">
           {/* 元数据显示 */}
           <div className="flex flex-wrap gap-4">
@@ -92,6 +83,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
               <Eye className="mr-2 h-4 w-4" />
               <span>阅读 {blog.view_count}</span>
             </div>
+            <div className="flex items-center text-sm text-muted-foreground bg-primary/5 rounded-full px-4 py-2">
+              <Clock className="mr-2 h-4 w-4" />
+              <span> {readTime}</span>
+            </div>
+            <div className="flex items-center text-sm text-muted-foreground bg-primary/5 rounded-full px-4 py-2">
+              <BookOpenText className="mr-2 h-4 w-4" />
+              <span>字数 {wordCount}</span>
+            </div>
           </div>
           {blog.tags && blog.tags.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2">
@@ -108,13 +107,13 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <div className="w-full">
           {/* 封面图作为背景 */}
           {coverImageUrl && (
-            <div className="w-full">
+            <div className="w-full rounded-md overflow-hidden h-[500px] relative">
               <Image
                 src={coverImageUrl}
                 alt={blog.title}
-                width={1200}
-                height={600}
+                fill
                 priority
+                className="object-cover"
               />
               <div className="bg-gradient-to-r from-primary/40 to-secondary/40 mix-blend-multiply"></div>
             </div>
