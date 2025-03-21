@@ -14,6 +14,7 @@ export interface Blog {
   status: "draft" | "published";
   cover_image?: string;
   view_count: number;
+  is_top: boolean;
 }
 
 export interface Tag {
@@ -35,6 +36,7 @@ export interface CreateBlogInput {
   status: "draft" | "published";
   cover_image?: string;
   tags: number[]; // tag ids
+  is_top?: boolean;
 }
 
 export interface UpdateBlogInput extends Partial<CreateBlogInput> {

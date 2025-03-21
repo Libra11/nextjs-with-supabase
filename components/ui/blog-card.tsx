@@ -8,59 +8,84 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Eye } from "lucide-react";
+import { Eye, Calendar, Pin } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { TagBadge } from "@/components/ui/tag-badge";
 import { BlogWithTags } from "@/types/blog";
+import { cn } from "@/lib/utils";
+import { MagicCard } from "@/components/magicui/magic-card";
+import { useTheme } from "next-themes";
 
 interface BlogCardProps {
   blog: BlogWithTags & { coverImageUrl: string };
   className?: string;
+  hasGradient?: boolean;
 }
 
-export function BlogCard({ blog, className = "" }: BlogCardProps) {
+export function BlogCard({
+  blog,
+  className = "",
+  hasGradient = false,
+}: BlogCardProps) {
+  const { theme } = useTheme();
+  const mainTag = blog.tags[0]; // 获取第一个标签作为主标签
+
   return (
-    <Link href={`/blogs/${blog.id}`} className={`group ${className}`}>
-      <div className="bg-card border rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md h-full flex flex-col">
-        {blog.coverImageUrl ? (
-          <div className="relative w-full h-48 overflow-hidden">
+    <Link href={`/blogs/${blog.id}`} className="block group">
+      <MagicCard
+        gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+        backgroundClassName={cn(
+          hasGradient && "bg-gradient-to-r from-[#222222] to-[#0d0d0d]"
+        )}
+        className={cn("h-full w-full rounded-xl", className)}
+      >
+        <div className="flex flex-col p-3">
+          <div className="relative w-full h-[180px]">
             <Image
               src={blog.coverImageUrl}
               alt={blog.title}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover rounded-lg"
             />
+            {blog.is_top && (
+              <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white px-1.5 py-0.5 rounded-md flex items-center gap-1">
+                <Pin className="w-3 h-3" />
+                <span className="text-[10px]">置顶</span>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="relative w-full h-48 bg-muted flex items-center justify-center">
-            <span className="text-muted-foreground">无封面图片</span>
-          </div>
-        )}
-        <div className="p-6 flex-grow flex flex-col">
-          <h2 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-            {blog.title}
-          </h2>
-          <div className="flex items-center gap-3 text-muted-foreground mb-4 text-sm">
-            <span>{formatDate(blog.created_at)}</span>
-            <div className="flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              <span>{blog.view_count}</span>
+          <div className="flex-1">
+            <div className="px-1 py-2">
+              <div className="flex items-center gap-2">
+                {mainTag && (
+                  <TagBadge
+                    icon_name={mainTag.icon_name || ""}
+                    color={mainTag.color || "#6c757d"}
+                    iconOnly
+                    className="shrink-0"
+                  />
+                )}
+                <h3 className="text-base font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                  {blog.title}
+                </h3>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">
+                {blog.description}
+              </p>
+              <div className="flex items-center gap-3 mt-2 text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  <span className="text-xs">{formatDate(blog.created_at)}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Eye className="w-3 h-3" />
+                  <span className="text-xs">{blog.view_count} 次阅读</span>
+                </div>
+              </div>
             </div>
           </div>
-          <p className="text-sm mb-4 flex-grow">{blog.description}</p>
-          <div className="flex flex-wrap gap-2">
-            {blog.tags.map((tag) => (
-              <TagBadge
-                key={tag.id}
-                name={tag.name}
-                icon_name={tag.icon_name || ""}
-                color={tag.color || ""}
-              />
-            ))}
-          </div>
         </div>
-      </div>
+      </MagicCard>
     </Link>
   );
 }

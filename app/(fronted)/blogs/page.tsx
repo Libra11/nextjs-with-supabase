@@ -6,16 +6,15 @@
  */
 "use client";
 
-import { getBlogs, getTags } from "@/lib/blog";
+import { getBlogs } from "@/lib/blog";
 import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 import { InfiniteScroll } from "@/components/ui/infinite-scroll";
-import { BlogWithTags, Tag } from "@/types/blog";
+import { BlogWithTags } from "@/types/blog";
 import { BlogCard } from "@/components/ui/blog-card";
+import { OverlappingCards } from "@/components/ui/overlapping-cards";
 import { useState, useEffect, useRef } from "react";
-import { TagBadge } from "@/components/ui/tag-badge";
-import { Button } from "@/components/ui/button";
-import { TagIcon, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function BlogsPage() {
   // 定义状态
@@ -24,17 +23,16 @@ export default function BlogsPage() {
   const [blogsWithUrls, setBlogsWithUrls] = useState<
     (BlogWithTags & { coverImageUrl: string })[]
   >([]);
+  const [toppedBlogs, setToppedBlogs] = useState<
+    (BlogWithTags & { coverImageUrl: string })[]
+  >([]);
+  const [regularBlogs, setRegularBlogs] = useState<
+    (BlogWithTags & { coverImageUrl: string })[]
+  >([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-
-  // 标签筛选相关状态
-  const [allTags, setAllTags] = useState<Tag[]>([]);
-  const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
-  const [showTags, setShowTags] = useState(false);
-
-  const PAGE_SIZE = 6; // 每页显示的博客数量
+  const PAGE_SIZE = 8; // 每页显示的博客数量
 
   // 使用 useRef 跟踪页面是否已经挂载，防止重复加载
   const isMounted = useRef(false);
@@ -53,6 +51,8 @@ export default function BlogsPage() {
       setPage(1);
       setBlogs([]);
       setBlogsWithUrls([]);
+      setToppedBlogs([]);
+      setRegularBlogs([]);
       setHasMore(true);
       setInitialLoadComplete(false);
 
@@ -63,8 +63,6 @@ export default function BlogsPage() {
     } else {
       // 首次挂载，直接加载
       loadBlogs(true);
-      // 加载所有标签
-      loadAllTags();
       isMounted.current = true;
     }
 
@@ -72,34 +70,18 @@ export default function BlogsPage() {
     return () => {
       // 不重置isMounted，这样我们可以知道组件已经挂载过
     };
-  }, [selectedTagId]); // 当选中的标签ID变化时重新加载
+  }, []);
 
-  // 加载所有标签
-  const loadAllTags = async () => {
-    try {
-      const tags = await getTags();
-      setAllTags(tags);
-    } catch (error) {
-      console.error("加载标签失败", error);
+  // 分离置顶和普通博客
+  useEffect(() => {
+    if (blogsWithUrls.length > 0) {
+      const topped = blogsWithUrls.filter((blog) => blog.is_top);
+      const regular = blogsWithUrls.filter((blog) => !blog.is_top);
+
+      setToppedBlogs(topped);
+      setRegularBlogs(regular);
     }
-  };
-
-  // 选择标签处理
-  const handleTagSelect = (tagId: number) => {
-    // 如果点击的是当前已选标签，则取消选择
-    if (selectedTagId === tagId) {
-      setSelectedTagId(null);
-    } else {
-      setSelectedTagId(tagId);
-    }
-    // 重置页面状态
-    setPage(1);
-  };
-
-  // 清除标签筛选
-  const clearTagFilter = () => {
-    setSelectedTagId(null);
-  };
+  }, [blogsWithUrls]);
 
   // 加载博客数据并处理封面图片
   const loadBlogs = async (isInitialLoad = false) => {
@@ -107,20 +89,14 @@ export default function BlogsPage() {
 
     try {
       setLoading(true);
-      // 构建筛选条件
-      const filters: { tagId?: number; status?: string } = {};
-
-      // 如果选择了标签，添加标签筛选
-      if (selectedTagId) {
-        filters.tagId = selectedTagId;
-      }
+      // 构建筛选条件 - 只显示已发布的博客
+      const filters = { status: "published" };
 
       const { blogs: newBlogs, count } = await getBlogs(
         page,
         PAGE_SIZE,
         filters
       );
-      setTotalCount(count);
 
       if (!newBlogs || newBlogs.length === 0) {
         setHasMore(false);
@@ -178,93 +154,62 @@ export default function BlogsPage() {
   };
 
   return (
-    <div className="container mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">我的博客</h1>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          分享我的技术经验、思考和最新见解
-        </p>
-      </div>
+    <div className="mx-auto max-w-[1200px]">
+      {/* 置顶博客展示区 */}
+      {toppedBlogs.length > 0 && (
+        <div className="mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="title-gradient">置顶推荐</h2>
+          </div>
 
-      {/* 标签筛选器 */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">按标签筛选</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowTags(!showTags)}
-            className="flex items-center gap-1"
-          >
-            <TagIcon className="w-4 h-4" />
-            {showTags ? "隐藏标签" : "显示标签"}
-          </Button>
-        </div>
-
-        {showTags && (
-          <div className="flex flex-wrap gap-2 animate-in fade-in-50 duration-300">
-            {allTags.map((tag) => (
-              <div
-                key={tag.id}
-                onClick={() => handleTagSelect(tag.id)}
-                className="cursor-pointer transition-transform hover:scale-105"
-              >
-                <TagBadge
-                  name={tag.name}
-                  icon_name={tag.icon_name || ""}
-                  color={
-                    selectedTagId === tag.id
-                      ? tag.color || "#6c757d"
-                      : `${tag.color || "#6c757d"}80`
-                  } // 未选中的标签颜色更淡
+          <div className="relative w-full h-[396px]">
+            <OverlappingCards
+              items={[
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+                ...toppedBlogs,
+              ]}
+              cardWidth={280}
+              cardSpacing={150}
+              className="h-full w-full"
+              renderItem={(blog) => (
+                <BlogCard
+                  blog={blog}
+                  className={cn("border-none")}
+                  hasGradient={true}
                 />
-              </div>
-            ))}
+              )}
+            />
           </div>
-        )}
-
-        {/* 当前筛选状态 */}
-        {selectedTagId && (
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">当前筛选:</span>
-            {allTags
-              .filter((t) => t.id === selectedTagId)
-              .map((tag) => (
-                <div key={tag.id} className="flex items-center gap-1">
-                  <TagBadge
-                    name={tag.name}
-                    icon_name={tag.icon_name || ""}
-                    color={tag.color || "#6c757d"}
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 rounded-full"
-                    onClick={clearTagFilter}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </div>
-              ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {blogsWithUrls.length === 0 && !loading ? (
         <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground">
-            {selectedTagId ? "该标签下暂无博客文章" : "暂无博客文章"}
-          </p>
-          {selectedTagId && (
-            <Button variant="outline" className="mt-4" onClick={clearTagFilter}>
-              清除筛选
-            </Button>
-          )}
+          <p className="text-xl text-muted-foreground">暂无博客文章</p>
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogsWithUrls.map((blog) => (
+          {/* 最新文章标题 */}
+          <div className="mb-6">
+            <h2 className="title-gradient">最新文章</h2>
+          </div>
+
+          {/* 常规博客列表 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              ...regularBlogs,
+              ...regularBlogs,
+              ...regularBlogs,
+              ...regularBlogs,
+              ...regularBlogs,
+            ].map((blog) => (
               <BlogCard key={blog.id} blog={blog} />
             ))}
           </div>

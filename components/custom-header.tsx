@@ -8,7 +8,7 @@
 
 import { MenuBar } from "@/components/ui/glow-menu";
 import { useState, useEffect } from "react";
-import { Home as HomeIcon, Bell, Menu, User } from "lucide-react";
+import { Home as HomeIcon, Bell, Menu, User, Tag } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatedLogo } from "@/components/ui/animated-logo";
@@ -26,6 +26,14 @@ const menuItems = [
     icon: Bell,
     label: "博客",
     href: "/blogs",
+    gradient:
+      "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
+    iconColor: "text-orange-500",
+  },
+  {
+    icon: Tag,
+    label: "标签",
+    href: "/tags",
     gradient:
       "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
     iconColor: "text-orange-500",

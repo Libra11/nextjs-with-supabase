@@ -8,15 +8,20 @@
 "use client";
 import { createElement, useEffect, useState } from "react";
 import { icons } from "@/icons.config";
+import { cn } from "@/lib/utils";
 
 export function TagBadge({
   icon_name,
   color,
   name,
+  className,
+  iconOnly = false,
 }: {
   icon_name: string;
   color: string;
   name?: string;
+  className?: string;
+  iconOnly?: boolean;
 }) {
   const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
 
@@ -34,7 +39,12 @@ export function TagBadge({
   return (
     <div
       key={icon_name}
-      className="w-fit px-3 py-1 rounded-full flex items-center gap-2"
+      className={cn(
+        "flex items-center",
+        !iconOnly && "px-3 py-1 rounded-full gap-2 w-fit",
+        iconOnly && "w-5 h-5 rounded-md justify-center",
+        className
+      )}
       style={{
         backgroundColor: color ? `${color}20` : "#6c757d20",
         color: color || "#6c757d",
@@ -44,13 +54,18 @@ export function TagBadge({
       }}
     >
       {icon_name && loadedIcons[icon_name] && (
-        <div className="w-4 h-4 flex items-center justify-center">
+        <div
+          className={cn(
+            "flex items-center justify-center",
+            iconOnly ? "w-3 h-3" : "w-4 h-4"
+          )}
+        >
           {createElement(loadedIcons[icon_name], {
-            className: "w-4 h-4",
+            className: iconOnly ? "w-3 h-3" : "w-4 h-4",
           })}
         </div>
       )}
-      <span>{name || icon_name}</span>
+      {!iconOnly && <span>{name || icon_name}</span>}
     </div>
   );
 }

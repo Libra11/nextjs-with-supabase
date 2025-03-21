@@ -113,6 +113,40 @@ h6 {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
   }
+}
+
+/* 自定义水平滚动条*/
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-r from-blue-500 to-purple-500;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.title-gradient {
+  @apply relative font-bold mt-8 mb-4 first:mt-0 w-fit pl-4 pr-8 py-3;
+  @apply transition-all duration-300;
+  @apply hover:pr-12 hover:pl-8;
+}
+.title-gradient::before {
+  @apply content-[''] absolute left-0 top-0 w-full h-full -z-10 opacity-20;
+  background: linear-gradient(
+    90deg,
+    theme(colors.blue.500) 0%,
+    theme(colors.purple.500) 50%,
+    transparent 100%
+  );
 }

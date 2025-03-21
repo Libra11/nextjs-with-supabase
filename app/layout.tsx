@@ -31,14 +31,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh" className={geistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-foreground">
+      <body className="text-foreground bg-background">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen w-screen">
+          <div className="flex flex-col h-screen overflow-y-auto z-0">
             <SplashCursor />
             {children}
           </div>

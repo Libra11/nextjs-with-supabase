@@ -17,7 +17,7 @@ const supabase = createClient();
 // 修改获取博客函数，支持分页
 export async function getBlogs(
   page = 1,
-  pageSize = 6,
+  pageSize = 8,
   filters: { tagId?: number; status?: string } = {}
 ): Promise<{ blogs: BlogWithTags[]; count: number }> {
   let query = supabase.from("blogs").select(
@@ -51,7 +51,10 @@ export async function getBlogs(
     data: blogs,
     error,
     count,
-  } = await query.order("created_at", { ascending: false }).range(from, to);
+  } = await query
+    .order("is_top", { ascending: false }) // 优先按置顶状态排序
+    .order("created_at", { ascending: false }) // 然后按创建时间排序
+    .range(from, to);
 
   if (error) {
     throw new Error("获取博客列表失败");
@@ -85,7 +88,8 @@ export async function getBlogById(id: number): Promise<BlogWithTags> {
 }
 
 export async function createBlog(data: CreateBlogInput): Promise<BlogWithTags> {
-  const { title, description, content, status, cover_image, tags } = data;
+  const { title, description, content, status, cover_image, tags, is_top } =
+    data;
 
   // 创建博客
   const { data: blog, error: blogError } = await supabase
@@ -97,6 +101,7 @@ export async function createBlog(data: CreateBlogInput): Promise<BlogWithTags> {
         content,
         status,
         cover_image,
+        is_top: is_top || false, // 默认不置顶
       },
     ])
     .select()
@@ -130,7 +135,8 @@ export async function updateBlog(
   id: number,
   data: Omit<UpdateBlogInput, "id">
 ): Promise<BlogWithTags> {
-  const { title, description, content, status, cover_image, tags } = data;
+  const { title, description, content, status, cover_image, tags, is_top } =
+    data;
 
   // 更新博客
   const { data: blog, error: blogError } = await supabase
@@ -141,6 +147,7 @@ export async function updateBlog(
       content,
       status,
       cover_image,
+      is_top, // 更新置顶状态
     })
     .eq("id", id)
     .select()
