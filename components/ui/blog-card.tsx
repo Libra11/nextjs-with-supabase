@@ -15,17 +15,23 @@ import { BlogWithTags } from "@/types/blog";
 import { cn } from "@/lib/utils";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { useTheme } from "next-themes";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface BlogCardProps {
   blog: BlogWithTags & { coverImageUrl: string };
   className?: string;
-  hasGradient?: boolean;
+  bgClassName?: string;
 }
 
 export function BlogCard({
   blog,
   className = "",
-  hasGradient = false,
+  bgClassName = "",
 }: BlogCardProps) {
   const { theme } = useTheme();
   const mainTag = blog.tags[0]; // 获取第一个标签作为主标签
@@ -34,9 +40,7 @@ export function BlogCard({
     <Link href={`/blogs/${blog.id}`} className="block group">
       <MagicCard
         gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
-        backgroundClassName={cn(
-          hasGradient && "bg-gradient-to-r from-[#222222] to-[#0d0d0d]"
-        )}
+        backgroundClassName={cn(bgClassName, "bg-card")}
         className={cn("h-full w-full rounded-xl", className)}
       >
         <div className="flex flex-col p-3">
@@ -65,13 +69,31 @@ export function BlogCard({
                     className="shrink-0"
                   />
                 )}
-                <h3 className="text-base font-semibold group-hover:text-primary transition-colors line-clamp-1">
-                  {blog.title}
-                </h3>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="text-base my-1 font-semibold group-hover:text-primary transition-colors line-clamp-1">
+                        {blog.title}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{blog.title}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
-              <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">
-                {blog.description}
-              </p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 h-8">
+                      {blog.description}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{blog.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <div className="flex items-center gap-3 mt-2 text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />

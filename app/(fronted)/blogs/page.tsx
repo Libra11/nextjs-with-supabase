@@ -15,6 +15,8 @@ import { BlogCard } from "@/components/ui/blog-card";
 import { OverlappingCards } from "@/components/ui/overlapping-cards";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { BookOpen, Tags, Eye, Clock } from "lucide-react";
+import { StatsOverview } from "@/components/ui/stats-overview";
 
 export default function BlogsPage() {
   // 定义状态
@@ -155,14 +157,17 @@ export default function BlogsPage() {
 
   return (
     <div className="mx-auto max-w-[1200px]">
+      {/* 使用 StatsOverview 组件 */}
+      <StatsOverview blogCount={blogs.length || 28} className="mb-16 mt-8" />
+
       {/* 置顶博客展示区 */}
       {toppedBlogs.length > 0 && (
         <div className="mb-16">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between">
             <h2 className="title-gradient">置顶推荐</h2>
           </div>
 
-          <div className="relative w-full h-[396px]">
+          <div className="relative w-full h-[346px]">
             <OverlappingCards
               items={[
                 ...toppedBlogs,
@@ -182,7 +187,7 @@ export default function BlogsPage() {
                 <BlogCard
                   blog={blog}
                   className={cn("border-none")}
-                  hasGradient={true}
+                  bgClassName="bg-gradient-to-r from-[#222222] to-[#0d0d0d]"
                 />
               )}
             />
@@ -197,20 +202,18 @@ export default function BlogsPage() {
       ) : (
         <>
           {/* 最新文章标题 */}
-          <div className="mb-6">
+          <div>
             <h2 className="title-gradient">最新文章</h2>
           </div>
 
           {/* 常规博客列表 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              ...regularBlogs,
-              ...regularBlogs,
-              ...regularBlogs,
-              ...regularBlogs,
-              ...regularBlogs,
-            ].map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+            {[...regularBlogs].map((blog) => (
+              <BlogCard
+                key={blog.id}
+                blog={blog}
+                bgClassName="shadow-[inset_0px_0px_25px_12px_#222222] overflow-hidden"
+              />
             ))}
           </div>
 
