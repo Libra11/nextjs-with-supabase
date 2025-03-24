@@ -7,6 +7,9 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 
+// 添加全局初始化标志，防止重复初始化
+let isInitialized = false;
+
 interface ColorRGB {
   r: number;
   g: number;
@@ -75,8 +78,19 @@ export default function SplashCursor({
   TRANSPARENT = true,
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // 添加初始化状态引用
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
+    // 如果已经初始化，则不再执行
+    if (isInitialized || hasInitializedRef.current) {
+      return;
+    }
+
+    // 设置初始化标志
+    isInitialized = true;
+    hasInitializedRef.current = true;
+
     const canvas = canvasRef.current;
     if (!canvas) return; // Guard canvas early
 
@@ -1449,15 +1463,15 @@ export default function SplashCursor({
     }
 
     // -------------------- Event Listeners --------------------
-    window.addEventListener("mousedown", (e) => {
+    // 重构为具名函数，以便于清理
+    function onMouseDown(e: MouseEvent) {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
       updatePointerDownData(pointer, -1, posX, posY);
       clickSplat(pointer);
-    });
+    }
 
-    // Start rendering on first mouse move
     function handleFirstMouseMove(e: MouseEvent) {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
@@ -1467,17 +1481,15 @@ export default function SplashCursor({
       updatePointerMoveData(pointer, posX, posY, color);
       document.body.removeEventListener("mousemove", handleFirstMouseMove);
     }
-    document.body.addEventListener("mousemove", handleFirstMouseMove);
 
-    window.addEventListener("mousemove", (e) => {
+    function onMouseMove(e: MouseEvent) {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
       const color = pointer.color;
       updatePointerMoveData(pointer, posX, posY, color);
-    });
+    }
 
-    // Start rendering on first touch
     function handleFirstTouchStart(e: TouchEvent) {
       const touches = e.targetTouches;
       const pointer = pointers[0];
@@ -1489,44 +1501,64 @@ export default function SplashCursor({
       }
       document.body.removeEventListener("touchstart", handleFirstTouchStart);
     }
-    document.body.addEventListener("touchstart", handleFirstTouchStart);
 
-    window.addEventListener(
-      "touchstart",
-      (e) => {
-        const touches = e.targetTouches;
-        const pointer = pointers[0];
-        for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX);
-          const posY = scaleByPixelRatio(touches[i].clientY);
-          updatePointerDownData(pointer, touches[i].identifier, posX, posY);
-        }
-      },
-      false
-    );
+    function onTouchStart(e: TouchEvent) {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX);
+        const posY = scaleByPixelRatio(touches[i].clientY);
+        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
+      }
+    }
 
-    window.addEventListener(
-      "touchmove",
-      (e) => {
-        const touches = e.targetTouches;
-        const pointer = pointers[0];
-        for (let i = 0; i < touches.length; i++) {
-          const posX = scaleByPixelRatio(touches[i].clientX);
-          const posY = scaleByPixelRatio(touches[i].clientY);
-          updatePointerMoveData(pointer, posX, posY, pointer.color);
-        }
-      },
-      false
-    );
+    function onTouchMove(e: TouchEvent) {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX);
+        const posY = scaleByPixelRatio(touches[i].clientY);
+        updatePointerMoveData(pointer, posX, posY, pointer.color);
+      }
+    }
 
-    window.addEventListener("touchend", (e) => {
+    function onTouchEnd(e: TouchEvent) {
       const touches = e.changedTouches;
       const pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
         updatePointerUpData(pointer);
       }
-    });
-    // ------------------------------------------------------------
+    }
+
+    // 重构事件绑定，使用命名函数
+    window.addEventListener("mousedown", onMouseDown);
+    document.body.addEventListener("mousemove", handleFirstMouseMove);
+    window.addEventListener("mousemove", onMouseMove);
+    document.body.addEventListener("touchstart", handleFirstTouchStart);
+    window.addEventListener("touchstart", onTouchStart, false);
+    window.addEventListener("touchmove", onTouchMove, false);
+    window.addEventListener("touchend", onTouchEnd);
+
+    // 清理函数
+    return () => {
+      // 只有在组件真正被卸载(而不是路由变化)时才清理
+      if (document.body.contains(canvas)) {
+        // 还在DOM中，可能只是路由变化，不清理全局状态
+        return;
+      }
+
+      // 组件真正卸载，重置状态
+      isInitialized = false;
+
+      // 清理事件监听器
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      document.body.removeEventListener("mousemove", handleFirstMouseMove);
+      document.body.removeEventListener("touchstart", handleFirstTouchStart);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
   }, [
     SIM_RESOLUTION,
     DYE_RESOLUTION,
