@@ -42,3 +42,11 @@ export interface CreateBlogInput {
 export interface UpdateBlogInput extends Partial<CreateBlogInput> {
   id: number;
 }
+
+// 博客统计数据类型
+export interface BlogStats {
+  blogCount: number; // 博客总数
+  tagCount: number; // 标签总数
+  viewCount: number; // 总阅读量
+  dayCount: number; // 更新天数
+}

@@ -11,18 +11,18 @@ import { StatCard } from "./stat-card";
 
 interface StatsOverviewProps {
   blogCount: number;
-  tagCount?: number;
-  viewCount?: number;
-  dayCount?: number;
+  tagCount: number;
+  viewCount: number;
+  dayCount: number;
   className?: string;
   title?: string;
 }
 
 export function StatsOverview({
   blogCount,
-  tagCount = 24,
-  viewCount = 3200,
-  dayCount = 180,
+  tagCount,
+  viewCount,
+  dayCount,
   className,
   title = "博客统计",
 }: StatsOverviewProps) {

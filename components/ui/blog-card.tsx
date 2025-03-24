@@ -49,6 +49,7 @@ export function BlogCard({
               src={blog.coverImageUrl}
               alt={blog.title}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               className="object-cover rounded-lg"
             />
             {blog.is_top && (

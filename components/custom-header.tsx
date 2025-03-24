@@ -39,14 +39,6 @@ const menuItems = [
     iconColor: "text-orange-500",
   },
   {
-    icon: Bell,
-    label: "菜谱",
-    href: "/recipes",
-    gradient:
-      "radial-gradient(circle, rgba(215,22,249,0.15) 0%, rgba(234,12,230,0.06) 50%, rgba(191,12,194,0) 100%)",
-    iconColor: "text-purple-500",
-  },
-  {
     icon: Menu,
     label: "简历",
     href: "/resume",
