@@ -7,7 +7,7 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-// import SplashCursor from "@/components/blocks/Animations/SplashCursor/SplashCursor";
+import SplashCursor from "@/components/blocks/Animations/SplashCursor/SplashCursor";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -39,7 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="flex flex-col h-screen overflow-y-auto z-0">
-            {/* <SplashCursor /> */}
+            <SplashCursor />
             {children}
           </div>
         </ThemeProvider>
