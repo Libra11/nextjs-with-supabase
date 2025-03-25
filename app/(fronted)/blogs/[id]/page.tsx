@@ -27,6 +27,7 @@ import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 import { TagBadge } from "@/components/ui/tag-badge";
 import readingTime from "reading-time";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
@@ -41,6 +42,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   const { id } = await params;
   let readTime = "";
   let wordCount = 0;
+  let coverImageUrl = "";
 
   try {
     const blog = await getBlogById(parseInt(id));
@@ -48,7 +50,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       blog.tags[0].id,
       parseInt(id)
     );
-    const coverImageUrl = blog.cover_image
+    coverImageUrl = blog.cover_image
       ? await getCoverImage(blog.cover_image)
       : "";
     const stats = readingTime(blog.content);
@@ -113,19 +115,23 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </div>
         <div className="w-full">
           {/* 封面图作为背景 */}
-          {coverImageUrl && (
-            <div className="w-full rounded-md overflow-hidden h-[500px] relative">
+          <div className="w-full rounded-md overflow-hidden h-[500px] relative">
+            coverImageUrl ? (
+            <>
               <Image
                 src={coverImageUrl}
                 alt={blog.title}
                 fill
                 priority
+                placeholder="blur"
+                blurDataURL="https://placehold.co/600x400"
                 sizes="full"
                 className="object-cover"
               />
               <div className="bg-gradient-to-r from-primary/40 to-secondary/40 mix-blend-multiply"></div>
-            </div>
-          )}
+            </>
+            )
+          </div>
         </div>
 
         {/* 主内容区域 */}

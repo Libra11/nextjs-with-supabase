@@ -35,8 +35,8 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "47.121.140.196",
+        protocol: "https",
+        hostname: "penlibra.xin",
       },
     ],
   },
