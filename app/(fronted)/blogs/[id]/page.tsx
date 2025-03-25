@@ -174,7 +174,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                         <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center shadow-lg shadow-blue-500/30 transform group-hover:scale-110 transition-all duration-500">
                           {/* 请将 src 替换为实际的头像图片路径 */}
                           <Image
-                            src="http://47.121.140.196:3000/_next/image?url=http%3A%2F%2F47.121.140.196%3A8000%2Fstorage%2Fv1%2Fobject%2Fpublic%2Flibra-bucket%2Fcovers%2FDesktop%2520-%25207.png&w=3840&q=75"
+                            src=""
                             alt="作者头像"
                             fill
                             sizes="100px"

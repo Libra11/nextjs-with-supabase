@@ -36,7 +36,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "penlibra.xin",
+        hostname: "api.penlibra.xin",
       },
     ],
   },
