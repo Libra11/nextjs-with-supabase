@@ -9,6 +9,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Suspense } from "react";
 import SplashCursor from "@/components/blocks/Animations/SplashCursor/SplashCursor";
+import { Toaster } from "@/components/ui/toaster";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -44,6 +45,7 @@ export default function RootLayout({
               <SplashCursor />
             </Suspense>
             {children}
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>

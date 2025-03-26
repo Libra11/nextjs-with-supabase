@@ -116,21 +116,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
         <div className="w-full">
           {/* 封面图作为背景 */}
           <div className="w-full rounded-md overflow-hidden h-[500px] relative">
-            coverImageUrl ? (
-            <>
-              <Image
-                src={coverImageUrl}
-                alt={blog.title}
-                fill
-                priority
-                placeholder="blur"
-                blurDataURL="https://placehold.co/600x400"
-                sizes="full"
-                className="object-cover"
-              />
-              <div className="bg-gradient-to-r from-primary/40 to-secondary/40 mix-blend-multiply"></div>
-            </>
-            )
+            <Image
+              src={coverImageUrl}
+              alt={blog.title}
+              fill
+              priority
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAL/xAAeEAABBAIDAQAAAAAAAAAAAAABAAIDBBESMTNBUf/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAGBEBAQADAAAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/AJVx9rI6nBBEIcXOOxnurWdKwbC5T//Z"
+              sizes="full"
+              className="object-cover"
+            />
+            <div className="bg-gradient-to-r from-primary/40 to-secondary/40 mix-blend-multiply"></div>
           </div>
         </div>
 
@@ -174,7 +170,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                         <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center shadow-lg shadow-blue-500/30 transform group-hover:scale-110 transition-all duration-500">
                           {/* 请将 src 替换为实际的头像图片路径 */}
                           <Image
-                            src=""
+                            src="https://api.penlibra.xin/storage/v1/object/public/libra-bucket/covers/z0rzlcz3q5w4.jpg"
                             alt="作者头像"
                             fill
                             sizes="100px"
@@ -224,11 +220,11 @@ export default async function BlogPage({ params }: BlogPageProps) {
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5"></div>
 
                         <div className="relative z-10">
-                          <h4 className="text-xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500/90 to-purple-500/90">
+                          <h4 className="text-xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500/90 to-purple-500/90 truncate">
                             {blog.title}
                           </h4>
 
-                          <p className="text-muted-foreground mb-3 text-sm line-clamp-2">
+                          <p className="text-muted-foreground mb-3 text-sm line-clamp-2 min-h-[40px]">
                             {blog.description}
                           </p>
 

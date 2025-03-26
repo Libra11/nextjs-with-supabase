@@ -16,12 +16,15 @@ import { motion } from "framer-motion";
 import rehypeHighlightCodeLines from "rehype-highlight-code-lines";
 import "./markdown.css"; // 导入Markdown样式
 import { Copy } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface MarkdownContentProps {
   content: string;
 }
 
 export default function MarkdownContent({ content }: MarkdownContentProps) {
+  const { toast } = useToast();
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -53,7 +56,27 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
                   <button
                     className="copy-button"
                     onClick={() => {
-                      navigator.clipboard.writeText(children as string);
+                      // 递归提取代码内容
+                      const extractTextFromReactNode = (node: any): string => {
+                        if (typeof node === "string") return node;
+                        if (Array.isArray(node))
+                          return node.map(extractTextFromReactNode).join("");
+                        if (node && node.props && node.props.children)
+                          return extractTextFromReactNode(node.props.children);
+                        return "";
+                      };
+
+                      const codeText = extractTextFromReactNode(children);
+                      navigator.clipboard.writeText(codeText);
+
+                      // 显示复制成功提示
+                      toast({
+                        title: "代码已复制",
+                        description: "代码已成功复制到剪贴板",
+                        duration: 1000,
+                        className:
+                          "bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30",
+                      });
                     }}
                   >
                     <Copy className="w-4 h-4" />
