@@ -84,7 +84,7 @@ function BlogSearchResult({
       <MagicCard
         gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
         backgroundClassName="bg-card"
-        className="h-[144px] w-full rounded-xl cursor-pointer overflow-hidden group"
+        className="h-[144px] w-full rounded-xl cursor-pointer overflow-hidden group hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-300"
       >
         <div className="flex h-full items-stretch gap-4 relative p-3">
           {/* 博客封面 */}
@@ -100,8 +100,8 @@ function BlogSearchResult({
                 style={{ objectFit: "cover", objectPosition: "center" }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/30 to-primary/20">
-                <Bookmark className="w-8 h-8 text-muted-foreground/50" />
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600/20 to-purple-600/20">
+                <Bookmark className="w-8 h-8 text-purple-600/50" />
               </div>
             )}
             {blog.is_top && (
@@ -110,6 +110,9 @@ function BlogSearchResult({
                 <span className="text-[10px]">置顶</span>
               </div>
             )}
+
+            {/* 添加发光效果 */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-blue-600/10 to-purple-600/10 transition-opacity duration-300"></div>
           </div>
 
           {/* 博客信息 */}
@@ -124,12 +127,12 @@ function BlogSearchResult({
                     className="shrink-0"
                   />
                 )}
-                <h3 className="font-medium truncate text-base group-hover:text-primary transition-colors duration-300">
+                <h3 className="font-medium truncate text-base group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300">
                   {blog.title}
                 </h3>
               </div>
 
-              <p className="text-sm text-muted-foreground  group-hover:text-foreground/80 transition-colors duration-300">
+              <p className="text-sm text-muted-foreground line-clamp-1 mt-1 group-hover:text-foreground/80 transition-colors duration-300">
                 {blog.description}
               </p>
             </div>
@@ -144,7 +147,7 @@ function BlogSearchResult({
                         icon_name={tag.icon_name || ""}
                         color={tag.color || "#6c757d"}
                         name={tag.name}
-                        className="text-xs py-0 h-5"
+                        className="text-xs py-0 h-5 group-hover:bg-gradient-to-r group-hover:from-blue-600/10 group-hover:to-purple-600/10 group-hover:border-purple-500/20 transition-all duration-300"
                       />
                     ))}
                     {remainingTags.length > 3 && (
@@ -157,19 +160,19 @@ function BlogSearchResult({
               </div>
 
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1 group-hover:text-primary/70 transition-all duration-300">
+                <span className="flex items-center gap-1 group-hover:text-blue-600 transition-all duration-300">
                   <Calendar className="h-3 w-3" />
                   {new Date(blog.created_at).toLocaleDateString("zh-CN")}
                 </span>
-                <span className="flex items-center gap-1 group-hover:text-primary/70 transition-all duration-300">
+                <span className="flex items-center gap-1 group-hover:text-purple-600 transition-all duration-300">
                   <Clock className="h-3 w-3" />
                   阅读量: {blog.view_count}
                 </span>
 
-                {/* 箭头 */}
+                {/* 箭头 - 改为更动感的设计 */}
                 <div className="ml-auto opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2 transition-all duration-300">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                    <ArrowUpRight className="h-3 w-3 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <ArrowUpRight className="h-3 w-3 text-purple-600" />
                   </div>
                 </div>
               </div>
@@ -189,11 +192,11 @@ function SearchHotKey() {
 
   return (
     <div className="flex items-center gap-1">
-      <kbd className="px-2 py-1.5 text-xs rounded-md bg-muted border-b-2 border-border/80 text-muted-foreground">
+      <kbd className="px-2 py-1.5 text-xs rounded-md bg-gradient-to-r from-blue-600/5 to-purple-600/5 border border-purple-500/10 text-muted-foreground shadow-sm">
         {isMac ? "⌘" : "Ctrl"}
       </kbd>
       <span className="text-muted-foreground">+</span>
-      <kbd className="px-2 py-1.5 text-xs rounded-md bg-muted border-b-2 border-border/80 text-muted-foreground">
+      <kbd className="px-2 py-1.5 text-xs rounded-md bg-gradient-to-r from-blue-600/5 to-purple-600/5 border border-purple-500/10 text-muted-foreground shadow-sm">
         K
       </kbd>
     </div>
@@ -322,7 +325,7 @@ export function CommandSearch() {
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <DialogContent className="sm:max-w-3xl max-h-[85vh] p-0 rounded-xl border border-border/30 bg-gradient-to-b from-background to-background/95 backdrop-blur-md shadow-2xl z-50 transition-all duration-500">
+          <DialogContent className="sm:max-w-3xl max-h-[85vh] p-0 rounded-xl border border-border/30 bg-gradient-to-b from-background to-background/95 backdrop-blur-md shadow-xl z-50 transition-all duration-500 shadow-purple-500/5">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -333,10 +336,12 @@ export function CommandSearch() {
               <DialogHeader className="px-6 pt-6 pb-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-primary" />
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
+                      <Sparkles className="h-4 w-4 text-white" />
                     </div>
-                    <DialogTitle className="text-xl">搜索博客</DialogTitle>
+                    <DialogTitle className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                      搜索博客
+                    </DialogTitle>
                   </div>
                   <SearchHotKey />
                 </div>
@@ -348,9 +353,9 @@ export function CommandSearch() {
               {/* 搜索框 */}
               <div className="px-6 pb-3 mt-2">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-secondary/5 rounded-xl blur-md opacity-70"></div>
-                  <div className="relative flex items-center bg-background rounded-xl border border-border/30 overflow-hidden group focus-within:ring-1 focus-within:ring-primary/30 transition-all duration-300">
-                    <Search className="ml-3 h-5 w-5 text-muted-foreground shrink-0 group-focus-within:text-primary transition-colors duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-blue-600/5 rounded-xl blur-md opacity-70"></div>
+                  <div className="relative flex items-center bg-background rounded-xl border border-border/30 overflow-hidden group focus-within:ring-1 focus-within:ring-purple-500/50 focus-within:border-purple-500/30 transition-all duration-300">
+                    <Search className="ml-3 h-5 w-5 text-muted-foreground shrink-0 group-focus-within:text-purple-600 transition-colors duration-300" />
                     <Input
                       ref={inputRef}
                       value={keyword}
@@ -361,7 +366,7 @@ export function CommandSearch() {
                     {keyword && (
                       <button
                         onClick={handleReset}
-                        className="mr-3 p-1 rounded-full hover:bg-accent/10 text-muted-foreground hover:text-foreground transition-colors duration-200"
+                        className="mr-3 p-1.5 rounded-full hover:bg-purple-600/10 text-muted-foreground hover:text-purple-600 transition-colors duration-200"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -379,14 +384,16 @@ export function CommandSearch() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ScrollArea className="max-h-[65vh] overflow-y-auto">
+                  <ScrollArea className="max-h-[65vh] overflow-y-auto px-6 pb-2">
                     <div className="py-2">
                       {keyword.trim() && loading ? (
                         <div className="flex flex-col items-center justify-center py-20">
-                          <div className="relative w-12 h-12 mb-4">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary via-accent to-primary opacity-30 blur-md animate-pulse"></div>
-                            <div className="absolute inset-0 rounded-full border-2 border-t-transparent border-primary animate-spin"></div>
-                            <Search className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-5 w-5 text-primary" />
+                          <div className="relative w-16 h-16 mb-6">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-30 blur-md animate-pulse"></div>
+                            <div className="absolute inset-0 rounded-full border-2 border-t-transparent border-purple-600 animate-spin"></div>
+                            <div className="absolute inset-1 rounded-full bg-background flex items-center justify-center">
+                              <Search className="h-5 w-5 text-purple-600" />
+                            </div>
                           </div>
                           <p className="text-muted-foreground animate-pulse">
                             正在搜索「{keyword}」...
@@ -395,24 +402,49 @@ export function CommandSearch() {
                       ) : !keyword.trim() && animationComplete ? (
                         <div className="flex flex-col items-center justify-center py-16">
                           <div className="relative w-24 h-24 mb-6">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/30 to-accent/30 blur-lg opacity-50"></div>
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600/30 to-purple-600/30 blur-lg opacity-50"></div>
                             <div className="relative flex items-center justify-center w-full h-full">
-                              <Search className="h-10 w-10 text-primary/50" />
+                              <motion.div
+                                animate={{
+                                  scale: [1, 1.05, 1],
+                                  rotate: [0, 5, 0, -5, 0],
+                                }}
+                                transition={{
+                                  duration: 5,
+                                  repeat: Infinity,
+                                  repeatType: "reverse",
+                                }}
+                              >
+                                <Search className="h-10 w-10 text-purple-600/70" />
+                              </motion.div>
                             </div>
                           </div>
-                          <p className="text-lg font-medium text-foreground/80 mb-2">
+                          <motion.p
+                            className="text-lg font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-2"
+                            animate={{
+                              backgroundPosition: [
+                                "0% 50%",
+                                "100% 50%",
+                                "0% 50%",
+                              ],
+                            }}
+                            transition={{
+                              duration: 10,
+                              repeat: Infinity,
+                            }}
+                          >
                             输入关键词开始搜索
-                          </p>
+                          </motion.p>
                           <p className="text-sm text-muted-foreground max-w-md text-center">
                             你可以搜索博客标题或标签名称，快速找到你感兴趣的内容
                           </p>
                         </div>
                       ) : keyword.trim() && results.length === 0 && !loading ? (
                         <div className="flex flex-col items-center justify-center py-20">
-                          <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-                            <Info className="h-8 w-8 text-muted-foreground/50" />
+                          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600/10 to-purple-600/10 flex items-center justify-center mb-4">
+                            <Info className="h-8 w-8 text-purple-600/50" />
                           </div>
-                          <p className="text-lg font-medium text-foreground/80 mb-1">
+                          <p className="text-lg font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-1">
                             没有找到相关结果
                           </p>
                           <p className="text-sm text-muted-foreground max-w-md text-center">
@@ -422,12 +454,22 @@ export function CommandSearch() {
                       ) : (
                         <div className="space-y-1">
                           <AnimatePresence>
-                            {results.map((blog) => (
-                              <BlogSearchResult
+                            {results.map((blog, index) => (
+                              <motion.div
                                 key={blog.id}
-                                blog={blog}
-                                onClick={() => handleSelectBlog(blog)}
-                              />
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{
+                                  duration: 0.3,
+                                  delay: index * 0.05,
+                                }}
+                              >
+                                <BlogSearchResult
+                                  blog={blog}
+                                  onClick={() => handleSelectBlog(blog)}
+                                />
+                              </motion.div>
                             ))}
                           </AnimatePresence>
                         </div>
@@ -438,10 +480,10 @@ export function CommandSearch() {
               </AnimatePresence>
 
               {/* 底部状态栏 */}
-              <div className="px-6 py-3 text-xs border-t border-border/30 bg-muted/20">
+              <div className="px-6 py-3 text-xs border-t border-border/30 bg-gradient-to-r from-blue-600/5 via-transparent to-purple-600/5">
                 <div className="flex items-center justify-between text-muted-foreground">
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 text-[10px] rounded bg-muted border border-border/30">
+                    <kbd className="px-1.5 py-0.5 text-[10px] rounded bg-gradient-to-r from-blue-600/5 to-purple-600/5 border border-purple-500/10">
                       ESC
                     </kbd>
                     <span>关闭</span>
@@ -455,7 +497,7 @@ export function CommandSearch() {
                     >
                       <span className="flex items-center gap-1.5">
                         共找到
-                        <span className="inline-flex h-5 items-center justify-center rounded-full bg-primary/10 px-2 text-xs font-medium text-primary">
+                        <span className="inline-flex h-5 items-center justify-center rounded-full bg-gradient-to-r from-blue-600/20 to-purple-600/20 px-2 text-xs font-medium text-purple-600">
                           {results.length}
                         </span>
                         个结果
