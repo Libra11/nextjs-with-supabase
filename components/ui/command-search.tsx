@@ -28,6 +28,7 @@ import {
   Bookmark,
   Info,
   Pin,
+  BookOpen,
 } from "lucide-react";
 import { BlogWithTags } from "@/types/blog";
 import { searchBlogs } from "@/lib/blog";
@@ -337,7 +338,7 @@ export function CommandSearch() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-white" />
+                      <BookOpen className="h-4 w-4 text-white" />
                     </div>
                     <DialogTitle className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
                       搜索博客

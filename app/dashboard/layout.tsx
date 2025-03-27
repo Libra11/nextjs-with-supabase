@@ -70,6 +70,13 @@ export default async function DashboardLayout({
               />
               <span>标签管理</span>
             </Link>
+            <Link
+              href="/dashboard/buckets"
+              className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent group"
+            >
+              <FileText size={20} />
+              <span>存储桶管理</span>
+            </Link>
           </div>
         </nav>
         <div className="mt-auto px-2">

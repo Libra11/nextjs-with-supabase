@@ -8,7 +8,7 @@
 
 import { MenuBar } from "@/components/ui/glow-menu";
 import { useState, useEffect } from "react";
-import { Home as HomeIcon, Bell, Menu, User, Tag } from "lucide-react";
+import { Home as HomeIcon, BookOpen, Briefcase, User, Tag } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatedLogo } from "@/components/ui/animated-logo";
@@ -23,7 +23,7 @@ const menuItems = [
     iconColor: "text-blue-500",
   },
   {
-    icon: Bell,
+    icon: BookOpen,
     label: "博客",
     href: "/blogs",
     gradient:
@@ -39,7 +39,7 @@ const menuItems = [
     iconColor: "text-orange-500",
   },
   {
-    icon: Menu,
+    icon: Briefcase,
     label: "简历",
     href: "/resume",
     gradient:
