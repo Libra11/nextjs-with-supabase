@@ -115,7 +115,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
         </div>
         <div className="w-full">
           {/* 封面图作为背景 */}
-          <div className="w-full rounded-md overflow-hidden h-[500px] relative">
+          <div className="w-full rounded-md overflow-hidden h-[800px] relative">
             <Image
               src={coverImageUrl}
               alt={blog.title}

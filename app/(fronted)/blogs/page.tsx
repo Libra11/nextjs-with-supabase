@@ -112,6 +112,7 @@ export default function BlogsPage() {
       const topped = blogsWithUrls.filter((blog) => blog.is_top);
       const regular = blogsWithUrls.filter((blog) => !blog.is_top);
 
+      console.log(blogsWithUrls);
       setToppedBlogs(topped);
       setRegularBlogs(regular);
     }
@@ -158,9 +159,24 @@ export default function BlogsPage() {
         setBlogs(newBlogs);
         setBlogsWithUrls(blogsWithCoverUrls);
       } else {
-        // 合并新旧博客数据
-        setBlogs((prevBlogs) => [...prevBlogs, ...newBlogs]);
-        setBlogsWithUrls((prevBlogs) => [...prevBlogs, ...blogsWithCoverUrls]);
+        // 合并新旧博客数据并去重
+        setBlogs((prevBlogs) => {
+          // 使用博客ID进行去重
+          const blogIds = new Set(prevBlogs.map((blog) => blog.id));
+          const uniqueNewBlogs = newBlogs.filter(
+            (blog) => !blogIds.has(blog.id)
+          );
+          return [...prevBlogs, ...uniqueNewBlogs];
+        });
+
+        setBlogsWithUrls((prevBlogs) => {
+          // 使用博客ID进行去重
+          const blogIds = new Set(prevBlogs.map((blog) => blog.id));
+          const uniqueNewBlogs = blogsWithCoverUrls.filter(
+            (blog) => !blogIds.has(blog.id)
+          );
+          return [...prevBlogs, ...uniqueNewBlogs];
+        });
       }
 
       // 正确判断是否还有更多数据
@@ -242,17 +258,7 @@ export default function BlogsPage() {
 
           <div className="relative w-full h-[346px]">
             <OverlappingCards
-              items={[
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-                ...toppedBlogs,
-              ]}
+              items={toppedBlogs}
               cardWidth={280}
               cardSpacing={150}
               className="h-full w-full"
@@ -294,7 +300,7 @@ export default function BlogsPage() {
             <BlogSkeleton />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...regularBlogs].map((blog) => (
+              {regularBlogs.map((blog) => (
                 <BlogCard
                   key={blog.id}
                   blog={blog}
