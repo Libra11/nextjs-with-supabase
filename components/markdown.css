@@ -207,12 +207,12 @@ pre {
 
 /* 语言标签 */
 .code-language {
-  @apply absolute right-4 top-3;
   @apply px-2 py-1 rounded-md;
   @apply text-xs font-mono;
   @apply bg-white/5;
   @apply text-gray-400;
   @apply border border-white/10;
+  @apply flex items-center;
 }
 
 /* 添加动画关键帧 */
