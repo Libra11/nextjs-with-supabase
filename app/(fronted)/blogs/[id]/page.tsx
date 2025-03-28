@@ -27,7 +27,6 @@ import { getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 import { TagBadge } from "@/components/ui/tag-badge";
 import readingTime from "reading-time";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
@@ -121,8 +120,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
               alt={blog.title}
               fill
               priority
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAL/xAAeEAABBAIDAQAAAAAAAAAAAAABAAIDBBESMTNBUf/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAGBEBAQADAAAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/AJVx9rI6nBBEIcXOOxnurWdKwbC5T//Z"
               sizes="full"
               className="object-cover"
             />
