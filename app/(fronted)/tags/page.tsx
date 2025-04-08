@@ -16,11 +16,9 @@ import { useState, useEffect, useRef } from "react";
 import { TagBadge } from "@/components/ui/tag-badge";
 import { Button } from "@/components/ui/button";
 import { X, Search, TagIcon, Filter, RefreshCw, BookOpen } from "lucide-react";
-import { MagicCard } from "@/components/magicui/magic-card";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { BlogSkeleton } from "@/components/ui/blog-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { Meteors } from "@/components/ui/meteors";
 
@@ -37,7 +35,7 @@ const floatingStyles = `
       transform: translateY(0px) scale(1);
     }
   }
-  
+
   @keyframes pulse {
     0%, 100% {
       opacity: 1;
@@ -46,7 +44,7 @@ const floatingStyles = `
       opacity: 0.7;
     }
   }
-  
+
   @keyframes glowPulse {
     0%, 100% {
       box-shadow: 0 0 5px 2px rgba(147, 51, 234, 0.1);
@@ -55,19 +53,19 @@ const floatingStyles = `
       box-shadow: 0 0 15px 5px rgba(147, 51, 234, 0.25);
     }
   }
-  
+
   .tag-selector:hover {
     animation: glowPulse 2s infinite;
   }
-  
+
   .tag-floating {
     animation: float 6s ease-in-out infinite;
   }
-  
+
   .tag-pulse {
     animation: pulse 3s ease-in-out infinite;
   }
-  
+
   .tag-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -78,15 +76,15 @@ const floatingStyles = `
     scrollbar-width: thin;
     scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
   }
-  
+
   .tag-grid::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   .tag-grid::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   .tag-grid::-webkit-scrollbar-thumb {
     background-color: rgba(155, 155, 155, 0.5);
     border-radius: 20px;
@@ -215,6 +213,9 @@ export default function TagsPage() {
         PAGE_SIZE,
         filters
       );
+
+      // 更新总数计数
+      setTotalCount(count);
 
       if (!newBlogs || newBlogs.length === 0) {
         setHasMore(false);
@@ -586,7 +587,7 @@ export default function TagsPage() {
                       },
                     }}
                   >
-                    {blogsWithUrls.map((blog, index) => (
+                    {blogsWithUrls.map((blog) => (
                       <motion.div
                         key={blog.id}
                         variants={{
