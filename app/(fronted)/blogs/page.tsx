@@ -13,7 +13,7 @@ import { InfiniteScroll } from "@/components/ui/infinite-scroll";
 import { BlogWithTags, BlogStats } from "@/types/blog";
 import { BlogCard } from "@/components/ui/blog-card";
 import { OverlappingCards } from "@/components/ui/overlapping-cards";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { BookOpen, Tags, Eye, Clock } from "lucide-react";
 import { StatsOverview } from "@/components/ui/stats-overview";
@@ -22,8 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogsPage() {
   // 定义状态
-  const [page, setPage] = useState(1);
-  const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
   const [blogsWithUrls, setBlogsWithUrls] = useState<
     (BlogWithTags & { coverImageUrl: string })[]
   >([]);
@@ -34,11 +32,8 @@ export default function BlogsPage() {
     (BlogWithTags & { coverImageUrl: string })[]
   >([]);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
-  // 客户端渲染标志
   const [mounted, setMounted] = useState(false);
-  // 博客统计数据
   const [blogStats, setBlogStats] = useState<BlogStats>({
     blogCount: 0,
     tagCount: 0,
@@ -48,8 +43,8 @@ export default function BlogsPage() {
 
   const PAGE_SIZE = 8; // 每页显示的博客数量
 
-  // 使用 useRef 跟踪页面是否已经挂载，防止重复加载
-  const isMounted = useRef(false);
+  const loadingRef = useRef(false);
+  const currentPageRef = useRef(1);
 
   // 确保组件已挂载，防止 hydration 不匹配
   useEffect(() => {
@@ -62,38 +57,66 @@ export default function BlogsPage() {
     return url || "";
   };
 
-  // 加载初始数据
+  // 加载博客数据并处理封面图片
+  const loadBlogs = async (isInitialLoad = false) => {
+    if (loadingRef.current) return;
+
+    try {
+      loadingRef.current = true;
+
+      const { blogs: newBlogs, count } = await getBlogs(
+        currentPageRef.current,
+        PAGE_SIZE,
+        { status: "published" }
+      );
+
+      if (!newBlogs || newBlogs.length === 0) {
+        setHasMore(false);
+        if (isInitialLoad) {
+          setInitialLoadComplete(true);
+        }
+        return;
+      }
+
+      // 处理新获取的博客封面图片
+      const blogsWithCoverUrls = await Promise.all(
+        newBlogs.map(async (blog) => ({
+          ...blog,
+          coverImageUrl: blog.cover_image
+            ? await getCoverImage(blog.cover_image)
+            : "",
+        }))
+      );
+
+      // 更新数据
+      if (isInitialLoad) {
+        setBlogsWithUrls(blogsWithCoverUrls);
+      } else {
+        setBlogsWithUrls((prev) => [...prev, ...blogsWithCoverUrls]);
+      }
+
+      // 更新分页状态
+      const nextPage = currentPageRef.current + 1;
+      setHasMore(currentPageRef.current * PAGE_SIZE < count);
+
+      // 更新页码
+      currentPageRef.current = nextPage;
+      if (isInitialLoad) {
+        setInitialLoadComplete(true);
+      }
+    } catch (error) {
+      console.error("加载博客失败", error);
+    } finally {
+      loadingRef.current = false;
+    }
+  };
+
+  // 组件挂载或重置时加载初始数据
   useEffect(() => {
-    // 确保组件已挂载
-    if (!mounted) return;
-
-    // 如果页面已经挂载过一次，重置状态
-    if (isMounted.current) {
-      // 重置页面到初始状态，而不是直接加载，避免重复
-      setPage(1);
-      setBlogs([]);
-      setBlogsWithUrls([]);
-      setToppedBlogs([]);
-      setRegularBlogs([]);
-      setHasMore(true);
-      setInitialLoadComplete(false);
-
-      // 延迟加载，确保状态已经重置
-      setTimeout(() => {
-        loadBlogs(true);
-        loadBlogStats();
-      }, 0);
-    } else {
-      // 首次挂载，直接加载
+    if (mounted) {
       loadBlogs(true);
       loadBlogStats();
-      isMounted.current = true;
     }
-
-    // 组件卸载时的清理函数
-    return () => {
-      // 不重置isMounted，这样我们可以知道组件已经挂载过
-    };
   }, [mounted]);
 
   // 加载博客统计数据
@@ -111,95 +134,13 @@ export default function BlogsPage() {
     if (blogsWithUrls.length > 0) {
       const topped = blogsWithUrls.filter((blog) => blog.is_top);
       const regular = blogsWithUrls.filter((blog) => !blog.is_top);
-
-      console.log(blogsWithUrls);
       setToppedBlogs(topped);
       setRegularBlogs(regular);
     }
   }, [blogsWithUrls]);
 
-  // 加载博客数据并处理封面图片
-  const loadBlogs = async (isInitialLoad = false) => {
-    if (loading) return;
-
-    try {
-      setLoading(true);
-      // 构建筛选条件 - 只显示已发布的博客
-      const filters = { status: "published" };
-
-      const { blogs: newBlogs, count } = await getBlogs(
-        page,
-        PAGE_SIZE,
-        filters
-      );
-
-      if (!newBlogs || newBlogs.length === 0) {
-        setHasMore(false);
-        setLoading(false);
-
-        if (isInitialLoad) {
-          setInitialLoadComplete(true);
-        }
-
-        return;
-      }
-
-      // 处理新获取的博客封面图片
-      const blogsWithCoverUrls = await Promise.all(
-        newBlogs.map(async (blog) => ({
-          ...blog,
-          coverImageUrl: blog.cover_image
-            ? await getCoverImage(blog.cover_image)
-            : "",
-        }))
-      );
-
-      // 如果是初始加载，则替换现有数据，否则追加
-      if (isInitialLoad) {
-        setBlogs(newBlogs);
-        setBlogsWithUrls(blogsWithCoverUrls);
-      } else {
-        // 合并新旧博客数据并去重
-        setBlogs((prevBlogs) => {
-          // 使用博客ID进行去重
-          const blogIds = new Set(prevBlogs.map((blog) => blog.id));
-          const uniqueNewBlogs = newBlogs.filter(
-            (blog) => !blogIds.has(blog.id)
-          );
-          return [...prevBlogs, ...uniqueNewBlogs];
-        });
-
-        setBlogsWithUrls((prevBlogs) => {
-          // 使用博客ID进行去重
-          const blogIds = new Set(prevBlogs.map((blog) => blog.id));
-          const uniqueNewBlogs = blogsWithCoverUrls.filter(
-            (blog) => !blogIds.has(blog.id)
-          );
-          return [...prevBlogs, ...uniqueNewBlogs];
-        });
-      }
-
-      // 正确判断是否还有更多数据
-      const currentTotal = isInitialLoad
-        ? newBlogs.length
-        : blogs.length + newBlogs.length;
-      setHasMore(currentTotal < count);
-
-      // 更新页码
-      setPage((prevPage) => prevPage + 1);
-
-      if (isInitialLoad) {
-        setInitialLoadComplete(true);
-      }
-    } catch (error) {
-      console.error("加载博客失败", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadMore = async () => {
-    if (!initialLoadComplete) return;
+    if (!initialLoadComplete || loadingRef.current) return;
     await loadBlogs();
   };
 
@@ -272,7 +213,7 @@ export default function BlogsPage() {
             />
           </div>
         </div>
-      ) : loading && !initialLoadComplete ? (
+      ) : loadingRef.current && !initialLoadComplete ? (
         <div className="mb-16">
           <h2 className="title-gradient">置顶推荐</h2>
           <div className="relative w-full h-[346px] bg-card/50 rounded-xl overflow-hidden">
@@ -289,14 +230,14 @@ export default function BlogsPage() {
         <h2 className="title-gradient">最新文章</h2>
       </div>
 
-      {blogsWithUrls.length === 0 && !loading ? (
+      {blogsWithUrls.length === 0 && !loadingRef.current ? (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">暂无博客文章</p>
         </div>
       ) : (
         <>
           {/* 博客列表 - 显示骨架屏或实际内容 */}
-          {loading && regularBlogs.length === 0 ? (
+          {loadingRef.current && regularBlogs.length === 0 ? (
             <BlogSkeleton />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -315,7 +256,7 @@ export default function BlogsPage() {
             <InfiniteScroll
               hasMore={hasMore}
               loadMore={loadMore}
-              isLoading={loading}
+              isLoading={loadingRef.current}
               loadingText="加载更多博客..."
               endMessage="已经到底了，没有更多博客了"
               loaderClassName="flex justify-center items-center py-10 text-muted-foreground"

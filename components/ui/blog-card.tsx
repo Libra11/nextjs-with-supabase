@@ -45,13 +45,17 @@ export function BlogCard({
       >
         <div className="flex flex-col p-3">
           <div className="relative w-full h-[180px]">
-            <Image
-              src={blog.coverImageUrl}
-              alt={blog.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-              className="object-cover rounded-lg"
-            />
+            {blog.coverImageUrl ? (
+              <Image
+                src={blog.coverImageUrl}
+                alt={blog.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 rounded-lg"></div>
+            )}
             {blog.is_top && (
               <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm text-white px-1.5 py-0.5 rounded-md flex items-center gap-1">
                 <Pin className="w-3 h-3" />

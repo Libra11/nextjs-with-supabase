@@ -196,33 +196,9 @@ export async function getBlogs(
   filters: { tagId?: number; tagIds?: number[]; status?: string } = {}
 ): Promise<{ blogs: BlogWithTags[]; count: number }> {
   try {
-    // 处理标签筛选
-    let blogIds: number[] | null = null;
-    if (filters.tagId || (filters.tagIds && filters.tagIds.length > 0)) {
-      // 如果有标签筛选条件，使用blog_tags关联表
-      const tagIds = filters.tagId ? [filters.tagId] : filters.tagIds || [];
-
-      // 通过blog_tags关联表获取符合条件的博客ID
-      const { data: blogTagsData, error: blogTagsError } = await supabase
-        .from("blog_tags")
-        .select("blog_id")
-        .in("tag_id", tagIds);
-
-      if (blogTagsError) {
-        console.error("获取标签关联博客失败:", blogTagsError);
-        return { blogs: [], count: 0 };
-      }
-
-      // 如果没有找到任何匹配的博客，直接返回空结果
-      if (!blogTagsData || blogTagsData.length === 0) {
-        console.log("没有找到含有指定标签的博客");
-        return { blogs: [], count: 0 };
-      }
-
-      // 提取博客ID
-      blogIds = [...new Set(blogTagsData.map((item) => item.blog_id))];
-    }
-
+    // 计算分页范围
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
     // 构建基础查询
     let query = supabase.from("blogs").select(
       `
@@ -237,56 +213,42 @@ export async function getBlogs(
       { count: "exact" }
     );
 
-    // 应用博客ID筛选（如果有）
-    if (blogIds && blogIds.length > 0) {
-      query = query.in("id", blogIds);
+    // 处理标签筛选
+    if (filters.tagId || (filters.tagIds && filters.tagIds.length > 0)) {
+      const tagIds = filters.tagId ? [filters.tagId] : filters.tagIds || [];
+      const { data: blogTags } = await supabase
+        .from("blog_tags")
+        .select("blog_id")
+        .in("tag_id", tagIds);
+
+      if (blogTags && blogTags.length > 0) {
+        const blogIds = [...new Set(blogTags.map((item) => item.blog_id))];
+        query = query.in("id", blogIds);
+      } else {
+        return { blogs: [], count: 0 };
+      }
     }
 
-    // 状态筛选
+    // 应用状态筛选
     if (filters.status) {
       query = query.eq("status", filters.status);
     }
 
-    // 添加排序
-    query = query
+    // 添加排序并执行查询
+    const { data, count, error } = await query
       .order("is_top", { ascending: false })
-      .order("created_at", { ascending: false });
-
-    // 先获取总记录数，这样即使分页查询失败，也能知道总数
-    const { count: totalItems } = await query;
-    const totalCount = totalItems || 0;
-
-    // 如果没有数据，直接返回空结果
-    if (totalCount === 0) {
-      return { blogs: [], count: 0 };
-    }
-
-    // 根据总数计算安全的分页范围
-    const lastPage = Math.ceil(totalCount / pageSize) || 1;
-    const safePage = Math.min(page, lastPage);
-    const from = (safePage - 1) * pageSize;
-    const to = Math.min(from + pageSize - 1, totalCount - 1);
-
-    // 使用安全范围查询数据
-    const { data: blogs, error } = await query.range(from, to);
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (error) {
       console.error("获取博客列表失败:", error);
-
-      // 如果仍然出错，返回第一页数据
-      try {
-        const { data: firstPageBlogs } = await query.range(0, pageSize - 1);
-        return {
-          blogs: firstPageBlogs || [],
-          count: totalCount,
-        };
-      } catch (fallbackError) {
-        console.error("尝试获取第一页数据也失败:", fallbackError);
-        return { blogs: [], count: totalCount };
-      }
+      return { blogs: [], count: 0 };
     }
 
-    return { blogs: blogs || [], count: totalCount };
+    return {
+      blogs: data || [],
+      count: count || 0,
+    };
   } catch (error) {
     console.error("getBlogs 函数出错:", error);
     return { blogs: [], count: 0 };

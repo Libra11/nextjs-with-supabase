@@ -96,15 +96,13 @@ const floatingStyles = `
 
 export default function TagsPage() {
   // 定义状态
-  const [page, setPage] = useState(1);
-  const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
   const [blogsWithUrls, setBlogsWithUrls] = useState<
     (BlogWithTags & { coverImageUrl: string })[]
   >([]);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const loadingRef = useRef(false); // 添加 loading 引用，用于防止重复加载
 
   // 标签筛选相关状态 - 改为支持多选
   const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -119,6 +117,7 @@ export default function TagsPage() {
 
   // 使用 useRef 跟踪页面是否已经挂载，防止重复加载
   const isMounted = useRef(false);
+  const currentPageRef = useRef(1);
 
   // 确保组件已挂载，防止 hydration 不匹配
   useEffect(() => {
@@ -139,8 +138,7 @@ export default function TagsPage() {
     // 如果页面已经挂载过一次，重置状态
     if (isMounted.current) {
       // 重置页面到初始状态，而不是直接加载，避免重复
-      setPage(1);
-      setBlogs([]);
+      currentPageRef.current = 1;
       setBlogsWithUrls([]);
       setHasMore(true);
       setInitialLoadComplete(false);
@@ -164,13 +162,13 @@ export default function TagsPage() {
   // 加载所有标签
   const loadAllTags = async () => {
     try {
-      setLoading(true);
+      loadingRef.current = true;
       const tags = await getTags();
       setAllTags(tags);
-      setLoading(false);
+      loadingRef.current = false;
     } catch (error) {
       console.error("加载标签失败", error);
-      setLoading(false);
+      loadingRef.current = false;
     }
   };
 
@@ -189,7 +187,6 @@ export default function TagsPage() {
   // 清除标签筛选
   const clearTagFilter = () => {
     setSelectedTagIds([]);
-    setBlogs([]);
     setBlogsWithUrls([]);
   };
 
@@ -202,44 +199,28 @@ export default function TagsPage() {
 
   // 加载博客数据并处理封面图片
   const loadBlogs = async (isInitialLoad = false) => {
-    if (loading || selectedTagIds.length === 0) return;
+    if (selectedTagIds.length === 0 || loadingRef.current) return;
 
     try {
-      setLoading(true);
+      loadingRef.current = true;
+
       // 构建筛选条件
-      const filters: { tagId?: number; tagIds?: number[]; status?: string } = {
-        status: "published", // 只显示已发布的博客
+      const filters = {
+        status: "published",
+        tagIds: selectedTagIds,
       };
 
-      // 添加标签筛选
-      if (selectedTagIds.length === 1) {
-        // 单选模式 - 使用 tagId
-        filters.tagId = selectedTagIds[0];
-      } else {
-        // 多选模式 - 使用 tagIds (如果后端支持)
-        filters.tagIds = selectedTagIds;
-      }
-
-      console.log("筛选条件:", filters);
-
       const { blogs: newBlogs, count } = await getBlogs(
-        page,
+        currentPageRef.current,
         PAGE_SIZE,
         filters
       );
 
-      console.log(`获取到 ${newBlogs.length} 篇博客，总数: ${count}`);
-
-      setTotalCount(count);
-
       if (!newBlogs || newBlogs.length === 0) {
         setHasMore(false);
-        setLoading(false);
-
         if (isInitialLoad) {
           setInitialLoadComplete(true);
         }
-
         return;
       }
 
@@ -253,24 +234,19 @@ export default function TagsPage() {
         }))
       );
 
-      // 如果是初始加载，则替换现有数据，否则追加
+      // 更新数据
       if (isInitialLoad) {
-        setBlogs(newBlogs);
         setBlogsWithUrls(blogsWithCoverUrls);
       } else {
-        // 合并新旧博客数据
-        setBlogs((prevBlogs) => [...prevBlogs, ...newBlogs]);
-        setBlogsWithUrls((prevBlogs) => [...prevBlogs, ...blogsWithCoverUrls]);
+        setBlogsWithUrls((prev) => [...prev, ...blogsWithCoverUrls]);
       }
 
-      // 正确判断是否还有更多数据
-      const currentTotal = isInitialLoad
-        ? newBlogs.length
-        : blogs.length + newBlogs.length;
-      setHasMore(currentTotal < count);
+      // 更新分页状态
+      const nextPage = currentPageRef.current + 1;
+      setHasMore(currentPageRef.current * PAGE_SIZE < count);
 
       // 更新页码
-      setPage((prevPage) => prevPage + 1);
+      currentPageRef.current = nextPage;
 
       if (isInitialLoad) {
         setInitialLoadComplete(true);
@@ -278,12 +254,12 @@ export default function TagsPage() {
     } catch (error) {
       console.error("加载博客失败", error);
     } finally {
-      setLoading(false);
+      loadingRef.current = false;
     }
   };
 
   const loadMore = async () => {
-    if (!initialLoadComplete) return;
+    if (!initialLoadComplete || loadingRef.current) return;
     await loadBlogs();
   };
 
@@ -568,7 +544,7 @@ export default function TagsPage() {
               </motion.div>
             </div>
 
-            {blogsWithUrls.length === 0 && !loading ? (
+            {blogsWithUrls.length === 0 && !loadingRef.current ? (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -593,7 +569,7 @@ export default function TagsPage() {
               </motion.div>
             ) : (
               <>
-                {loading && blogsWithUrls.length === 0 ? (
+                {loadingRef.current && blogsWithUrls.length === 0 ? (
                   <BlogSkeleton />
                 ) : (
                   <motion.div
@@ -629,7 +605,7 @@ export default function TagsPage() {
                   <InfiniteScroll
                     hasMore={hasMore}
                     loadMore={loadMore}
-                    isLoading={loading}
+                    isLoading={loadingRef.current}
                     loadingText="加载更多博客..."
                     endMessage={`已加载全部${
                       selectedTagIds.length === 1

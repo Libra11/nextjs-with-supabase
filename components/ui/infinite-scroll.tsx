@@ -46,20 +46,23 @@ export function InfiniteScroll({
   initDelay = 1000,
 }: InfiniteScrollProps) {
   const [loading, setLoading] = useState(isLoading);
+  const isLoadingRef = useRef(false);
   const [initialized, setInitialized] = useState(false);
   const observer = useRef<IntersectionObserver | null>(null);
-  const loadingRef = useRef<HTMLDivElement>(null);
+  const targetRef = useRef<HTMLDivElement>(null);
 
   // 处理加载更多的逻辑
   const handleLoadMore = async () => {
-    if (loading || !hasMore || !initialized) return;
+    if (isLoadingRef.current || !hasMore || !initialized) return;
 
+    isLoadingRef.current = true;
     setLoading(true);
     try {
       await loadMore();
     } catch (error) {
       console.error("加载更多内容时出错:", error);
     } finally {
+      isLoadingRef.current = false;
       setLoading(false);
     }
   };
@@ -86,7 +89,7 @@ export function InfiniteScroll({
     if (loading || !initialized) return;
 
     const currentObserver = observer.current;
-    const currentElement = loadingRef.current;
+    const currentElement = targetRef.current;
 
     if (currentElement) {
       observer.current = new IntersectionObserver(
@@ -113,7 +116,7 @@ export function InfiniteScroll({
 
   return (
     <div>
-      <div ref={loadingRef}>
+      <div ref={targetRef}>
         {loading && (
           <div className={loaderClassName}>
             <Loader2 className="h-6 w-6 animate-spin mr-2" />
