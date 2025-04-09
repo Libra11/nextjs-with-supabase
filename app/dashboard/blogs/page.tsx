@@ -52,6 +52,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
@@ -60,6 +70,8 @@ export default function BlogsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(10);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [blogToDelete, setBlogToDelete] = useState<number | null>(null);
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -80,13 +92,22 @@ export default function BlogsPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("确定要删除这篇博客吗？")) return;
+  const openDeleteDialog = (id: number) => {
+    setBlogToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!blogToDelete) return;
+
     try {
-      await deleteBlog(id);
+      await deleteBlog(blogToDelete);
       await loadBlogs();
     } catch (error) {
       console.error("删除博客失败:", error);
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setBlogToDelete(null);
     }
   };
 
@@ -239,7 +260,7 @@ export default function BlogsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">博客管理</h1>
         <Link href="/dashboard/blogs/new">
@@ -257,94 +278,95 @@ export default function BlogsPage() {
           <p className="mt-2">点击"新建博客"按钮创建您的第一篇博客</p>
         </div>
       ) : (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>标题</TableHead>
-                <TableHead>标签</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>置顶</TableHead>
-                <TableHead>创建时间</TableHead>
-                <TableHead>操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {blogs.map((blog) => (
-                <TableRow key={blog.id}>
-                  <TableCell className="font-medium">{blog.title}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {blog.tags.map((tag) => (
-                        <TagBadge
-                          key={tag.id}
-                          name={tag.name}
-                          icon_name={tag.icon_name || ""}
-                          color={tag.color || ""}
-                        />
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {blog.status === "published" ? (
-                      <Badge variant="default">已发布</Badge>
-                    ) : (
-                      <Badge variant="outline">草稿</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() =>
-                              handleToggleTop(blog.id, blog.is_top)
-                            }
-                            disabled={loading[blog.id]}
-                            className={
-                              blog.is_top
-                                ? "text-amber-500"
-                                : "text-muted-foreground"
-                            }
-                          >
-                            <PinIcon className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {blog.is_top ? "取消置顶" : "置顶博客"}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(blog.created_at), "yyyy-MM-dd HH:mm", {
-                      locale: zhCN,
-                    })}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Link href={`/dashboard/blogs/${blog.id}/edit`}>
-                        <Button variant="outline" size="icon">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDelete(blog.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+        <div className="flex flex-col gap-4 flex-1 h-0">
+          <div className="flex-1 overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>标题</TableHead>
+                  <TableHead>标签</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead>置顶</TableHead>
+                  <TableHead>创建时间</TableHead>
+                  <TableHead>操作</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          <div className="flex flex-col  items-center justify-between gap-4 mt-4">
+              </TableHeader>
+              <TableBody>
+                {blogs.map((blog) => (
+                  <TableRow key={blog.id}>
+                    <TableCell className="font-medium">{blog.title}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {blog.tags.map((tag) => (
+                          <TagBadge
+                            key={tag.id}
+                            name={tag.name}
+                            icon_name={tag.icon_name || ""}
+                            color={tag.color || ""}
+                          />
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {blog.status === "published" ? (
+                        <Badge variant="default">已发布</Badge>
+                      ) : (
+                        <Badge variant="outline">草稿</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() =>
+                                handleToggleTop(blog.id, blog.is_top)
+                              }
+                              disabled={loading[blog.id]}
+                              className={
+                                blog.is_top
+                                  ? "text-amber-500"
+                                  : "text-muted-foreground"
+                              }
+                            >
+                              <PinIcon className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {blog.is_top ? "取消置顶" : "置顶博客"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(blog.created_at), "yyyy-MM-dd HH:mm", {
+                        locale: zhCN,
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Link href={`/dashboard/blogs/${blog.id}/edit`}>
+                          <Button variant="outline" size="icon">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => openDeleteDialog(blog.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-4">
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">每页显示:</span>
               <Select
@@ -396,8 +418,32 @@ export default function BlogsPage() {
               </PaginationContent>
             </Pagination>
           </div>
-        </>
+        </div>
       )}
+
+      {/* 删除确认对话框 */}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除博客</AlertDialogTitle>
+            <AlertDialogDescription>
+              此操作无法撤销。博客将被永久删除，且无法恢复。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground"
+            >
+              删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -97,14 +97,6 @@ export default async function DashboardLayout({
               label="存储桶管理"
             />
           </NavSection>
-
-          <NavSection title="系统设置" className="mt-6">
-            <NavItem
-              href="/dashboard/settings"
-              icon={<Settings size={18} />}
-              label="系统设置"
-            />
-          </NavSection>
         </nav>
 
         <div className="mt-auto px-3 pb-6 pt-2">
@@ -192,8 +184,10 @@ export default async function DashboardLayout({
         </header>
 
         {/* 内容区域 - 简洁版 */}
-        <main className="flex-1 overflow-auto p-4">
-          <div>{children}</div>
+        <main className="flex-1 overflow-auto p-2">
+          <div className="bg-card p-4 overflow-auto h-full rounded-md">
+            {children}
+          </div>
         </main>
       </div>
     </div>
