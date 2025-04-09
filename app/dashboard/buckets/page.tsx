@@ -19,7 +19,7 @@ export default function BucketsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="py-6 space-y-6">
       <Toaster position="top-right" />
 
       {/* 页面标题 */}
