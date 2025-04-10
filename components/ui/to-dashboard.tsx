@@ -8,31 +8,67 @@
 import { TvMinimal, ChevronUp, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function ToDashboard() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
 
-  // 监听滚动事件，决定是否显示回到顶部按钮
+  // 找到可滚动容器
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
+    // 尝试获取主要滚动容器，这里假设是一个有特定 ID 或类名的元素
+    // 可以根据您的实际 DOM 结构调整选择器
+    const container = document.querySelector(".main-container");
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // 初始检查
+    if (container) {
+      scrollContainerRef.current = container as HTMLElement;
 
-    return () => window.removeEventListener("scroll", handleScroll);
+      // 监听容器的滚动事件
+      const handleScroll = () => {
+        if (scrollContainerRef.current) {
+          setShowScrollTop(scrollContainerRef.current.scrollTop > 300);
+        }
+      };
+
+      scrollContainerRef.current.addEventListener("scroll", handleScroll);
+      handleScroll(); // 初始检查
+
+      return () => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.removeEventListener(
+            "scroll",
+            handleScroll
+          );
+        }
+      };
+    } else {
+      // 如果找不到特定容器，回退到 window 滚动
+      const handleWindowScroll = () => {
+        setShowScrollTop(window.scrollY > 300);
+      };
+
+      window.addEventListener("scroll", handleWindowScroll);
+      handleWindowScroll(); // 初始检查
+
+      return () => window.removeEventListener("scroll", handleWindowScroll);
+    }
   }, []);
 
   // 回到顶部功能
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
   };
 
   return (

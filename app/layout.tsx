@@ -40,7 +40,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col h-screen overflow-y-auto z-0">
+          <div className="main-container flex flex-col h-screen overflow-y-auto z-0">
             <Suspense fallback={null}>
               <SplashCursor />
             </Suspense>
