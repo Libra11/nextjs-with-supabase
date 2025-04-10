@@ -8,7 +8,14 @@
 
 import { MenuBar } from "@/components/ui/glow-menu";
 import { useState, useEffect } from "react";
-import { Home as HomeIcon, BookOpen, Briefcase, User, Tag } from "lucide-react";
+import {
+  Home as HomeIcon,
+  BookOpen,
+  Briefcase,
+  User,
+  Tag,
+  FileCode,
+} from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatedLogo } from "@/components/ui/animated-logo";
@@ -29,6 +36,14 @@ const menuItems = [
     gradient:
       "radial-gradient(circle, rgba(249,115,22,0.15) 0%, rgba(234,88,12,0.06) 50%, rgba(194,65,12,0) 100%)",
     iconColor: "text-orange-500",
+  },
+  {
+    icon: FileCode,
+    label: "片段",
+    href: "/snippets",
+    gradient:
+      "radial-gradient(circle, rgba(124,58,237,0.15) 0%, rgba(109,40,217,0.06) 50%, rgba(91,33,182,0) 100%)",
+    iconColor: "text-purple-500",
   },
   {
     icon: Tag,

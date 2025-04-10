@@ -100,12 +100,27 @@ const config = {
             opacity: "0",
           },
         },
+        float: {
+          "0%": { transform: "translateY(0px) scale(1)" },
+          "50%": { transform: "translateY(-8px) scale(1.03)" },
+          "100%": { transform: "translateY(0px) scale(1)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 5px 2px rgba(147, 51, 234, 0.1)",
+          },
+          "50%": {
+            boxShadow: "0 0 15px 5px rgba(147, 51, 234, 0.25)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         gradient: "gradient 15s ease infinite",
         "meteor-effect": "meteor 5s linear infinite",
+        float: "float 6s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 2s infinite",
       },
     },
   },

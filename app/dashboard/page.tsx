@@ -4,7 +4,13 @@
  * LastEditors: Libra
  * Description:
  */
-import { BarChart, DollarSign, ShoppingBag, Users } from "lucide-react";
+import {
+  BarChart,
+  DollarSign,
+  ShoppingBag,
+  Users,
+  FileCode,
+} from "lucide-react";
 import { getAllDashboardData } from "@/lib/dashboard";
 
 export default async function DashboardPage() {
@@ -36,6 +42,12 @@ export default async function DashboardPage() {
       value: stats.tagCount.toString(),
       change: "分类",
       icon: <DollarSign className="h-4 w-4" />,
+    },
+    {
+      title: "代码片段",
+      value: stats.snippetCount.toString(),
+      change: "代码库",
+      icon: <FileCode className="h-4 w-4" />,
     },
   ];
 

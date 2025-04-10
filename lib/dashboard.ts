@@ -7,6 +7,7 @@
 
 import { createClient as createClientServer } from "@/utils/supabase/server";
 import { getBlogStats } from "./blog";
+import { getSnippetStats } from "./snippet";
 
 export interface DashboardStats {
   blogCount: number;
@@ -14,6 +15,7 @@ export interface DashboardStats {
   bucketCount: number;
   viewCount: number;
   dayCount: number;
+  snippetCount: number;
 }
 
 /**
@@ -44,6 +46,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     // 获取博客统计
     const blogStats = await getBlogStats();
 
+    // 获取片段统计
+    const snippetStats = await getSnippetStats();
+
     // 获取存储桶数量（服务端方式）
     const bucketCount = await getBucketsCount();
 
@@ -53,6 +58,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       bucketCount: bucketCount,
       viewCount: blogStats.viewCount,
       dayCount: blogStats.dayCount,
+      snippetCount: snippetStats.snippetCount,
     };
   } catch (error) {
     console.error("获取仪表盘统计数据失败:", error);
@@ -62,6 +68,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       bucketCount: 0,
       viewCount: 0,
       dayCount: 0,
+      snippetCount: 0,
     };
   }
 }
@@ -109,6 +116,7 @@ export async function getAllDashboardData() {
         bucketCount: 0,
         viewCount: 0,
         dayCount: 0,
+        snippetCount: 0,
       },
       user: null,
     };
