@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 export default async function SnippetsPage({
   searchParams,
 }: {
-  searchParams: { page?: string; tagId?: string };
+  searchParams: Promise<{ page?: string; tagId?: string }>;
 }) {
   // 获取当前用户，确保已登录
   const supabase = await createClient();

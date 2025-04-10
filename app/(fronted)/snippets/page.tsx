@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export default async function SnippetsPage({
   searchParams,
 }: {
-  searchParams: { page?: string; tagId?: string };
+  searchParams: Promise<{ page?: string; tagId?: string }>;
 }) {
   const { page: searchPage, tagId: searchTagId } = await searchParams;
   const page = searchPage ? parseInt(searchPage) : 1;
