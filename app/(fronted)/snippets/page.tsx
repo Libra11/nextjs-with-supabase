@@ -51,7 +51,7 @@ export default async function SnippetsPage({
   const tags = await getTags();
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 md:py-12 py-0">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-bold mb-2">片段</h1>
         <p className="text-lg text-muted-foreground mb-8">
@@ -95,7 +95,7 @@ export default async function SnippetsPage({
 
               {/* 标签网格 */}
               <div className="p-6 relative z-10">
-                <div className="flex flex-wrap gap-3">
+                <div className="grid gap-3 grid-cols-3 md:grid-cols-5 lg:grid-cols-8">
                   <Link
                     href="/snippets"
                     className={cn(
@@ -109,7 +109,7 @@ export default async function SnippetsPage({
                     style={{ animationDelay: "0.1s" }}
                   >
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative z-10 flex items-center gap-2">
+                    <div className="relative z-10 flex items-center gap-2 truncate">
                       <TagBadge
                         icon_name="tag"
                         color="#6c757d"
@@ -155,7 +155,7 @@ export default async function SnippetsPage({
                       {/* Glow effect on hover */}
                       <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 bg-gradient-to-br from-blue-600/10 to-purple-600/10 blur-md transition-opacity duration-300"></div>
 
-                      <div className="relative z-10 flex items-center gap-2">
+                      <div className="relative z-10 flex items-center gap-2 truncate">
                         <TagBadge
                           icon_name={tag.icon_name || "tag"}
                           color={tag.color || "#6c757d"}
@@ -167,7 +167,7 @@ export default async function SnippetsPage({
                         />
                         <span
                           className={cn(
-                            "text-sm whitespace-nowrap transition-all duration-200",
+                            "text-sm whitespace-nowrap text-ellipsis transition-all duration-200 flex-1 overflow-hidden",
                             tagId === tag.id && "text-primary font-medium"
                           )}
                         >
@@ -252,7 +252,7 @@ export default async function SnippetsPage({
                                   {/* Glow effect on hover */}
                                   <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 bg-gradient-to-br from-blue-600/10 to-purple-600/10 blur-md transition-opacity duration-300"></div>
 
-                                  <div className="relative z-10 flex items-center gap-2">
+                                  <div className="relative z-10 flex items-center gap-2 truncate">
                                     <TagBadge
                                       icon_name={tag.icon_name || "tag"}
                                       color={tag.color || "#6c757d"}

@@ -187,7 +187,7 @@ export default function BlogsPage() {
         tagCount={blogStats.tagCount}
         viewCount={blogStats.viewCount}
         dayCount={blogStats.dayCount}
-        className="mb-16 mt-8"
+        className="mb-16 mt-0 md:mt-8"
       />
 
       {/* 置顶博客展示区 */}

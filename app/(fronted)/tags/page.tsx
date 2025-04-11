@@ -292,7 +292,7 @@ export default function TagsPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="mb-12 mt-4"
+        className="mb-12 mt-0 md:mt-4"
       >
         <div className="relative inline-block">
           <h2 className="title-gradient">标签筛选</h2>
@@ -440,7 +440,7 @@ export default function TagsPage() {
                         {/* Glow effect on hover */}
                         <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 bg-gradient-to-br from-blue-600/10 to-purple-600/10 blur-md transition-opacity duration-300"></div>
 
-                        <div className="relative z-10 flex items-center gap-2">
+                        <div className="relative z-10 flex items-center gap-2 truncate">
                           <TagBadge
                             icon_name={tag.icon_name || ""}
                             color={tag.color || "#6c757d"}
@@ -452,7 +452,7 @@ export default function TagsPage() {
                           />
                           <span
                             className={cn(
-                              "text-sm whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200",
+                              "text-sm whitespace-nowrap overflow-hidden text-ellipsis transition-all duration-200 flex-1",
                               selectedTagIds.includes(tag.id) &&
                                 "text-primary font-medium"
                             )}
