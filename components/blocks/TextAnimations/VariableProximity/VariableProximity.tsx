@@ -1,3 +1,9 @@
+/**
+ * Author: Libra
+ * Date: 2025-03-07 09:56:50
+ * LastEditors: Libra
+ * Description:
+ */
 /*
 	jsrepo 1.41.2
 	Installed from https://reactbits.dev/ts/tailwind/
@@ -186,7 +192,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>(
         {...restProps}
       >
         {words.map((word, wordIndex) => (
-          <span key={wordIndex} className="inline-block whitespace-nowrap">
+          <span key={wordIndex} className="inline-block">
             {word.split("").map((letter) => {
               const currentLetterIndex = letterIndex++;
               return (

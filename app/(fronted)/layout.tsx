@@ -37,7 +37,7 @@ export default function FrontedLayout({
             options={{ showSpinner: false }}
             shallowRouting
           >
-            {children}
+            <div className="px-4 md:px-6">{children}</div>
           </ProgressProvider>
         </div>
       </PresenceAnimation>

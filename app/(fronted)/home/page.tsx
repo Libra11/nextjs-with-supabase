@@ -41,18 +41,20 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-fulls">
-      <div className="flex justify-between items-center">
-        <div className="w-[560px]">
+    <div className="w-full h-full py-6 md:py-8">
+      {/* 主要内容区域 - 移动端上下布局，桌面端左右布局 */}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-8 md:gap-4">
+        {/* 左侧内容 */}
+        <div className="w-full md:w-[560px]">
           <div
-            className={`${satisfy.className} text-4xl font-bold flex items-center gap-2 justify-start italic`}
+            className={`${satisfy.className} text-2xl md:text-4xl font-bold flex flex-wrap md:flex-nowrap items-center gap-2 justify-start italic`}
           >
-            <span className="text-5xl font-bold">A</span>
+            <span className="text-3xl md:text-5xl font-bold">A</span>
             <GradientText
               colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
               animationSpeed={3}
               showBorder={false}
-              className="font-bold text-5xl"
+              className="font-bold text-3xl md:text-5xl"
             >
               creative developer
             </GradientText>
@@ -61,12 +63,12 @@ export default function Home() {
             text={["<Developer />"]}
             speed={100}
             loop={true}
-            className={`${saira.className} text-2xl font-medium my-4 block text-green-500`}
+            className={`${saira.className} text-xl md:text-2xl font-medium my-3 md:my-4 block text-green-500`}
           />
           <div
             ref={containerRef}
             style={{ position: "relative" }}
-            className="text-lg text-gray-500"
+            className="text-base md:text-lg text-gray-500"
           >
             <VariableProximity
               label={
@@ -81,7 +83,9 @@ export default function Home() {
             />
           </div>
         </div>
-        <div className="w-[600px] h-[300px]">
+
+        {/* 右侧内容 */}
+        <div className="w-full h-[250px] md:w-[600px] md:h-[300px]">
           <LetterGlitch
             glitchSpeed={50}
             centerVignette={true}
@@ -91,17 +95,19 @@ export default function Home() {
           />
         </div>
       </div>
-      <div className="relative mt-16">
-        <div className="absolute left-0 w-32 h-full bg-gradient-to-r from-[hsl(var(--background))] to-transparent z-10"></div>
-        <div className="absolute right-0 w-32 h-full bg-gradient-to-l from-[hsl(var(--background))] to-transparent z-10"></div>
-        <Marquee>
+
+      {/* Marquee 区域 */}
+      <div className="relative mt-8 md:mt-16">
+        <div className="absolute left-0 w-16 md:w-32 h-full bg-gradient-to-r from-[hsl(var(--background))] to-transparent z-10"></div>
+        <div className="absolute right-0 w-16 md:w-32 h-full bg-gradient-to-l from-[hsl(var(--background))] to-transparent z-10"></div>
+        <Marquee speed={40} className="py-2">
           {Object.entries(loadedIcons).map(([icon, IconComponent]) => (
             <div
               key={icon}
-              className="mx-4 flex items-center gap-2 bg-gray-900 rounded-full px-5 py-2"
+              className="mx-3 md:mx-4 flex items-center gap-1 md:gap-2 bg-gray-900 rounded-full px-3 md:px-5 py-1.5 md:py-2"
             >
-              <IconComponent className="w-6 h-6" />
-              <span className="text-sm">{icon}</span>
+              <IconComponent className="w-5 h-5 md:w-6 md:h-6" />
+              <span className="text-xs md:text-sm">{icon}</span>
             </div>
           ))}
         </Marquee>

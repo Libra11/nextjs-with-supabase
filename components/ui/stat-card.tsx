@@ -127,13 +127,15 @@ export function StatCard({
     >
       <div
         className={cn(
-          "absolute -right-6 -top-6 w-24 h-24 rounded-full",
+          "absolute -right-6 -top-6 w-16 md:w-24 h-16 md:h-24 rounded-full",
           colors.circleBg,
           colors.circleHoverBg,
           "transition-all duration-500"
         )}
       ></div>
-      <div className="p-6 z-10 relative">
+
+      {/* 桌面端水平布局 */}
+      <div className="hidden md:block p-6 z-10 relative">
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
             <Icon
@@ -148,6 +150,23 @@ export function StatCard({
               {label}
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* 移动端垂直居中布局 */}
+      <div className="md:hidden flex flex-col items-center justify-center text-center h-full p-4 z-10 relative">
+        <div className="h-12 w-12 rounded-lg bg-card flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform mb-2">
+          <Icon
+            className={cn("h-6 w-6", colors.iconColor, colors.iconHoverColor)}
+          />
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="text-2xl font-bold tracking-tight group-hover:translate-y-1 transition-transform">
+            <NumberTicker value={value} />
+          </div>
+          <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors mt-1">
+            {label}
+          </p>
         </div>
       </div>
 
