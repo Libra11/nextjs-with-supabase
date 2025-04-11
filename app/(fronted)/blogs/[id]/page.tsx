@@ -60,7 +60,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
     await incrementBlogViewCount(parseInt(id));
 
     return (
-      <div className="px-4 md:px-0">
+      <div>
         {/* 顶部内容 */}
         <div className="flex flex-row items-center gap-2 mb-4">
           {/* 标签 - 移动端显示在标题左侧，仅图标模式 */}
