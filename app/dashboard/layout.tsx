@@ -84,8 +84,7 @@ export default async function DashboardLayout({
             <NavItem
               href="/dashboard/blogs"
               icon={<FileText size={18} />}
-              label="博客列表"
-              badge="新建"
+              label="博客管理"
             />
             <NavItem
               href="/dashboard/tags"
@@ -93,15 +92,14 @@ export default async function DashboardLayout({
               label="标签管理"
             />
             <NavItem
+              href="/dashboard/snippets"
+              icon={<FileCode size={18} />}
+              label="片段管理"
+            />
+            <NavItem
               href="/dashboard/buckets"
               icon={<Image size={18} />}
               label="存储桶管理"
-            />
-            <NavItem
-              href="/dashboard/snippets"
-              icon={<FileCode size={18} />}
-              label="代码片段"
-              badge="新功能"
             />
           </NavSection>
         </nav>

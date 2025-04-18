@@ -193,7 +193,12 @@ export async function getBlogStats(): Promise<BlogStats> {
 export async function getBlogs(
   page = 1,
   pageSize = 8,
-  filters: { tagId?: number; tagIds?: number[]; status?: string } = {}
+  filters: {
+    tagId?: number;
+    tagIds?: number[];
+    status?: string;
+    title?: string;
+  } = {}
 ): Promise<{ blogs: BlogWithTags[]; count: number }> {
   try {
     // 计算分页范围
@@ -232,6 +237,11 @@ export async function getBlogs(
     // 应用状态筛选
     if (filters.status) {
       query = query.eq("status", filters.status);
+    }
+
+    // 应用标题筛选
+    if (filters.title) {
+      query = query.ilike("title", `%${filters.title}%`);
     }
 
     // 添加排序并执行查询
@@ -570,4 +580,82 @@ export async function getRecentBlogsByTagId(
   }
 
   return blogs;
+}
+
+// 后台管理系统使用的搜索博客功能
+export async function searchBlogsAdmin(
+  keyword: string,
+  filters: {
+    tagIds?: number[];
+    status?: string;
+    page?: number;
+    pageSize?: number;
+  } = {}
+): Promise<{ blogs: BlogWithTags[]; count: number }> {
+  try {
+    const page = filters.page || 1;
+    const pageSize = filters.pageSize || 10;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    // 构建基础查询
+    let query = supabase.from("blogs").select(
+      `
+        *,
+        tags (
+          id,
+          name,
+          icon_name,
+          color
+        )
+      `,
+      { count: "exact" }
+    );
+
+    // 应用关键词搜索 - 标题、描述或内容
+    if (keyword && keyword.trim() !== "") {
+      query = query.or(
+        `title.ilike.%${keyword}%,description.ilike.%${keyword}%,content.ilike.%${keyword}%`
+      );
+    }
+
+    // 处理标签筛选
+    if (filters.tagIds && filters.tagIds.length > 0) {
+      const { data: blogTags } = await supabase
+        .from("blog_tags")
+        .select("blog_id")
+        .in("tag_id", filters.tagIds);
+
+      if (blogTags && blogTags.length > 0) {
+        const blogIds = [...new Set(blogTags.map((item) => item.blog_id))];
+        query = query.in("id", blogIds);
+      } else {
+        return { blogs: [], count: 0 };
+      }
+    }
+
+    // 应用状态筛选
+    if (filters.status) {
+      query = query.eq("status", filters.status);
+    }
+
+    // 添加排序并执行查询
+    const { data, count, error } = await query
+      .order("is_top", { ascending: false })
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      console.error("搜索博客列表失败:", error);
+      return { blogs: [], count: 0 };
+    }
+
+    return {
+      blogs: data || [],
+      count: count || 0,
+    };
+  } catch (error) {
+    console.error("searchBlogsAdmin 函数出错:", error);
+    return { blogs: [], count: 0 };
+  }
 }

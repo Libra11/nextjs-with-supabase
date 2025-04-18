@@ -21,11 +21,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BlogWithTags } from "@/types/blog";
+import { BlogWithTags, Tag } from "@/types/blog";
 import { useEffect, useState } from "react";
-import { getBlogs, deleteBlog, updateBlog } from "@/lib/blog";
+import {
+  getBlogs,
+  deleteBlog,
+  updateBlog,
+  getTags,
+  searchBlogsAdmin,
+} from "@/lib/blog";
 import Link from "next/link";
-import { Edit, Trash2, PinIcon } from "lucide-react";
+import { Edit, Trash2, PinIcon, Eye, Search, X } from "lucide-react";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { TagBadge } from "@/components/ui/tag-badge";
@@ -62,6 +68,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import MarkdownContent from "@/components/markdown-content";
+import { Input } from "@/components/ui/input";
+import { MultiSelect, Option } from "@/components/ui/multi-select";
 
 export default function BlogsPage() {
   const [blogs, setBlogs] = useState<BlogWithTags[]>([]);
@@ -72,19 +88,63 @@ export default function BlogsPage() {
   const [pageSize, setPageSize] = useState(10);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<number | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewBlog, setPreviewBlog] = useState<BlogWithTags | null>(null);
+
+  // 搜索相关状态
+  const [searchTitle, setSearchTitle] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [isLoadingTags, setIsLoadingTags] = useState(false);
+  const [searchStatus, setSearchStatus] = useState<string>("all");
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
   useEffect(() => {
     loadBlogs();
+    loadTags();
   }, [currentPage, pageSize]);
+
+  const loadTags = async () => {
+    try {
+      setIsLoadingTags(true);
+      const tags = await getTags();
+      setAllTags(tags);
+    } catch (error) {
+      console.error("加载标签失败:", error);
+    } finally {
+      setIsLoadingTags(false);
+    }
+  };
 
   const loadBlogs = async () => {
     try {
       setIsLoading(true);
-      const data = await getBlogs(currentPage, pageSize);
-      setBlogs(data.blogs);
-      setTotalItems(data.count);
+
+      // 使用关键词搜索或普通分页获取
+      if (
+        searchKeyword ||
+        selectedTagIds.length > 0 ||
+        (searchStatus && searchStatus !== "all")
+      ) {
+        const data = await searchBlogsAdmin(searchKeyword, {
+          tagIds: selectedTagIds.length > 0 ? selectedTagIds : undefined,
+          status:
+            searchStatus && searchStatus !== "all" ? searchStatus : undefined,
+          page: currentPage,
+          pageSize: pageSize,
+        });
+        setBlogs(data.blogs);
+        setTotalItems(data.count);
+      } else {
+        // 基本分页获取
+        const data = await getBlogs(currentPage, pageSize, {
+          title: searchTitle || undefined,
+        });
+        setBlogs(data.blogs);
+        setTotalItems(data.count);
+      }
     } catch (error) {
       console.error("加载博客列表失败:", error);
     } finally {
@@ -132,6 +192,36 @@ export default function BlogsPage() {
     setPageSize(Number(value));
     setCurrentPage(1); // 重置到第一页
   };
+
+  const handlePreview = (blog: BlogWithTags) => {
+    setPreviewBlog(blog);
+    setIsPreviewOpen(true);
+  };
+
+  // 处理搜索
+  const handleSearch = () => {
+    setCurrentPage(1); // 重置页码
+    loadBlogs(); // 重新加载博客
+  };
+
+  // 重置搜索
+  const handleResetSearch = () => {
+    setSearchTitle("");
+    setSearchKeyword("");
+    setSelectedTagIds([]);
+    setSearchStatus("all");
+    setCurrentPage(1);
+    // 重置后立即加载数据
+    setTimeout(() => {
+      loadBlogs();
+    }, 0);
+  };
+
+  // 将标签数据转换为 Option 格式
+  const tagOptions: Option[] = allTags.map((tag) => ({
+    value: tag.id,
+    label: tag.name,
+  }));
 
   // 生成可点击的页码
   const renderPaginationItems = () => {
@@ -268,6 +358,77 @@ export default function BlogsPage() {
         </Link>
       </div>
 
+      {/* 搜索区域 */}
+      <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
+        <div className="space-y-4">
+          <h2 className="text-lg font-medium">博客搜索</h2>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div className="md:col-span-3">
+              <label className="text-sm font-medium mb-1 block">
+                关键词搜索
+              </label>
+              <Input
+                placeholder="搜索标题、描述或内容..."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="text-sm font-medium mb-1 block">博客标题</label>
+              <Input
+                placeholder="输入博客标题关键词..."
+                value={searchTitle}
+                onChange={(e) => setSearchTitle(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="md:col-span-3">
+              <label className="text-sm font-medium mb-1 block">博客标签</label>
+              <MultiSelect
+                options={tagOptions}
+                selected={selectedTagIds}
+                onChange={setSelectedTagIds}
+                placeholder="选择博客标签..."
+                className="w-full"
+              />
+            </div>
+            <div className="md:col-span-1">
+              <label className="text-sm font-medium mb-1 block">状态</label>
+              <Select value={searchStatus} onValueChange={setSearchStatus}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="全部" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部</SelectItem>
+                  <SelectItem value="published">已发布</SelectItem>
+                  <SelectItem value="draft">草稿</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="md:col-span-2 flex items-end space-x-2">
+              <Button
+                onClick={handleSearch}
+                className="flex-1"
+                disabled={isLoading}
+              >
+                <Search className="h-4 w-4 mr-2" />
+                搜索
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleResetSearch}
+                className="flex-1"
+                disabled={isLoading}
+              >
+                <X className="h-4 w-4 mr-2" />
+                重置
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="py-24 flex justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
@@ -347,6 +508,14 @@ export default function BlogsPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handlePreview(blog)}
+                          title="预览博客"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
                         <Link href={`/dashboard/blogs/${blog.id}/edit`}>
                           <Button variant="outline" size="icon">
                             <Edit className="h-4 w-4" />
@@ -444,6 +613,19 @@ export default function BlogsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* 博客预览对话框 */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-4xl h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>{previewBlog?.title}</DialogTitle>
+            <DialogDescription>{previewBlog?.description}</DialogDescription>
+          </DialogHeader>
+          <div className="overflow-y-auto flex-1 mt-4">
+            {previewBlog && <MarkdownContent content={previewBlog.content} />}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

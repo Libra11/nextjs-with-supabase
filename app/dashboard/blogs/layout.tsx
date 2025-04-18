@@ -4,6 +4,8 @@
  * LastEditors: Libra
  * Description:
  */
+import "@/components/markdown.css";
+
 export default function BlogsLayout({
   children,
 }: {
