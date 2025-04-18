@@ -1,0 +1,25 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 项目结构概览
+
+本项目是一个使用Next.js和Supabase构建的全栈应用。
+
+## 主要目录
+
+- [app](mdc:app) - Next.js App Router应用的主要目录
+- [components](mdc:components) - React组件库
+- [lib](mdc:lib) - 应用程序库和工具函数
+- [utils](mdc:utils) - 工具函数，包括Supabase客户端配置
+- [public](mdc:public) - 静态资产
+- [types](mdc:types) - TypeScript类型定义
+
+## 重要文件
+
+- [package.json](mdc:package.json) - 项目依赖和脚本配置
+- [tailwind.config.ts](mdc:tailwind.config.ts) - Tailwind CSS配置
+- [next.config.ts](mdc:next.config.ts) - Next.js配置
+- [app/layout.tsx](mdc:app/layout.tsx) - 主布局组件
+- [app/page.tsx](mdc:app/page.tsx) - 首页

@@ -1,0 +1,28 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 库和工具函数指南
+
+## Supabase工具
+
+- [utils/supabase/client.ts](mdc:utils/supabase/client.ts) - 浏览器客户端工具
+- [utils/supabase/server.ts](mdc:utils/supabase/server.ts) - 服务器端客户端工具
+- [utils/supabase/middleware.ts](mdc:utils/supabase/middleware.ts) - 中间件工具
+
+## 功能库
+
+- [lib/blog.ts](mdc:lib/blog.ts) - 博客功能相关函数
+- [lib/snippet.ts](mdc:lib/snippet.ts) - 代码片段功能
+- [lib/dashboard.ts](mdc:lib/dashboard.ts) - 仪表板功能
+- [lib/bucket.ts](mdc:lib/bucket.ts) - 存储桶功能
+
+## 自定义钩子
+
+- 项目中的自定义React钩子位于[hooks](mdc:hooks)目录
+
+## 常量和工具
+
+- [lib/const.ts](mdc:lib/const.ts) - 应用常量
+- [lib/utils.ts](mdc:lib/utils.ts) - 通用工具函数

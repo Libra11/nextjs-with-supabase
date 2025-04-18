@@ -1,0 +1,41 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# UI组件指南
+
+本项目使用Tailwind CSS 3.4.17进行样式设计，并基于shadcn/ui构建组件。
+
+## 核心UI组件
+
+- [components/ui/button.tsx](mdc:components/ui/button.tsx) - 按钮组件
+- [components/ui/input.tsx](mdc:components/ui/input.tsx) - 输入框组件 
+- [components/ui/card.tsx](mdc:components/ui/card.tsx) - 卡片组件
+- [components/ui/dialog.tsx](mdc:components/ui/dialog.tsx) - 对话框组件
+- [components/ui/dropdown-menu.tsx](mdc:components/ui/dropdown-menu.tsx) - 下拉菜单
+- [components/ui/form.tsx](mdc:components/ui/form.tsx) - 表单组件
+- [components/ui/toast.tsx](mdc:components/ui/toast.tsx) - 提示通知组件
+
+## 特色组件
+
+- [components/ui/command.tsx](mdc:components/ui/command.tsx) - 命令面板组件
+- [components/ui/animated-logo.tsx](mdc:components/ui/animated-logo.tsx) - 动画logo
+- [components/ui/blog-card.tsx](mdc:components/ui/blog-card.tsx) - 博客卡片组件
+- [components/ui/meteors.tsx](mdc:components/ui/meteors.tsx) - 流星效果组件
+- [components/theme-switcher.tsx](mdc:components/theme-switcher.tsx) - 主题切换器
+
+## Markdown相关
+
+- [components/markdown-content.tsx](mdc:components/markdown-content.tsx) - Markdown内容渲染
+- [components/markdown.css](mdc:components/markdown.css) - Markdown样式
+
+## 表单组件
+
+- [components/blog-form.tsx](mdc:components/blog-form.tsx) - 博客表单
+- [components/submit-button.tsx](mdc:components/submit-button.tsx) - 提交按钮
+- [components/form-message.tsx](mdc:components/form-message.tsx) - 表单消息组件
+
+## 样式指南
+
+在使用Tailwind CSS时，始终遵循项目现有的样式约定。优先使用Tailwind的类名而不是自定义CSS。对于复杂组件，利用Tailwind的组合能力。
