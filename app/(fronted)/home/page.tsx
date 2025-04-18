@@ -41,7 +41,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-full py-6 md:py-8">
+    <div className="w-full h-full py-6 md:py-8 md:mt-[150px]">
       {/* 主要内容区域 - 移动端上下布局，桌面端左右布局 */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-8 md:gap-4">
         {/* 左侧内容 */}

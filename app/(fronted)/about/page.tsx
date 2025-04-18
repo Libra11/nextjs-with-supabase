@@ -32,14 +32,14 @@ import Link from "next/link";
 
 // 关于我的内容
 const aboutContent = {
-  name: "刘博文",
+  name: "Libra",
   avatar:
     "https://api.penlibra.xin/storage/v1/object/public/libra-bucket/covers/z0rzlcz3q5w4.jpg",
-  bio: "嗨，我是刘博文，一个热爱技术、阅读和创作的程序员。这个博客是我分享思考和记录成长的地方，希望能与你产生共鸣。",
+  bio: "嗨，我是 Libra，一个热爱技术、阅读和创作的程序员。这个博客是我分享思考和记录成长的地方，希望能与你产生共鸣。",
   contact: {
-    email: "libra@example.com",
-    github: "github.com/libra",
-    website: "libra.dev",
+    email: "libra085925@gmail.com",
+    github: "https://github.com/Libra11",
+    website: "https://penlibra.xin",
   },
 };
 
@@ -59,10 +59,6 @@ export default function About() {
     target: containerRef,
     offset: ["start start", "end end"],
   });
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 5]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.05, 1]);
 
   // 鼠标移动效果
   const handleMouseMove = (e) => {
@@ -159,11 +155,6 @@ export default function About() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
-          style={{
-            y,
-            rotateZ: rotate,
-            scale,
-          }}
           className="relative text-center"
         >
           <motion.h1
