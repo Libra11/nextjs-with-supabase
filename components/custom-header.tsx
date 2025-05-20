@@ -16,6 +16,7 @@ import {
   Tag,
   FileCode,
   Menu,
+  UtensilsCrossed,
 } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
@@ -48,6 +49,14 @@ const menuItems = [
     iconColor: "text-purple-500",
   },
   {
+    icon: UtensilsCrossed,
+    label: "菜谱",
+    href: "/recipes",
+    gradient:
+      "radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.06) 50%, rgba(4,120,87,0) 100%)",
+    iconColor: "text-emerald-500",
+  },
+  {
     icon: Tag,
     label: "标签",
     href: "/tags",
@@ -68,7 +77,7 @@ const menuItems = [
     label: "关于",
     href: "/about",
     gradient:
-      "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(185,28,28,0) 100%)",
+      "radial-gradient(circle, rgba(239,68,68,0.15) 0%, rgba(220,38,38,0.06) 50%, rgba(29,78,216,0) 100%)",
     iconColor: "text-red-500",
   },
 ];

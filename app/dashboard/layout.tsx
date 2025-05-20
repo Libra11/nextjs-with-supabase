@@ -18,6 +18,7 @@ import {
   Bell,
   LayoutDashboardIcon,
   FileCode,
+  UtensilsCrossed,
 } from "lucide-react";
 import Link from "next/link";
 import { NavItem, NavSection } from "@/components/dashboard/nav-links";
@@ -95,6 +96,11 @@ export default async function DashboardLayout({
               href="/dashboard/snippets"
               icon={<FileCode size={18} />}
               label="片段管理"
+            />
+            <NavItem
+              href="/dashboard/recipes"
+              icon={<UtensilsCrossed size={18} />}
+              label="菜谱管理"
             />
             <NavItem
               href="/dashboard/buckets"

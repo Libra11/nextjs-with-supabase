@@ -15,7 +15,7 @@ alwaysApply: true
 
 ## 前端路由
 
-- [app/(frontend)/](mdc:app/(frontend)) - 公共前端页面
+- @app/(fronted)/ - 公共前端页面
 
 ## 仪表板路由
 
