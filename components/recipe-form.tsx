@@ -31,6 +31,8 @@ import {
   RecipeStep,
   Ingredient,
   RecipeIngredientUsage,
+  RecipeCategory,
+  RecipeWithDetails,
 } from "@/types/recipe";
 import {
   Dialog,
@@ -46,8 +48,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { createIngredient, searchIngredients } from "@/lib/recipe-client";
-import { Search, Plus, ChevronDown } from "lucide-react";
+import { createIngredient, searchIngredients, getAllCategories, createCategory } from "@/lib/recipe-client";
+import { Search, Plus, ChevronDown, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { uploadFile, getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
@@ -59,6 +61,7 @@ const recipeFormSchema = z.object({
   difficulty_level: z.string().optional(),
   is_published: z.boolean().default(false),
   featured_image_url: z.string().optional(),
+  categories: z.array(z.string()),
   ingredients: z.array(
     z.object({
       ingredient_id: z.string().min(1, "请选择或添加配料"),
@@ -81,10 +84,7 @@ const recipeFormSchema = z.object({
 type RecipeFormValues = z.infer<typeof recipeFormSchema>;
 
 interface RecipeFormProps {
-  recipe?: Recipe & {
-    ingredients: RecipeIngredientUsage[];
-    steps: RecipeStep[];
-  };
+  recipe?: RecipeWithDetails;
   isEditing?: boolean;
 }
 
@@ -117,6 +117,12 @@ export default function RecipeForm({
     category: "",
   });
   const [isSearching, setIsSearching] = useState(false);
+  const [categories, setCategories] = useState<RecipeCategory[]>([]);
+  const [showAddCategoryDialog, setShowAddCategoryDialog] = useState(false);
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    description: "",
+  });
 
   // 初始化表单
   const form = useForm<RecipeFormValues>({
@@ -127,6 +133,7 @@ export default function RecipeForm({
       difficulty_level: recipe?.difficulty_level || "",
       is_published: recipe?.is_published || false,
       featured_image_url: recipe?.featured_image_url || "",
+      categories: recipe?.categories?.map((cat) => cat.id) || [],
       ingredients: recipe?.ingredients?.map((ingredient, index) => ({
         ingredient_id: ingredient.ingredient_id,
         quantity: ingredient.quantity,
@@ -213,6 +220,37 @@ export default function RecipeForm({
     name: "steps",
     control: form.control,
   });
+
+  // 加载所有分类
+  useEffect(() => {
+    const loadCategories = async () => {
+      const loadedCategories = await getAllCategories();
+      setCategories(loadedCategories);
+    };
+    
+    loadCategories();
+  }, []);
+
+  // 处理新增分类
+  const handleAddNewCategory = async () => {
+    if (!newCategory.name.trim()) {
+      return;
+    }
+    
+    const createdCategory = await createCategory({
+      name: newCategory.name.trim(),
+      description: newCategory.description.trim() || null,
+    });
+    
+    if (createdCategory) {
+      // 添加新分类到列表
+      setCategories((prev) => [...prev, createdCategory]);
+      
+      // 清空并关闭对话框
+      setNewCategory({ name: "", description: "" });
+      setShowAddCategoryDialog(false);
+    }
+  };
 
   // 处理特色图片上传
   const handleFeaturedImageChange = (
@@ -400,8 +438,8 @@ export default function RecipeForm({
 
   // 表单提交
   const onSubmit = async (data: RecipeFormValues) => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
       const supabase = createClient();
 
       // 上传特色图片（如果有）
@@ -455,6 +493,8 @@ export default function RecipeForm({
       
       console.log("更新的菜谱数据:", recipeData);
 
+      // 创建或更新菜谱
+      let recipeId: string;
       if (isEditing && recipe) {
         // 更新菜谱
         const { error } = await supabase
@@ -468,37 +508,7 @@ export default function RecipeForm({
         }
         
         console.log("菜谱更新成功");
-
-        // 删除现有配料并添加新配料
-        await supabase
-          .from("recipe_ingredient_usage")
-          .delete()
-          .eq("recipe_id", recipe.id);
-        await supabase.from("recipe_ingredient_usage").insert(
-          data.ingredients.map((ingredient, index) => ({
-            recipe_id: recipe.id,
-            ingredient_id: ingredient.ingredient_id,
-            quantity: ingredient.quantity,
-            unit: ingredient.unit,
-            notes: ingredient.notes,
-            order: index + 1,
-          }))
-        );
-
-        // 删除现有步骤并添加新步骤
-        await supabase.from("recipe_steps").delete().eq("recipe_id", recipe.id);
-        await supabase.from("recipe_steps").insert(
-          stepsWithImages.map((step) => ({
-            recipe_id: recipe.id,
-            step_number: step.step_number,
-            instruction: step.instruction,
-            image_url:
-              step.image_urls && step.image_urls.length > 0
-                ? step.image_urls.join("||") // 用||分隔符连接多张图片URL
-                : null,
-            step_type: step.step_type,
-          }))
-        );
+        recipeId = recipe.id;
       } else {
         // 创建新菜谱
         const { data: newRecipe, error } = await supabase
@@ -518,47 +528,77 @@ export default function RecipeForm({
           return;
         }
 
-        // 添加配料用量
-        await supabase.from("recipe_ingredient_usage").insert(
-          data.ingredients.map((ingredient, index) => ({
-            recipe_id: newRecipe.id,
-            ingredient_id: ingredient.ingredient_id,
-            quantity: ingredient.quantity,
-            unit: ingredient.unit,
-            notes: ingredient.notes,
-            order: index + 1,
-          }))
-        );
-
-        // 添加步骤
-        await supabase.from("recipe_steps").insert(
-          stepsWithImages.map((step) => ({
-            recipe_id: newRecipe.id,
-            step_number: step.step_number,
-            instruction: step.instruction,
-            image_url:
-              step.image_urls && step.image_urls.length > 0
-                ? step.image_urls.join("||") // 用||分隔符连接多张图片URL
-                : null,
-            step_type: step.step_type,
-          }))
-        );
+        recipeId = newRecipe.id;
       }
 
-      // 重定向到菜谱管理页面
+      // 更新菜谱分类
+      if (recipeId) {
+        // 先删除现有分类映射
+        await supabase
+          .from('recipe_category_mappings')
+          .delete()
+          .eq('recipe_id', recipeId);
+        
+        // 如果有选择分类，创建新的映射
+        if (data.categories.length > 0) {
+          const mappings = data.categories.map((categoryId) => ({
+            recipe_id: recipeId,
+            category_id: categoryId,
+          }));
+          
+          await supabase
+            .from('recipe_category_mappings')
+            .insert(mappings);
+        }
+      }
+
+      // 删除现有配料并添加新配料
+      await supabase
+        .from("recipe_ingredient_usage")
+        .delete()
+        .eq("recipe_id", recipeId);
+      await supabase.from("recipe_ingredient_usage").insert(
+        data.ingredients.map((ingredient, index) => ({
+          recipe_id: recipeId,
+          ingredient_id: ingredient.ingredient_id,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+          notes: ingredient.notes,
+          order: index + 1,
+        }))
+      );
+
+      // 删除现有步骤并添加新步骤
+      await supabase.from("recipe_steps").delete().eq("recipe_id", recipeId);
+      await supabase.from("recipe_steps").insert(
+        stepsWithImages.map((step) => ({
+          recipe_id: recipeId,
+          step_number: step.step_number,
+          instruction: step.instruction,
+          image_url:
+            step.image_urls && step.image_urls.length > 0
+              ? step.image_urls.join("||") // 用||分隔符连接多张图片URL
+              : null,
+          step_type: step.step_type,
+        }))
+      );
+
       router.push("/dashboard/recipes");
       router.refresh();
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error creating/updating recipe:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 max-w-3xl"
+        >
           {/* 基本信息 */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">基本信息</h2>
@@ -668,6 +708,108 @@ export default function RecipeForm({
                           className="h-full w-full object-cover"
                         />
                       </div>
+                    )}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* 分类选择部分 */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">分类</h3>
+              <Dialog open={showAddCategoryDialog} onOpenChange={setShowAddCategoryDialog}>
+                <DialogTrigger asChild>
+                  <Button type="button" variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-1" /> 新增分类
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>新增分类</DialogTitle>
+                    <DialogDescription>
+                      创建新的菜谱分类，便于分类整理菜谱。
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-2">
+                      <FormLabel htmlFor="new-category-name">名称</FormLabel>
+                      <Input
+                        id="new-category-name"
+                        placeholder="输入分类名称"
+                        value={newCategory.name}
+                        onChange={(e) =>
+                          setNewCategory({ ...newCategory, name: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <FormLabel htmlFor="new-category-description">
+                        描述（可选）
+                      </FormLabel>
+                      <Textarea
+                        id="new-category-description"
+                        placeholder="输入分类描述"
+                        value={newCategory.description}
+                        onChange={(e) =>
+                          setNewCategory({
+                            ...newCategory,
+                            description: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      onClick={handleAddNewCategory}
+                      disabled={!newCategory.name.trim()}
+                    >
+                      添加
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="categories"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => (
+                      <Badge
+                        key={category.id}
+                        variant={
+                          field.value.includes(category.id)
+                            ? "default"
+                            : "outline"
+                        }
+                        className="cursor-pointer"
+                        onClick={() => {
+                          if (field.value.includes(category.id)) {
+                            field.onChange(
+                              field.value.filter((id) => id !== category.id)
+                            );
+                          } else {
+                            field.onChange([...field.value, category.id]);
+                          }
+                        }}
+                      >
+                        {category.name}
+                        {field.value.includes(category.id) && (
+                          <X className="ml-1 h-3 w-3" />
+                        )}
+                      </Badge>
+                    ))}
+                    {categories.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        暂无分类，请点击"新增分类"按钮创建分类
+                      </p>
                     )}
                   </div>
                   <FormMessage />

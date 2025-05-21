@@ -19,9 +19,12 @@ import {
   LayoutDashboardIcon,
   FileCode,
   UtensilsCrossed,
+  ListFilter,
+  Utensils,
+  ChefHat,
 } from "lucide-react";
 import Link from "next/link";
-import { NavItem, NavSection } from "@/components/dashboard/nav-links";
+import { NavItem, NavSection, NavGroup } from "@/components/dashboard/nav-links";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -97,11 +100,29 @@ export default async function DashboardLayout({
               icon={<FileCode size={18} />}
               label="片段管理"
             />
-            <NavItem
-              href="/dashboard/recipes"
-              icon={<UtensilsCrossed size={18} />}
-              label="菜谱管理"
-            />
+            
+            <NavGroup
+              icon={<ChefHat size={18} />}
+              label="菜谱系统"
+              defaultOpen={true}
+            >
+              <NavItem
+                href="/dashboard/recipes"
+                icon={<UtensilsCrossed size={16} />}
+                label="菜谱管理"
+              />
+              <NavItem
+                href="/dashboard/categories"
+                icon={<ListFilter size={16} />}
+                label="菜谱分类"
+              />
+              <NavItem
+                href="/dashboard/ingredients"
+                icon={<Utensils size={16} />}
+                label="调料分类"
+              />
+            </NavGroup>
+            
             <NavItem
               href="/dashboard/buckets"
               icon={<Image size={18} />}

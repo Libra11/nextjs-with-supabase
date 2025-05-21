@@ -6,7 +6,9 @@ import {
   RecipeCategory,
   RecipeWithDetails,
   Ingredient,
-  RecipeIngredientUsage
+  RecipeIngredientUsage,
+  RecipeCategoryMapping,
+  IngredientCategory
 } from '@/types/recipe';
 
 // 获取所有已发布的菜谱
@@ -275,6 +277,23 @@ export async function getAllCategories() {
   return data as RecipeCategory[];
 }
 
+// 获取单个分类
+export async function getCategoryById(id: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipe_categories')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching category:', error);
+    return null;
+  }
+
+  return data as RecipeCategory;
+}
+
 // 添加分类
 export async function addCategory(category: Omit<RecipeCategory, 'id'>) {
   const supabase = await createClient();
@@ -289,6 +308,52 @@ export async function addCategory(category: Omit<RecipeCategory, 'id'>) {
   }
 
   return data[0] as RecipeCategory;
+}
+
+// 更新分类
+export async function updateCategory(id: string, category: Partial<RecipeCategory>) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('recipe_categories')
+    .update(category)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating category:', error);
+    return null;
+  }
+
+  return data[0] as RecipeCategory;
+}
+
+// 删除分类
+export async function deleteCategory(id: string) {
+  const supabase = await createClient();
+  
+  // 首先删除所有关联的映射关系
+  const { error: mappingError } = await supabase
+    .from('recipe_category_mappings')
+    .delete()
+    .eq('category_id', id);
+  
+  if (mappingError) {
+    console.error('Error deleting category mappings:', mappingError);
+    return false;
+  }
+  
+  // 然后删除分类本身
+  const { error } = await supabase
+    .from('recipe_categories')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting category:', error);
+    return false;
+  }
+
+  return true;
 }
 
 // 将菜谱添加到分类中
@@ -307,6 +372,93 @@ export async function addRecipeToCategory(recipeId: string, categoryId: string) 
   }
 
   return true;
+}
+
+// 从分类中移除菜谱
+export async function removeRecipeFromCategory(recipeId: string, categoryId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('recipe_category_mappings')
+    .delete()
+    .eq('recipe_id', recipeId)
+    .eq('category_id', categoryId);
+
+  if (error) {
+    console.error('Error removing recipe from category:', error);
+    return false;
+  }
+
+  return true;
+}
+
+// 批量更新菜谱的分类
+export async function updateRecipeCategories(recipeId: string, categoryIds: string[]) {
+  const supabase = await createClient();
+  
+  // 首先删除所有现有的映射关系
+  const { error: deleteError } = await supabase
+    .from('recipe_category_mappings')
+    .delete()
+    .eq('recipe_id', recipeId);
+    
+  if (deleteError) {
+    console.error('Error removing existing category mappings:', deleteError);
+    return false;
+  }
+  
+  // 如果没有要添加的分类，则提前返回成功
+  if (categoryIds.length === 0) {
+    return true;
+  }
+  
+  // 创建新的映射记录
+  const mappings: RecipeCategoryMapping[] = categoryIds.map(categoryId => ({
+    recipe_id: recipeId,
+    category_id: categoryId
+  }));
+  
+  const { error: insertError } = await supabase
+    .from('recipe_category_mappings')
+    .insert(mappings);
+    
+  if (insertError) {
+    console.error('Error adding new category mappings:', insertError);
+    return false;
+  }
+  
+  return true;
+}
+
+// 获取菜谱已分配的分类
+export async function getRecipeCategories(recipeId: string) {
+  const supabase = await createClient();
+  const { data: mappings, error: mappingsError } = await supabase
+    .from('recipe_category_mappings')
+    .select('category_id')
+    .eq('recipe_id', recipeId);
+    
+  if (mappingsError) {
+    console.error('Error fetching recipe category mappings:', mappingsError);
+    return [];
+  }
+  
+  if (!mappings.length) {
+    return [];
+  }
+  
+  const categoryIds = mappings.map(m => m.category_id);
+  
+  const { data: categories, error: categoriesError } = await supabase
+    .from('recipe_categories')
+    .select('*')
+    .in('id', categoryIds);
+    
+  if (categoriesError) {
+    console.error('Error fetching recipe categories:', categoriesError);
+    return [];
+  }
+  
+  return categories as RecipeCategory[];
 }
 
 // 上传图片到存储桶
@@ -333,4 +485,161 @@ export async function uploadRecipeImage(file: File) {
     .getPublicUrl(filePath);
 
   return publicUrl;
+}
+
+// 根据分类获取已发布的菜谱
+export async function getPublishedRecipesByCategory(categoryId: string) {
+  const supabase = await createClient();
+  
+  // 首先获取指定分类的菜谱ID
+  const { data: mappings, error: mappingError } = await supabase
+    .from('recipe_category_mappings')
+    .select('recipe_id')
+    .eq('category_id', categoryId);
+
+  if (mappingError) {
+    console.error('Error fetching recipe mappings by category:', mappingError);
+    return [];
+  }
+
+  if (!mappings || mappings.length === 0) {
+    return [];
+  }
+
+  // 从映射中获取菜谱ID列表
+  const recipeIds = mappings.map(mapping => mapping.recipe_id);
+  
+  // 获取已发布的菜谱
+  const { data: recipes, error: recipesError } = await supabase
+    .from('recipes')
+    .select('*')
+    .in('id', recipeIds)
+    .eq('is_published', true)
+    .order('created_at', { ascending: false });
+
+  if (recipesError) {
+    console.error('Error fetching recipes by category:', recipesError);
+    return [];
+  }
+
+  return recipes as Recipe[];
+}
+
+// =========== 调料分类函数 ===========
+
+// 获取所有调料分类
+export async function getAllIngredientCategories() {
+  const supabase = await createClient();
+  
+  // 从ingredients表中提取唯一的category值
+  const { data, error } = await supabase
+    .from('ingredients')
+    .select('category')
+    .not('category', 'is', null)
+    .order('category');
+
+  if (error) {
+    console.error('Error fetching ingredient categories:', error);
+    return [];
+  }
+
+  // 去重并转换为IngredientCategory格式
+  const uniqueCategories = Array.from(new Set(data.map(item => item.category)))
+    .filter(Boolean) // 过滤掉null和空字符串
+    .map(category => ({
+      id: category, // 使用category名称作为id
+      name: category,
+      description: null,
+      icon: null,
+      created_at: new Date().toISOString()
+    }));
+
+  return uniqueCategories as IngredientCategory[];
+}
+
+// 获取某个分类下的所有配料
+export async function getIngredientsByCategory(categoryName: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('ingredients')
+    .select('*')
+    .eq('category', categoryName)
+    .order('name');
+
+  if (error) {
+    console.error('Error fetching ingredients by category:', error);
+    return [];
+  }
+
+  return data as Ingredient[];
+}
+
+// 更新配料的分类
+export async function updateIngredientCategory(id: string, newCategory: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('ingredients')
+    .update({ category: newCategory })
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating ingredient category:', error);
+    return null;
+  }
+
+  return data[0] as Ingredient;
+}
+
+// 更新配料
+export async function updateIngredient(id: string, ingredient: Partial<Ingredient>) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('ingredients')
+    .update(ingredient)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating ingredient:', error);
+    return null;
+  }
+
+  return data[0] as Ingredient;
+}
+
+// 删除配料
+export async function deleteIngredient(id: string) {
+  const supabase = await createClient();
+  
+  // 首先检查是否有关联的使用记录
+  const { data: usageData, error: usageError } = await supabase
+    .from('recipe_ingredient_usage')
+    .select('id')
+    .eq('ingredient_id', id)
+    .limit(1);
+    
+  if (usageError) {
+    console.error('Error checking ingredient usage:', usageError);
+    return false;
+  }
+  
+  // 如果有关联的使用记录，不允许删除
+  if (usageData && usageData.length > 0) {
+    console.error('Cannot delete ingredient that is in use');
+    return false;
+  }
+  
+  // 删除配料
+  const { error } = await supabase
+    .from('ingredients')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting ingredient:', error);
+    return false;
+  }
+
+  return true;
 } 

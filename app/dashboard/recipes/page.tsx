@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import RecipeActions from './recipe-actions';
+import { ListFilter, Plus, Utensils } from 'lucide-react';
 
 export const revalidate = 0; // 不缓存，每次请求重新获取
 
@@ -21,9 +22,26 @@ export default async function RecipesAdminPage() {
     <div className="py-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">菜谱管理</h1>
-        <Link href="/dashboard/recipes/new">
-          <Button>创建菜谱</Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link href="/dashboard/ingredients">
+            <Button variant="outline" className="flex items-center gap-1">
+              <Utensils className="h-4 w-4" />
+              调料分类
+            </Button>
+          </Link>
+          <Link href="/dashboard/categories">
+            <Button variant="outline" className="flex items-center gap-1">
+              <ListFilter className="h-4 w-4" />
+              管理分类
+            </Button>
+          </Link>
+          <Link href="/dashboard/recipes/new">
+            <Button className="flex items-center gap-1">
+              <Plus className="h-4 w-4" />
+              创建菜谱
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Card>

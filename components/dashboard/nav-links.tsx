@@ -8,8 +8,10 @@
 
 import { ActiveLink } from "@/components/ui/active-link";
 import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface NavItemProps {
   href: string;
@@ -37,6 +39,61 @@ export function NavItem({ href, icon, label, badge }: NavItemProps) {
         </Badge>
       )}
     </ActiveLink>
+  );
+}
+
+interface NavGroupProps {
+  icon: ReactNode;
+  label: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}
+
+export function NavGroup({ icon, label, children, defaultOpen = false }: NavGroupProps) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  
+  // 检查子路径是否为当前活动路径
+  const childPaths = Array.isArray(children)
+    ? children.map((child: any) => child?.props?.href || "")
+    : [];
+  
+  const isActive = childPaths.some(path => pathname === path || pathname.startsWith(`${path}/`));
+  
+  // 使用useEffect只在组件挂载和路径变化时自动展开,而不是每次渲染
+  useEffect(() => {
+    if (isActive) {
+      setIsOpen(true);
+    }
+  }, [pathname]);
+  
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "flex items-center justify-between w-full px-3 py-2.5 rounded-md transition-colors",
+          "hover:bg-primary/10 hover:text-primary",
+          isActive && "text-primary bg-primary/5"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          {icon}
+          <span className={cn("font-medium", isActive && "font-semibold")}>{label}</span>
+        </div>
+        {isOpen ? (
+          <ChevronDown className="h-4 w-4" />
+        ) : (
+          <ChevronRight className="h-4 w-4" />
+        )}
+      </button>
+      
+      {isOpen && (
+        <div className="pl-3 ml-2 border-l border-border/30 space-y-1">
+          {children}
+        </div>
+      )}
+    </div>
   );
 }
 

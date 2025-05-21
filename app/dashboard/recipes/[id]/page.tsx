@@ -24,32 +24,36 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
   const sortedSteps = [...recipe.steps].sort((a, b) => a.step_number - b.step_number);
 
   return (
-    <div className="py-10">
-      <div className="flex justify-between items-center mb-8">
+    <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold">{recipe.title}</h1>
-        <div className="flex gap-4">
+        <div className="flex gap-3">
           <Link href={`/dashboard/recipes/${recipe.id}/edit`}>
-            <Button variant="outline">编辑菜谱</Button>
+            <Button variant="outline" size="sm" className="shadow-sm">
+              编辑菜谱
+            </Button>
           </Link>
           <Link href={`/recipes/${recipe.id}`} target="_blank">
-            <Button>查看前台页面</Button>
+            <Button size="sm" className="shadow-sm">
+              查看前台页面
+            </Button>
           </Link>
         </div>
       </div>
 
       {/* 菜谱信息卡片 */}
-      <Card className="mb-8">
-        <CardContent className="pt-6">
+      <Card className="mb-10 shadow-sm border border-gray-100 overflow-hidden">
+        <CardContent className="pt-6 pb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h2 className="text-xl font-semibold mb-4">基本信息</h2>
-              <dl className="space-y-2">
+              <h2 className="text-xl font-semibold mb-5 text-gray-800">基本信息</h2>
+              <dl className="space-y-3">
                 <div className="flex">
-                  <dt className="w-24 font-medium">难度:</dt>
-                  <dd>{recipe.difficulty_level || '未设置'}</dd>
+                  <dt className="w-24 font-medium text-gray-600">难度:</dt>
+                  <dd className="text-gray-800">{recipe.difficulty_level || '未设置'}</dd>
                 </div>
                 <div className="flex">
-                  <dt className="w-24 font-medium">发布状态:</dt>
+                  <dt className="w-24 font-medium text-gray-600">发布状态:</dt>
                   <dd>
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -63,8 +67,8 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
                   </dd>
                 </div>
                 <div className="flex">
-                  <dt className="w-24 font-medium">创建时间:</dt>
-                  <dd>
+                  <dt className="w-24 font-medium text-gray-600">创建时间:</dt>
+                  <dd className="text-gray-800">
                     {new Date(recipe.created_at).toLocaleDateString('zh-CN', {
                       year: 'numeric',
                       month: 'long',
@@ -73,8 +77,8 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
                   </dd>
                 </div>
                 <div className="flex">
-                  <dt className="w-24 font-medium">更新时间:</dt>
-                  <dd>
+                  <dt className="w-24 font-medium text-gray-600">更新时间:</dt>
+                  <dd className="text-gray-800">
                     {new Date(recipe.updated_at).toLocaleDateString('zh-CN', {
                       year: 'numeric',
                       month: 'long',
@@ -86,15 +90,15 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
               
               {recipe.description && (
                 <div className="mt-6">
-                  <h3 className="font-medium mb-2">描述:</h3>
-                  <p className="text-gray-600">{recipe.description}</p>
+                  <h3 className="font-medium mb-2 text-gray-600">描述:</h3>
+                  <p className="text-gray-600 italic">{recipe.description}</p>
                 </div>
               )}
             </div>
 
             {recipe.featured_image_url && (
-              <div className="flex justify-center">
-                <div className="relative h-64 w-full md:w-80 rounded-lg overflow-hidden">
+              <div className="flex justify-center items-center">
+                <div className="relative h-72 w-full rounded-lg overflow-hidden shadow-md">
                   <Image
                     src={recipe.featured_image_url}
                     alt={recipe.title}
@@ -111,14 +115,14 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
       </Card>
 
       {/* 配料部分 */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">配料 ({recipe.ingredients.length})</h2>
+      <div className="mb-10">
+        <h2 className="text-2xl font-semibold mb-5 text-gray-800 pb-2 border-b border-gray-100">配料 ({recipe.ingredients.length})</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {recipe.ingredients.map((ingredient) => (
-            <Card key={ingredient.id}>
-              <CardContent className="p-4 flex items-center gap-3">
+            <Card key={ingredient.id} className="border border-gray-100 shadow-sm hover:shadow transition-shadow">
+              <CardContent className="p-4 flex items-center gap-4">
                 {ingredient.ingredient?.icon && (
-                  <div className="w-8 h-8 flex-shrink-0">
+                  <div className="w-10 h-10 flex-shrink-0 bg-gray-50 rounded-full p-1.5 flex items-center justify-center">
                     <Image
                       src={ingredient.ingredient.icon}
                       alt={ingredient.ingredient.name}
@@ -128,7 +132,7 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
                   </div>
                 )}
                 <div>
-                  <p className="font-medium">{ingredient.ingredient?.name}</p>
+                  <p className="font-medium text-gray-800">{ingredient.ingredient?.name}</p>
                   <div className="text-sm text-gray-500">
                     {(ingredient.quantity || ingredient.unit) && (
                       <span>
@@ -146,30 +150,30 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
       </div>
 
       {/* 步骤部分 */}
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">步骤 ({recipe.steps.length})</h2>
-        <div className="space-y-4">
+      <div className="mb-10">
+        <h2 className="text-2xl font-semibold mb-5 text-gray-800 pb-2 border-b border-gray-100">烹饪步骤 ({recipe.steps.length})</h2>
+        <div className="space-y-6">
           {sortedSteps.map((step) => (
-            <Card key={step.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+            <Card key={step.id} className="border-l-4 border-l-primary border-t-0 border-r border-b border-gray-100 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-semibold shadow-sm">
                     {step.step_number}
                   </div>
-                  <h3 className="font-medium">
+                  <h3 className="font-medium text-lg text-gray-800">
                     {step.step_type === 'preparation' && '准备: '}
                     {step.step_type === 'cooking' && '烹饪: '}
                     {step.step_type === 'final' && '成品: '}
                   </h3>
                 </div>
                 
-                <p className="text-gray-700 ml-10 mb-4">{step.instruction}</p>
+                <p className="text-gray-700 mb-6 ml-12">{step.instruction}</p>
                 
                 {step.image_url && (
-                  <div className="ml-10">
+                  <div className="ml-12">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {step.image_url.split('||').filter(url => !!url).map((imageUrl, index) => (
-                        <div key={index} className="relative h-40 rounded-lg overflow-hidden">
+                        <div key={index} className="relative h-44 rounded-lg overflow-hidden shadow-sm hover:shadow transition-shadow">
                           <Image
                             src={imageUrl}
                             alt={`步骤 ${step.step_number} 图片 ${index + 1}`}
@@ -190,13 +194,13 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
 
       {/* 分类部分 */}
       {recipe.categories.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">分类</h2>
+        <div className="mb-10">
+          <h2 className="text-2xl font-semibold mb-5 text-gray-800 pb-2 border-b border-gray-100">分类</h2>
           <div className="flex flex-wrap gap-2">
             {recipe.categories.map((category) => (
               <span
                 key={category.id}
-                className="px-3 py-1 bg-gray-100 rounded-full text-sm"
+                className="px-4 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-full text-sm text-gray-700 transition-colors"
               >
                 {category.name}
               </span>
@@ -205,9 +209,11 @@ export default async function RecipeDetailPage({ params }: RecipeDetailPageProps
         </div>
       )}
       
-      <div className="flex justify-end mt-8">
+      <div className="flex justify-end mt-10 border-t border-gray-100 pt-6">
         <Link href="/dashboard/recipes">
-          <Button variant="outline">返回列表</Button>
+          <Button variant="outline" className="shadow-sm">
+            返回列表
+          </Button>
         </Link>
       </div>
     </div>

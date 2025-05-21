@@ -9,12 +9,22 @@ export type Recipe = {
   featured_image_url: string | null;
 };
 
+export type IngredientCategory = {
+  id: string;
+  name: string;
+  description: string | null;
+  icon: string | null;
+  created_at: string;
+};
+
 export type Ingredient = {
   id: string;
   name: string;
   icon: string | null;
   category: string | null;
+  category_id: string | null;
   created_at: string;
+  ingredient_category?: IngredientCategory;
 };
 
 export type RecipeIngredientUsage = {
@@ -25,7 +35,7 @@ export type RecipeIngredientUsage = {
   unit: string | null;
   notes: string | null;
   order: number | null;
-  ingredient?: Ingredient; // 用于JOIN查询时
+  ingredient?: Ingredient;
 };
 
 export type RecipeIngredient = {
