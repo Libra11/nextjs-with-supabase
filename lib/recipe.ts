@@ -44,12 +44,12 @@ export async function getRecipeById(id: string): Promise<RecipeWithDetails | nul
     return null;
   }
 
-  // 获取菜谱配料（使用JOIN查询获取配料详情）
+  // 获取菜谱配料（使用JOIN查询获取配料详情和配料分类）
   const { data: ingredients, error: ingredientsError } = await supabase
     .from('recipe_ingredient_usage')
     .select(`
       *,
-      ingredient:ingredient_id(*)
+      ingredient:ingredient_id(*, ingredient_category:category_id(*))
     `)
     .eq('recipe_id', id)
     .order('order');
@@ -213,6 +213,7 @@ export async function getAllIngredients() {
 // 创建配料
 export async function createIngredient(ingredient: Omit<Ingredient, 'id' | 'created_at'>) {
   const supabase = await createClient();
+  
   const { data, error } = await supabase
     .from('ingredients')
     .insert(ingredient)
@@ -531,39 +532,30 @@ export async function getPublishedRecipesByCategory(categoryId: string) {
 export async function getAllIngredientCategories() {
   const supabase = await createClient();
   
-  // 从ingredients表中提取唯一的category值
+  // 直接从ingredient_categories表查询
   const { data, error } = await supabase
-    .from('ingredients')
-    .select('category')
-    .not('category', 'is', null)
-    .order('category');
+    .from('ingredient_categories')
+    .select('*')
+    .order('name');
 
   if (error) {
     console.error('Error fetching ingredient categories:', error);
     return [];
   }
 
-  // 去重并转换为IngredientCategory格式
-  const uniqueCategories = Array.from(new Set(data.map(item => item.category)))
-    .filter(Boolean) // 过滤掉null和空字符串
-    .map(category => ({
-      id: category, // 使用category名称作为id
-      name: category,
-      description: null,
-      icon: null,
-      created_at: new Date().toISOString()
-    }));
-
-  return uniqueCategories as IngredientCategory[];
+  return data as IngredientCategory[];
 }
 
 // 获取某个分类下的所有配料
-export async function getIngredientsByCategory(categoryName: string) {
+export async function getIngredientsByCategory(categoryId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('ingredients')
-    .select('*')
-    .eq('category', categoryName)
+    .select(`
+      *,
+      ingredient_category:category_id(*)
+    `)
+    .eq('category_id', categoryId)
     .order('name');
 
   if (error) {
@@ -575,11 +567,13 @@ export async function getIngredientsByCategory(categoryName: string) {
 }
 
 // 更新配料的分类
-export async function updateIngredientCategory(id: string, newCategory: string) {
+export async function updateIngredientCategory(id: string, newCategoryId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('ingredients')
-    .update({ category: newCategory })
+    .update({ 
+      category_id: newCategoryId,
+    })
     .eq('id', id)
     .select();
 
@@ -594,6 +588,7 @@ export async function updateIngredientCategory(id: string, newCategory: string) 
 // 更新配料
 export async function updateIngredient(id: string, ingredient: Partial<Ingredient>) {
   const supabase = await createClient();
+  
   const { data, error } = await supabase
     .from('ingredients')
     .update(ingredient)

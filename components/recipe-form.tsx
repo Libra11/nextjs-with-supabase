@@ -48,7 +48,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { createIngredient, searchIngredients, getAllCategories, createCategory } from "@/lib/recipe-client";
+import {
+  createIngredient,
+  searchIngredients,
+  getAllCategories,
+  createCategory,
+} from "@/lib/recipe-client";
 import { Search, Plus, ChevronDown, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { uploadFile, getPublicUrl } from "@/lib/bucket";
@@ -227,7 +232,7 @@ export default function RecipeForm({
       const loadedCategories = await getAllCategories();
       setCategories(loadedCategories);
     };
-    
+
     loadCategories();
   }, []);
 
@@ -236,16 +241,16 @@ export default function RecipeForm({
     if (!newCategory.name.trim()) {
       return;
     }
-    
+
     const createdCategory = await createCategory({
       name: newCategory.name.trim(),
       description: newCategory.description.trim() || null,
     });
-    
+
     if (createdCategory) {
       // 添加新分类到列表
       setCategories((prev) => [...prev, createdCategory]);
-      
+
       // 清空并关闭对话框
       setNewCategory({ name: "", description: "" });
       setShowAddCategoryDialog(false);
@@ -259,11 +264,11 @@ export default function RecipeForm({
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setFeaturedImageFile(file);
-      
+
       // 创建本地预览URL
       const previewUrl = URL.createObjectURL(file);
       setFeaturedImagePreview(previewUrl);
-      
+
       // 注意：这里不立即更新表单值，而是保持原有值
       // 只有在提交表单时才会上传图片并更新URL
       console.log("特色图片已选择，保存在state中等待上传");
@@ -347,16 +352,16 @@ export default function RecipeForm({
     try {
       const supabase = createClient();
       const { data, error } = await supabase
-        .from('ingredients')
-        .select('*')
-        .order('name')
+        .from("ingredients")
+        .select("*")
+        .order("name")
         .limit(50);
-        
+
       if (error) {
         console.error("Error loading ingredients:", error);
         return;
       }
-      
+
       setAllIngredients(data || []);
     } catch (error) {
       console.error("Error loading ingredients:", error);
@@ -392,7 +397,7 @@ export default function RecipeForm({
       const ingredient = await createIngredient({
         name: newIngredient.name,
         icon: newIngredient.icon || null,
-        category: newIngredient.category || null,
+        category_id: newIngredient.category || null,
       });
 
       if (ingredient) {
@@ -420,12 +425,12 @@ export default function RecipeForm({
       const data = await uploadFile(BUCKET_NAME, filePath, file, {
         upsert: true,
       });
-      
+
       if (!data) {
         console.error("上传失败，返回数据为空");
         return null;
       }
-      
+
       console.log("上传成功，获取公共URL");
       const publicUrl = await getPublicUrl(BUCKET_NAME, filePath);
       console.log("获取到公共URL:", publicUrl);
@@ -461,22 +466,22 @@ export default function RecipeForm({
       const stepsWithImages = await Promise.all(
         data.steps.map(async (step, index) => {
           let imageUrls = step.image_urls || [];
-          
+
           // 上传该步骤的新图片
           if (stepImageFiles[index] && stepImageFiles[index].length > 0) {
             const uploadedUrls = await Promise.all(
               stepImageFiles[index].map((file) => uploadImage(file))
             );
-            
+
             // 过滤掉上传失败的图片
             const validUrls = uploadedUrls.filter(
               (url) => url !== null
             ) as string[];
             imageUrls = [...(step.image_urls || []), ...validUrls];
           }
-          
-          return { 
-            ...step, 
+
+          return {
+            ...step,
             image_urls: imageUrls,
           };
         })
@@ -490,7 +495,7 @@ export default function RecipeForm({
         is_published: data.is_published,
         featured_image_url: featuredImageUrl,
       };
-      
+
       console.log("更新的菜谱数据:", recipeData);
 
       // 创建或更新菜谱
@@ -506,7 +511,7 @@ export default function RecipeForm({
           console.error("Error updating recipe:", error);
           return;
         }
-        
+
         console.log("菜谱更新成功");
         recipeId = recipe.id;
       } else {
@@ -535,20 +540,18 @@ export default function RecipeForm({
       if (recipeId) {
         // 先删除现有分类映射
         await supabase
-          .from('recipe_category_mappings')
+          .from("recipe_category_mappings")
           .delete()
-          .eq('recipe_id', recipeId);
-        
+          .eq("recipe_id", recipeId);
+
         // 如果有选择分类，创建新的映射
         if (data.categories.length > 0) {
           const mappings = data.categories.map((categoryId) => ({
             recipe_id: recipeId,
             category_id: categoryId,
           }));
-          
-          await supabase
-            .from('recipe_category_mappings')
-            .insert(mappings);
+
+          await supabase.from("recipe_category_mappings").insert(mappings);
         }
       }
 
@@ -695,11 +698,7 @@ export default function RecipeForm({
                       onChange={handleFeaturedImageChange}
                       className="max-w-sm"
                     />
-                    <Input 
-                      type="hidden" 
-                      {...field} 
-                      value={field.value || ""}
-                    />
+                    <Input type="hidden" {...field} value={field.value || ""} />
                     {featuredImagePreview && (
                       <div className="relative h-20 w-20 overflow-hidden rounded-md">
                         <img
@@ -720,7 +719,10 @@ export default function RecipeForm({
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-medium">分类</h3>
-              <Dialog open={showAddCategoryDialog} onOpenChange={setShowAddCategoryDialog}>
+              <Dialog
+                open={showAddCategoryDialog}
+                onOpenChange={setShowAddCategoryDialog}
+              >
                 <DialogTrigger asChild>
                   <Button type="button" variant="outline" size="sm">
                     <Plus className="h-4 w-4 mr-1" /> 新增分类
@@ -741,7 +743,10 @@ export default function RecipeForm({
                         placeholder="输入分类名称"
                         value={newCategory.name}
                         onChange={(e) =>
-                          setNewCategory({ ...newCategory, name: e.target.value })
+                          setNewCategory({
+                            ...newCategory,
+                            name: e.target.value,
+                          })
                         }
                       />
                     </div>
@@ -774,7 +779,7 @@ export default function RecipeForm({
                 </DialogContent>
               </Dialog>
             </div>
-            
+
             <FormField
               control={form.control}
               name="categories"
@@ -922,12 +927,12 @@ export default function RecipeForm({
                                                 />
                                               )}
                                               <span>{ingredient.name}</span>
-                                              {ingredient.category && (
+                                              {ingredient.category_id && (
                                                 <Badge
                                                   variant="outline"
                                                   className="ml-2 text-xs"
                                                 >
-                                                  {ingredient.category}
+                                                  {ingredient.category_id}
                                                 </Badge>
                                               )}
                                             </Button>
@@ -959,19 +964,21 @@ export default function RecipeForm({
                                               />
                                             )}
                                             <span>{ingredient.name}</span>
-                                            {ingredient.category && (
+                                            {ingredient.category_id && (
                                               <Badge
                                                 variant="outline"
                                                 className="ml-2 text-xs"
                                               >
-                                                {ingredient.category}
+                                                {ingredient.category_id}
                                               </Badge>
                                             )}
                                           </Button>
                                         ))
                                       ) : (
                                         <div className="text-center py-2 text-sm text-gray-500">
-                                          {isSearching ? "加载中..." : "没有配料数据"}
+                                          {isSearching
+                                            ? "加载中..."
+                                            : "没有配料数据"}
                                         </div>
                                       )}
                                     </div>

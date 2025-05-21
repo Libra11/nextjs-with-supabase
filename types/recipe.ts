@@ -15,13 +15,13 @@ export type IngredientCategory = {
   description: string | null;
   icon: string | null;
   created_at: string;
+  updated_at?: string;
 };
 
 export type Ingredient = {
   id: string;
   name: string;
   icon: string | null;
-  category: string | null;
   category_id: string | null;
   created_at: string;
   ingredient_category?: IngredientCategory;

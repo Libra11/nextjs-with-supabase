@@ -7,9 +7,6 @@ export default async function IngredientsPage() {
   const categories = await getAllIngredientCategories();
   const ingredients = await getAllIngredients();
   
-  // 提取分类名称列表，供配料组件使用
-  const categoryNames = categories.map(cat => cat.name);
-  
   return (
     <div className="space-y-6 p-2">
       <div className="flex items-center justify-between">
@@ -35,7 +32,7 @@ export default async function IngredientsPage() {
         <TabsContent value="ingredients">
           <IngredientList 
             initialIngredients={ingredients} 
-            categories={categoryNames}
+            categories={categories}
           />
         </TabsContent>
       </Tabs>

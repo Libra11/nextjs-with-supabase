@@ -9,24 +9,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRecipeById } from "@/lib/recipe";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  Clock,
-  ChefHat,
-  Utensils,
-  ArrowLeft,
-  Heart,
-  Share2,
-  Printer,
-  BookMarked,
-} from "lucide-react";
-import {
-  RecipeTabs,
-  ActionButtons,
-  SaveRecipeButton,
-} from "@/components/recipe-components";
+import { Clock, ChefHat, Utensils, ArrowLeft } from "lucide-react";
+import { RecipeTabs } from "./components/recipe-tabs";
+import { ActionButtons, SaveRecipeButton } from "./components/recipe-actions";
 
 export const revalidate = 3600; // 每小时重新验证一次
 
@@ -68,6 +55,29 @@ export default async function RecipeDetailPage({
   );
   const finalSteps = stepsWithImageArrays.filter(
     (step) => step.step_type === "final"
+  );
+  
+  // 对配料进行分类
+  const ingredientsByCategory = recipe.ingredients.reduce((grouped, ingredient) => {
+    const categoryId = ingredient.ingredient?.category_id || 'uncategorized';
+    const categoryName = ingredient.ingredient?.ingredient_category?.name || '未分类';
+    
+    if (!grouped[categoryId]) {
+      grouped[categoryId] = {
+        id: categoryId,
+        name: categoryName,
+        icon: ingredient.ingredient?.ingredient_category?.icon || null,
+        ingredients: []
+      };
+    }
+    
+    grouped[categoryId].ingredients.push(ingredient);
+    return grouped;
+  }, {} as Record<string, { id: string, name: string, icon: string | null, ingredients: typeof recipe.ingredients }>);
+  
+  // 转换为数组并按名称排序
+  const sortedCategories = Object.values(ingredientsByCategory).sort((a, b) => 
+    a.name.localeCompare(b.name)
   );
 
   return (
@@ -165,6 +175,7 @@ export default async function RecipeDetailPage({
           <RecipeTabs
             ingredientsCount={recipe.ingredients.length}
             ingredients={recipe.ingredients}
+            categorizedIngredients={sortedCategories}
           />
         </div>
 
@@ -182,46 +193,63 @@ export default async function RecipeDetailPage({
                 </Badge>
               </div>
               <Separator className="mb-3" />
-              <ul className="space-y-2.5 max-h-[calc(100vh-15rem)] overflow-y-auto pr-1">
-                {recipe.ingredients.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center p-1.5 rounded-md hover:bg-accent/10 transition-colors"
-                  >
-                    <div className="flex-shrink-0 bg-background shadow-sm rounded-full p-1 mr-2 border border-border">
-                      {item.ingredient?.icon ? (
-                        <img
-                          src={item.ingredient.icon}
-                          alt=""
-                          className="w-5 h-5"
-                        />
-                      ) : (
-                        <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center">
-                          <span className="text-[9px] text-primary">配料</span>
-                        </div>
+              
+              <div className="max-h-[calc(100vh-15rem)] overflow-y-auto pr-1">
+                {sortedCategories.map((category) => (
+                  <div key={category.id} className="mb-4">
+                    <div className="flex items-center bg-muted/50 rounded-md py-1.5 px-2 mb-2">
+                      {category.icon && (
+                        <img src={category.icon} alt="" className="w-4 h-4 mr-1.5" />
                       )}
+                      <h3 className="text-xs font-medium">{category.name}</h3>
+                      <Badge variant="outline" className="ml-2 text-[10px] rounded-full h-4 px-1.5">
+                        {category.ingredients.length}
+                      </Badge>
                     </div>
-                    <div className="flex-grow min-w-0">
-                      <span className="font-medium text-xs block truncate">
-                        {item.ingredient?.name}
-                      </span>
-                      {(item.quantity || item.unit) && (
-                        <span className="text-xs text-muted-foreground block truncate">
-                          {item.quantity} {item.unit}
-                        </span>
-                      )}
-                    </div>
-                    {item.notes && (
-                      <div
-                        className="ml-1 text-[10px] text-muted-foreground italic max-w-[80px] truncate"
-                        title={item.notes}
-                      >
-                        {item.notes}
-                      </div>
-                    )}
-                  </li>
+                    
+                    <ul className="space-y-2">
+                      {category.ingredients.map((item) => (
+                        <li
+                          key={item.id}
+                          className="flex items-center p-1.5 rounded-md hover:bg-accent/10 transition-colors"
+                        >
+                          <div className="flex-shrink-0 bg-background shadow-sm rounded-full p-1 mr-2 border border-border">
+                            {item.ingredient?.icon ? (
+                              <img
+                                src={item.ingredient.icon}
+                                alt=""
+                                className="w-5 h-5"
+                              />
+                            ) : (
+                              <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center">
+                                <span className="text-[9px] text-primary">配料</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-grow min-w-0">
+                            <span className="font-medium text-xs block truncate">
+                              {item.ingredient?.name}
+                            </span>
+                            {(item.quantity || item.unit) && (
+                              <span className="text-xs text-muted-foreground block truncate">
+                                {item.quantity} {item.unit}
+                              </span>
+                            )}
+                          </div>
+                          {item.notes && (
+                            <div
+                              className="ml-1 text-[10px] text-muted-foreground italic max-w-[80px] truncate"
+                              title={item.notes}
+                            >
+                              {item.notes}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
 
               <Separator className="my-4" />
 

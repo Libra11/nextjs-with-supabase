@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Ingredient } from "@/types/recipe";
+import { Ingredient, IngredientCategory } from "@/types/recipe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -63,7 +63,7 @@ import { useRouter } from "next/navigation";
 
 interface IngredientListProps {
   initialIngredients: Ingredient[];
-  categories: string[];
+  categories: IngredientCategory[];
 }
 
 export default function IngredientList({
@@ -110,7 +110,7 @@ export default function IngredientList({
     // 应用分类过滤
     if (categoryFilter) {
       filtered = filtered.filter(
-        (ingredient) => ingredient.category === categoryFilter
+        (ingredient) => ingredient.category_id === categoryFilter
       );
     }
 
@@ -126,8 +126,7 @@ export default function IngredientList({
       const created = await createIngredient({
         name: newIngredient.name.trim(),
         icon: newIngredient.icon.trim() || null,
-        category: newIngredient.category,
-        category_id: null,
+        category_id: newIngredient.category,
       });
 
       if (created) {
@@ -152,7 +151,7 @@ export default function IngredientList({
       const updated = await updateIngredient(editIngredient.id, {
         name: editIngredient.name.trim(),
         icon: editIngredient.icon?.trim() || null,
-        category: editIngredient.category,
+        category_id: editIngredient.category_id,
       });
 
       if (updated) {
@@ -204,6 +203,13 @@ export default function IngredientList({
   const openDeleteConfirm = (ingredient: Ingredient) => {
     setIngredientToDelete(ingredient);
     setDeleteConfirmOpen(true);
+  };
+
+  // Find category name by id
+  const getCategoryNameById = (categoryId: string | null) => {
+    if (!categoryId) return null;
+    const category = categories.find(c => c.id === categoryId);
+    return category ? category.name : null;
   };
 
   return (
@@ -266,8 +272,8 @@ export default function IngredientList({
                     <SelectContent>
                       <SelectItem value="none">无分类</SelectItem>
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -288,6 +294,19 @@ export default function IngredientList({
                       })
                     }
                   />
+                  {newIngredient.icon && (
+                    <div className="mt-2 relative h-10 w-10 overflow-hidden rounded-md">
+                      <img
+                        src={newIngredient.icon}
+                        alt="图标预览"
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://via.placeholder.com/40?text=错误";
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <DialogFooter>
@@ -307,7 +326,6 @@ export default function IngredientList({
             </DialogContent>
           </Dialog>
         </CardHeader>
-
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <Input
@@ -326,8 +344,8 @@ export default function IngredientList({
               <SelectContent>
                 <SelectItem value="none">全部分类</SelectItem>
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -348,21 +366,18 @@ export default function IngredientList({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[80px]">图标</TableHead>
-                <TableHead className="w-[200px]">名称</TableHead>
-                <TableHead className="w-[150px]">分类</TableHead>
-                <TableHead className="w-[120px] text-right">操作</TableHead>
+                <TableHead className="w-12">图标</TableHead>
+                <TableHead>名称</TableHead>
+                <TableHead>分类</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredIngredients.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center text-muted-foreground py-8"
-                  >
+                  <TableCell colSpan={4} className="h-24 text-center">
                     {searchTerm || categoryFilter
-                      ? "没有匹配的配料，请尝试其他搜索条件"
+                      ? "没有符合筛选条件的配料"
                       : "暂无配料数据，请点击 添加配料 按钮创建"}
                   </TableCell>
                 </TableRow>
@@ -392,9 +407,9 @@ export default function IngredientList({
                       {ingredient.name}
                     </TableCell>
                     <TableCell>
-                      {ingredient.category ? (
+                      {ingredient.category_id ? (
                         <span className="px-2 py-1 bg-primary/10 text-primary rounded-md text-xs font-medium">
-                          {ingredient.category}
+                          {getCategoryNameById(ingredient.category_id)}
                         </span>
                       ) : (
                         <span className="text-muted-foreground">无分类</span>
@@ -459,13 +474,13 @@ export default function IngredientList({
                 分类
               </label>
               <Select
-                value={editIngredient?.category || "none"}
+                value={editIngredient?.category_id || "none"}
                 onValueChange={(value) =>
                   setEditIngredient(
                     editIngredient
                       ? {
                           ...editIngredient,
-                          category: value === "none" ? null : value,
+                          category_id: value === "none" ? null : value,
                         }
                       : null
                   )
@@ -477,8 +492,8 @@ export default function IngredientList({
                 <SelectContent>
                   <SelectItem value="none">无分类</SelectItem>
                   {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
