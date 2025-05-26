@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { Clock, ChefHat, Utensils, ArrowLeft } from "lucide-react";
 import { RecipeTabs } from "./components/recipe-tabs";
 import { ActionButtons, SaveRecipeButton } from "./components/recipe-actions";
+import { ImageViewer } from "./components/image-viewer";
 
 export const revalidate = 3600; // 每小时重新验证一次
 
@@ -312,19 +313,11 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <div
+                                <ImageViewer 
                                   key={imgIndex}
-                                  className="relative h-40 sm:h-48 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border/40 group"
-                                >
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                                  <Image
-                                    src={imageUrl}
-                                    alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
-                                    fill
-                                    sizes="(max-width: 640px) 50vw, 33vw"
-                                    className="object-cover transition-transform group-hover:scale-105 duration-300"
-                                  />
-                                </div>
+                                  imageUrl={imageUrl}
+                                  alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
+                                />
                               ))}
                             </div>
                           )}
@@ -370,19 +363,11 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <div
+                                <ImageViewer 
                                   key={imgIndex}
-                                  className="relative h-40 sm:h-48 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border/40 group"
-                                >
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                                  <Image
-                                    src={imageUrl}
-                                    alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
-                                    fill
-                                    sizes="(max-width: 640px) 50vw, 33vw"
-                                    className="object-cover transition-transform group-hover:scale-105 duration-300"
-                                  />
-                                </div>
+                                  imageUrl={imageUrl}
+                                  alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
+                                />
                               ))}
                             </div>
                           )}
@@ -430,19 +415,11 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <div
+                                <ImageViewer 
                                   key={imgIndex}
-                                  className="relative h-40 sm:h-48 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-border/40 group"
-                                >
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
-                                  <Image
-                                    src={imageUrl}
-                                    alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
-                                    fill
-                                    sizes="(max-width: 640px) 50vw, 33vw"
-                                    className="object-cover transition-transform group-hover:scale-105 duration-300"
-                                  />
-                                </div>
+                                  imageUrl={imageUrl}
+                                  alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
+                                />
                               ))}
                             </div>
                           )}
