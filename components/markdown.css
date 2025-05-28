@@ -27,6 +27,29 @@
   @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500;
 }
 
+/* 图片样式 */
+.markdown-content img {
+  @apply block my-4 rounded-lg shadow-md;
+  @apply max-w-full h-auto;
+  @apply transition-all duration-300;
+}
+
+.markdown-content img + p {
+  @apply clear-none;
+}
+
+.markdown-content figure {
+  @apply my-6 inline-block;
+}
+
+.markdown-content figure img {
+  @apply mb-2;
+}
+
+.markdown-content figcaption {
+  @apply text-sm text-muted-foreground text-center italic;
+}
+
 .markdown-content del {
   @apply relative text-gray-400;
   @apply after:absolute after:left-0 after:right-0 after:top-1/2;
