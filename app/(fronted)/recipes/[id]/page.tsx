@@ -57,27 +57,39 @@ export default async function RecipeDetailPage({
   const finalSteps = stepsWithImageArrays.filter(
     (step) => step.step_type === "final"
   );
-  
+
   // 对配料进行分类
-  const ingredientsByCategory = recipe.ingredients.reduce((grouped, ingredient) => {
-    const categoryId = ingredient.ingredient?.category_id || 'uncategorized';
-    const categoryName = ingredient.ingredient?.ingredient_category?.name || '未分类';
-    
-    if (!grouped[categoryId]) {
-      grouped[categoryId] = {
-        id: categoryId,
-        name: categoryName,
-        icon: ingredient.ingredient?.ingredient_category?.icon || null,
-        ingredients: []
-      };
-    }
-    
-    grouped[categoryId].ingredients.push(ingredient);
-    return grouped;
-  }, {} as Record<string, { id: string, name: string, icon: string | null, ingredients: typeof recipe.ingredients }>);
-  
+  const ingredientsByCategory = recipe.ingredients.reduce(
+    (grouped, ingredient) => {
+      const categoryId = ingredient.ingredient?.category_id || "uncategorized";
+      const categoryName =
+        ingredient.ingredient?.ingredient_category?.name || "未分类";
+
+      if (!grouped[categoryId]) {
+        grouped[categoryId] = {
+          id: categoryId,
+          name: categoryName,
+          icon: ingredient.ingredient?.ingredient_category?.icon || null,
+          ingredients: [],
+        };
+      }
+
+      grouped[categoryId].ingredients.push(ingredient);
+      return grouped;
+    },
+    {} as Record<
+      string,
+      {
+        id: string;
+        name: string;
+        icon: string | null;
+        ingredients: typeof recipe.ingredients;
+      }
+    >
+  );
+
   // 转换为数组并按名称排序
-  const sortedCategories = Object.values(ingredientsByCategory).sort((a, b) => 
+  const sortedCategories = Object.values(ingredientsByCategory).sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
@@ -194,20 +206,27 @@ export default async function RecipeDetailPage({
                 </Badge>
               </div>
               <Separator className="mb-3" />
-              
+
               <div className="max-h-[calc(100vh-15rem)] overflow-y-auto pr-1">
                 {sortedCategories.map((category) => (
                   <div key={category.id} className="mb-4">
                     <div className="flex items-center bg-muted/50 rounded-md py-1.5 px-2 mb-2">
                       {category.icon && (
-                        <img src={category.icon} alt="" className="w-4 h-4 mr-1.5" />
+                        <img
+                          src={category.icon}
+                          alt=""
+                          className="w-4 h-4 mr-1.5"
+                        />
                       )}
                       <h3 className="text-xs font-medium">{category.name}</h3>
-                      <Badge variant="outline" className="ml-2 text-[10px] rounded-full h-4 px-1.5">
+                      <Badge
+                        variant="outline"
+                        className="ml-2 text-[10px] rounded-full h-4 px-1.5"
+                      >
                         {category.ingredients.length}
                       </Badge>
                     </div>
-                    
+
                     <ul className="space-y-2">
                       {category.ingredients.map((item) => (
                         <li
@@ -223,7 +242,9 @@ export default async function RecipeDetailPage({
                               />
                             ) : (
                               <div className="w-5 h-5 bg-primary/10 rounded-full flex items-center justify-center">
-                                <span className="text-[9px] text-primary">配料</span>
+                                <span className="text-[9px] text-primary">
+                                  配料
+                                </span>
                               </div>
                             )}
                           </div>
@@ -290,7 +311,7 @@ export default async function RecipeDetailPage({
                     <h3 className="text-lg font-semibold">准备工作</h3>
                   </div>
 
-                  <div className="space-y-4 pl-8">
+                  <div className="space-y-4">
                     {preparationSteps.map((step, index) => (
                       <Card
                         key={step.id}
@@ -313,7 +334,7 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <ImageViewer 
+                                <ImageViewer
                                   key={imgIndex}
                                   imageUrl={imageUrl}
                                   alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
@@ -340,7 +361,7 @@ export default async function RecipeDetailPage({
                     <h3 className="text-lg font-semibold">烹饪过程</h3>
                   </div>
 
-                  <div className="space-y-4 pl-8">
+                  <div className="space-y-4">
                     {cookingSteps.map((step, index) => (
                       <Card
                         key={step.id}
@@ -363,7 +384,7 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <ImageViewer 
+                                <ImageViewer
                                   key={imgIndex}
                                   imageUrl={imageUrl}
                                   alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
@@ -392,7 +413,7 @@ export default async function RecipeDetailPage({
                     <h3 className="text-lg font-semibold">完成步骤</h3>
                   </div>
 
-                  <div className="space-y-4 pl-8">
+                  <div className="space-y-4">
                     {finalSteps.map((step, index) => (
                       <Card
                         key={step.id}
@@ -415,7 +436,7 @@ export default async function RecipeDetailPage({
                           {step.imageUrls && step.imageUrls.length > 0 && (
                             <div className="grid grid-cols-2 xs:grid-cols-2 gap-2 mt-3 relative">
                               {step.imageUrls.map((imageUrl, imgIndex) => (
-                                <ImageViewer 
+                                <ImageViewer
                                   key={imgIndex}
                                   imageUrl={imageUrl}
                                   alt={`步骤 ${step.step_number} 图片 ${imgIndex + 1}`}
