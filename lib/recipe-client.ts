@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/client';
-import { Ingredient, RecipeCategory, IngredientCategory } from '@/types/recipe';
+import { Ingredient, RecipeCategory, IngredientCategory, RecipeWithDetails } from '@/types/recipe';
 
 // 创建配料
 export async function createIngredient(ingredient: Omit<Ingredient, 'id' | 'created_at'>) {
@@ -326,4 +326,101 @@ export async function getIngredientsByCategory(categoryId: string) {
   }
   
   return data as Ingredient[];
+}
+
+// 从JSON导入菜谱
+export async function importRecipeFromJson(recipeData: RecipeWithDetails) {
+  const supabase = createClient();
+  try {
+    // 1. 创建菜谱基本信息
+    const { data: recipe, error: recipeError } = await supabase
+      .from('recipes')
+      .insert({
+        title: recipeData.title,
+        description: recipeData.description,
+        difficulty_level: recipeData.difficulty_level,
+        is_published: recipeData.is_published || false,
+        featured_image_url: recipeData.featured_image_url,
+      })
+      .select()
+      .single();
+
+    if (recipeError || !recipe) {
+      console.error('Error creating recipe:', recipeError);
+      throw new Error(`创建菜谱失败: ${recipeError?.message || '未知错误'}`);
+    }
+
+    const recipeId = recipe.id;
+
+    // 2. 添加分类
+    if (recipeData.categories && recipeData.categories.length > 0) {
+      const mappings = recipeData.categories.map(category => ({
+        recipe_id: recipeId,
+        category_id: category.id,
+      }));
+
+      const { error: categoryError } = await supabase
+        .from('recipe_category_mappings')
+        .insert(mappings);
+
+      if (categoryError) {
+        console.error('Error adding categories:', categoryError);
+        // 继续执行，即使分类添加失败
+      }
+    }
+
+    // 3. 添加配料
+    if (recipeData.ingredients && recipeData.ingredients.length > 0) {
+      const ingredientUsages = recipeData.ingredients.map((ingredient, index) => ({
+        recipe_id: recipeId,
+        ingredient_id: ingredient.ingredient_id,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+        notes: ingredient.notes,
+        order: index + 1,
+      }));
+
+      const { error: ingredientsError } = await supabase
+        .from('recipe_ingredient_usage')
+        .insert(ingredientUsages);
+
+      if (ingredientsError) {
+        console.error('Error adding ingredients:', ingredientsError);
+        throw new Error(`添加配料失败: ${ingredientsError.message}`);
+      }
+    }
+
+    // 4. 添加步骤
+    if (recipeData.steps && recipeData.steps.length > 0) {
+      const recipeSteps = recipeData.steps.map(step => ({
+        recipe_id: recipeId,
+        step_number: step.step_number,
+        instruction: step.instruction,
+        image_url: step.image_url,
+        step_type: step.step_type || 'cooking',
+      }));
+
+      const { error: stepsError } = await supabase
+        .from('recipe_steps')
+        .insert(recipeSteps);
+
+      if (stepsError) {
+        console.error('Error adding steps:', stepsError);
+        throw new Error(`添加步骤失败: ${stepsError.message}`);
+      }
+    }
+
+    return {
+      success: true,
+      message: '菜谱导入成功',
+      recipeId: recipeId
+    };
+  } catch (error: any) {
+    console.error('Error importing recipe:', error);
+    return {
+      success: false,
+      message: error.message || '导入菜谱失败',
+      error
+    };
+  }
 } 

@@ -53,6 +53,7 @@ import {
   searchIngredients,
   getAllCategories,
   createCategory,
+  importRecipeFromJson,
 } from "@/lib/recipe-client";
 import { Search, Plus, ChevronDown, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -128,6 +129,10 @@ export default function RecipeForm({
     name: "",
     description: "",
   });
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importJson, setImportJson] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   // 初始化表单
   const form = useForm<RecipeFormValues>({
@@ -595,8 +600,123 @@ export default function RecipeForm({
     }
   };
 
+  // 处理JSON导入
+  const handleImportRecipe = async () => {
+    setIsImporting(true);
+    setImportError(null);
+    try {
+      const recipeData = JSON.parse(importJson);
+      const result = await importRecipeFromJson(recipeData);
+      
+      if (result.success) {
+        setShowImportDialog(false);
+        setImportJson("");
+        router.push(`/dashboard/recipes`);
+        router.refresh();
+      } else {
+        setImportError(result.message);
+      }
+    } catch (error: any) {
+      setImportError(error.message || "导入失败，请检查JSON格式是否正确");
+      console.error("Error importing recipe:", error);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{isEditing ? "编辑菜谱" : "创建菜谱"}</h1>
+        <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+          <DialogTrigger asChild>
+            <Button variant="outline" type="button">
+              导入JSON
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
+            <DialogHeader>
+              <DialogTitle>从JSON导入菜谱</DialogTitle>
+              <DialogDescription>
+                粘贴包含菜谱数据的JSON内容，一键导入菜谱。
+                请确保JSON格式正确，包含必要的字段。
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-2 overflow-y-auto pr-2" style={{maxHeight: "60vh"}}>
+              <Textarea
+                placeholder="粘贴JSON数据..."
+                className="h-[180px] font-mono text-sm"
+                value={importJson}
+                onChange={(e) => setImportJson(e.target.value)}
+              />
+              <details className="text-xs text-gray-500">
+                <summary className="cursor-pointer">查看JSON格式示例</summary>
+                <pre className="mt-2 rounded bg-gray-100 p-2 overflow-auto text-xs max-h-[200px]">
+{`{
+  "title": "示例菜谱名称",
+  "description": "这是一个示例菜谱描述",
+  "difficulty_level": "中等",
+  "is_published": true,
+  "featured_image_url": "https://example.com/image.jpg",
+  "categories": [
+    {"id": "分类ID1", "name": "分类名称1"},
+    {"id": "分类ID2", "name": "分类名称2"}
+  ],
+  "ingredients": [
+    {
+      "ingredient_id": "配料ID1",
+      "quantity": 100,
+      "unit": "克",
+      "notes": "切块",
+      "order": 1
+    },
+    {
+      "ingredient_id": "配料ID2",
+      "quantity": 2,
+      "unit": "个",
+      "notes": null,
+      "order": 2
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "instruction": "第一步操作说明",
+      "image_url": "https://example.com/step1.jpg",
+      "step_type": "preparation"
+    },
+    {
+      "step_number": 2,
+      "instruction": "第二步操作说明",
+      "image_url": "https://example.com/step2-1.jpg||https://example.com/step2-2.jpg||https://example.com/step2-3.jpg",
+      "step_type": "cooking"
+    },
+    {
+      "step_number": 3,
+      "instruction": "第三步操作说明",
+      "image_url": null,
+      "step_type": "final"
+    }
+  ]
+}`}
+                </pre>
+              </details>
+              {importError && (
+                <div className="text-red-500 text-sm">{importError}</div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                onClick={handleImportRecipe}
+                disabled={!importJson.trim() || isImporting}
+              >
+                {isImporting ? "导入中..." : "导入菜谱"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
