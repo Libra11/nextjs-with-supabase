@@ -152,10 +152,12 @@ export function OverlappingCards<T>({
             zIndex: hoveredIndex === index ? 50 : index,
             rotateY: hoveredIndex === index ? 0 : index % 2 === 0 ? 2 : -2,
           }}
-          transition={{
-            ...animationConfig.transition,
-            rotateY: { duration: 0.3 },
-          }}
+          transition={
+            {
+              ...animationConfig.transition,
+              rotateY: { duration: 0.3 },
+            } as any
+          }
           onHoverStart={() => handleHoverStart(index)}
           onHoverEnd={handleHoverEnd}
         >

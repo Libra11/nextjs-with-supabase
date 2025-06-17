@@ -337,7 +337,7 @@ export function AnimatedLogo({
 
           {/* Permanent particle effects */}
           {displayParticles.map((particle, i) => {
-            const variants = getParticleVariants(i);
+            const variants: any = getParticleVariants(i);
             return (
               <motion.div
                 key={`particle-${particle.id}`}

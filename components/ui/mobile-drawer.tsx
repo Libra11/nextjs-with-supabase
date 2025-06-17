@@ -61,7 +61,7 @@ export function MobileDrawer({
     };
   }, [isOpen]);
 
-  const drawerVariants = {
+  const drawerVariants: any = {
     hidden: {
       x: position === "right" ? "100%" : "-100%",
       opacity: 0.5,
@@ -109,7 +109,7 @@ export function MobileDrawer({
     },
   };
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: {
       opacity: 0,
       x: position === "right" ? 20 : -20,

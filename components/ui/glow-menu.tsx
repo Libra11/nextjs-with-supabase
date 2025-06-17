@@ -37,7 +37,7 @@ const backVariants = {
   hover: { rotateX: 0, opacity: 1 },
 };
 
-const glowVariants = {
+const glowVariants: any = {
   initial: { opacity: 0, scale: 0.8 },
   hover: {
     opacity: 1,
@@ -49,7 +49,7 @@ const glowVariants = {
   },
 };
 
-const navGlowVariants = {
+const navGlowVariants: any = {
   initial: { opacity: 0 },
   hover: {
     opacity: 1,
@@ -60,7 +60,7 @@ const navGlowVariants = {
   },
 };
 
-const sharedTransition = {
+const sharedTransition: any = {
   type: "spring",
   stiffness: 100,
   damping: 20,
