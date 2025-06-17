@@ -30,6 +30,7 @@ export default function Home() {
   const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
 
   useEffect(() => {
+    console.log("nextjs 15");
     Promise.all(
       Object.entries(icons).map(async ([name, importFn]: any) => {
         const icon = await importFn();
