@@ -198,6 +198,7 @@ export async function getBlogs(
     tagIds?: number[];
     status?: string;
     title?: string;
+    is_top?: boolean;
   } = {}
 ): Promise<{ blogs: BlogWithTags[]; count: number }> {
   try {
@@ -242,6 +243,11 @@ export async function getBlogs(
     // 应用标题筛选
     if (filters.title) {
       query = query.ilike("title", `%${filters.title}%`);
+    }
+
+    // 应用置顶筛选
+    if (typeof filters.is_top === "boolean") {
+      query = query.eq("is_top", filters.is_top);
     }
 
     // 添加排序并执行查询

@@ -113,7 +113,7 @@ export function InfiniteScroll({
   }, [loading, hasMore, threshold, initialized]);
 
   return (
-    <div>
+    <div className="min-h-1">
       <div ref={loadingRef}>
         {loading && (
           <div className={loaderClassName}>

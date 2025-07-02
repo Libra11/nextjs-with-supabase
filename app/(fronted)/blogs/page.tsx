@@ -22,9 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogsPage() {
   // 定义状态
-  const [blogsWithUrls, setBlogsWithUrls] = useState<
-    (BlogWithTags & { coverImageUrl: string })[]
-  >([]);
   const [toppedBlogs, setToppedBlogs] = useState<
     (BlogWithTags & { coverImageUrl: string })[]
   >([]);
@@ -43,7 +40,8 @@ export default function BlogsPage() {
 
   const PAGE_SIZE = 8; // 每页显示的博客数量
 
-  const loadingRef = useRef(false);
+  const loadingToppedRef = useRef(false);
+  const loadingRegularRef = useRef(false);
   const currentPageRef = useRef(1);
 
   // 确保组件已挂载，防止 hydration 不匹配
@@ -57,28 +55,49 @@ export default function BlogsPage() {
     return url || "";
   };
 
-  // 加载博客数据并处理封面图片
-  const loadBlogs = async (isInitialLoad = false) => {
-    if (loadingRef.current) return;
-
+  // 加载置顶博客
+  const loadToppedBlogs = async () => {
+    if (loadingToppedRef.current) return;
     try {
-      loadingRef.current = true;
+      loadingToppedRef.current = true;
+      const { blogs: topped } = await getBlogs(1, 99, {
+        status: "published",
+        is_top: true,
+      });
+      if (topped) {
+        const toppedWithUrls = await Promise.all(
+          topped.map(async (blog) => ({
+            ...blog,
+            coverImageUrl: blog.cover_image
+              ? await getCoverImage(blog.cover_image)
+              : "",
+          }))
+        );
+        setToppedBlogs(toppedWithUrls);
+      }
+    } catch (error) {
+      console.error("加载置顶博客失败", error);
+    } finally {
+      loadingToppedRef.current = false;
+    }
+  };
 
+  // 加载常规博客
+  const loadRegularBlogs = async (isInitialLoad = false) => {
+    if (loadingRegularRef.current) return;
+    try {
+      loadingRegularRef.current = true;
       const { blogs: newBlogs, count } = await getBlogs(
         currentPageRef.current,
         PAGE_SIZE,
-        { status: "published" }
+        { status: "published", is_top: false }
       );
 
       if (!newBlogs || newBlogs.length === 0) {
         setHasMore(false);
-        if (isInitialLoad) {
-          setInitialLoadComplete(true);
-        }
         return;
       }
 
-      // 处理新获取的博客封面图片
       const blogsWithCoverUrls = await Promise.all(
         newBlogs.map(async (blog) => ({
           ...blog,
@@ -88,33 +107,26 @@ export default function BlogsPage() {
         }))
       );
 
-      // 更新数据
-      if (isInitialLoad) {
-        setBlogsWithUrls(blogsWithCoverUrls);
-      } else {
-        setBlogsWithUrls((prev) => [...prev, ...blogsWithCoverUrls]);
-      }
-
-      // 更新分页状态
-      const nextPage = currentPageRef.current + 1;
+      setRegularBlogs((prev) =>
+        isInitialLoad ? blogsWithCoverUrls : [...prev, ...blogsWithCoverUrls]
+      );
       setHasMore(currentPageRef.current * PAGE_SIZE < count);
-
-      // 更新页码
-      currentPageRef.current = nextPage;
+      currentPageRef.current += 1;
+    } catch (error) {
+      console.error("加载常规博客失败", error);
+    } finally {
+      loadingRegularRef.current = false;
       if (isInitialLoad) {
         setInitialLoadComplete(true);
       }
-    } catch (error) {
-      console.error("加载博客失败", error);
-    } finally {
-      loadingRef.current = false;
     }
   };
 
-  // 组件挂载或重置时加载初始数据
+  // 组件挂载时加载初始数据
   useEffect(() => {
     if (mounted) {
-      loadBlogs(true);
+      loadToppedBlogs();
+      loadRegularBlogs(true);
       loadBlogStats();
     }
   }, [mounted]);
@@ -129,19 +141,9 @@ export default function BlogsPage() {
     }
   };
 
-  // 分离置顶和普通博客
-  useEffect(() => {
-    if (blogsWithUrls.length > 0) {
-      const topped = blogsWithUrls.filter((blog) => blog.is_top);
-      const regular = blogsWithUrls.filter((blog) => !blog.is_top);
-      setToppedBlogs(topped);
-      setRegularBlogs(regular);
-    }
-  }, [blogsWithUrls]);
-
   const loadMore = async () => {
-    if (!initialLoadComplete || loadingRef.current) return;
-    await loadBlogs();
+    if (!initialLoadComplete || loadingRegularRef.current || !hasMore) return;
+    await loadRegularBlogs();
   };
 
   // 如果组件还未挂载，返回骨架屏
@@ -213,7 +215,7 @@ export default function BlogsPage() {
             />
           </div>
         </div>
-      ) : loadingRef.current && !initialLoadComplete ? (
+      ) : loadingToppedRef.current ? (
         <div className="mb-16">
           <h2 className="title-gradient">置顶推荐</h2>
           <div className="relative w-full h-[346px] bg-card/50 rounded-xl overflow-hidden">
@@ -230,14 +232,14 @@ export default function BlogsPage() {
         <h2 className="title-gradient">最新文章</h2>
       </div>
 
-      {blogsWithUrls.length === 0 && !loadingRef.current ? (
+      {regularBlogs.length === 0 && !loadingRegularRef.current ? (
         <div className="text-center py-12">
           <p className="text-xl text-muted-foreground">暂无博客文章</p>
         </div>
       ) : (
         <>
           {/* 博客列表 - 显示骨架屏或实际内容 */}
-          {loadingRef.current && regularBlogs.length === 0 ? (
+          {loadingRegularRef.current && regularBlogs.length === 0 ? (
             <BlogSkeleton />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -250,13 +252,12 @@ export default function BlogsPage() {
               ))}
             </div>
           )}
-
           {/* 无限滚动加载组件 */}
           {initialLoadComplete && (
             <InfiniteScroll
               hasMore={hasMore}
               loadMore={loadMore}
-              isLoading={loadingRef.current}
+              isLoading={loadingRegularRef.current}
               loadingText="加载更多博客..."
               endMessage="已经到底了，没有更多博客了"
               loaderClassName="flex justify-center items-center py-10 text-muted-foreground"
