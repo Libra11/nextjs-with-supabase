@@ -385,3 +385,36 @@ export async function getPublicUrl(
     throw new Error("获取公共URL失败");
   }
 }
+
+// 批量获取公共URLs - 优化版本
+export function getBatchPublicUrls(
+  bucket: string,
+  paths: string[],
+  options?: {
+    download?: boolean | string;
+    transform?: {
+      width?: number;
+      height?: number;
+      quality?: number;
+      format?: "origin";
+      resize?: "cover" | "contain" | "fill";
+    };
+  }
+): Record<string, string> {
+  try {
+    const urls: Record<string, string> = {};
+    
+    // 批量处理所有路径
+    paths.forEach(path => {
+      if (path) {
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path, options);
+        urls[path] = data.publicUrl;
+      }
+    });
+    
+    return urls;
+  } catch (error) {
+    console.error("批量获取公共URL失败:", error);
+    throw new Error("批量获取公共URL失败");
+  }
+}
