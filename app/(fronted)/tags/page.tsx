@@ -225,6 +225,11 @@ export default function TagsPage() {
         return;
       }
 
+      // 如果返回的博客数量少于页面大小，说明没有更多数据了
+      if (newBlogs.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
+
       // 处理新获取的博客封面图片
       const blogsWithCoverUrls = await Promise.all(
         newBlogs.map(async (blog) => ({
@@ -238,16 +243,23 @@ export default function TagsPage() {
       // 更新数据
       if (isInitialLoad) {
         setBlogsWithUrls(blogsWithCoverUrls);
+        // 初始加载时，如果数据量等于页面大小且小于总数，则可能还有更多数据
+        if (newBlogs.length === PAGE_SIZE) {
+          setHasMore(blogsWithCoverUrls.length < count);
+        }
       } else {
-        setBlogsWithUrls((prev) => [...prev, ...blogsWithCoverUrls]);
+        setBlogsWithUrls((prev) => {
+          const updatedBlogs = [...prev, ...blogsWithCoverUrls];
+          // 只有当返回的数据量等于页面大小时，才检查是否还有更多数据
+          if (newBlogs.length === PAGE_SIZE) {
+            setHasMore(updatedBlogs.length < count);
+          }
+          return updatedBlogs;
+        });
       }
 
-      // 更新分页状态
-      const nextPage = currentPageRef.current + 1;
-      setHasMore(currentPageRef.current * PAGE_SIZE < count);
-
       // 更新页码
-      currentPageRef.current = nextPage;
+      currentPageRef.current += 1;
 
       if (isInitialLoad) {
         setInitialLoadComplete(true);

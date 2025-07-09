@@ -205,6 +205,7 @@ export async function getBlogs(
     // 计算分页范围
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
+    
     // 构建基础查询
     let query = supabase.from("blogs").select(
       `
@@ -257,6 +258,40 @@ export async function getBlogs(
       .range(from, to);
 
     if (error) {
+      // 如果是范围超出错误，返回空数据但保持正确的总数
+      if (error.code === 'PGRST103') {
+        // 重新构建计数查询以获取正确的总数
+        let countQuery = supabase.from("blogs").select("*", { count: "exact", head: true });
+        
+        // 应用相同的筛选条件
+        if (filters.tagId || (filters.tagIds && filters.tagIds.length > 0)) {
+          const tagIds = filters.tagId ? [filters.tagId] : filters.tagIds || [];
+          const { data: blogTags } = await supabase
+            .from("blog_tags")
+            .select("blog_id")
+            .in("tag_id", tagIds);
+
+          if (blogTags && blogTags.length > 0) {
+            const blogIds = [...new Set(blogTags.map((item) => item.blog_id))];
+            countQuery = countQuery.in("id", blogIds);
+          }
+        }
+        
+        if (filters.status) {
+          countQuery = countQuery.eq("status", filters.status);
+        }
+        
+        if (filters.title) {
+          countQuery = countQuery.ilike("title", `%${filters.title}%`);
+        }
+        
+        if (typeof filters.is_top === "boolean") {
+          countQuery = countQuery.eq("is_top", filters.is_top);
+        }
+        
+        const { count: totalCount } = await countQuery;
+        return { blogs: [], count: totalCount || 0 };
+      }
       console.error("获取博客列表失败:", error);
       return { blogs: [], count: 0 };
     }
