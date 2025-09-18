@@ -22,6 +22,7 @@ import {
   ListFilter,
   Utensils,
   ChefHat,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import { NavItem, NavSection, NavGroup } from "@/components/dashboard/nav-links";
@@ -100,6 +101,22 @@ export default async function DashboardLayout({
               icon={<FileCode size={18} />}
               label="片段管理"
             />
+            <NavGroup
+              icon={<Globe size={18} />}
+              label="HTML文档"
+              defaultOpen={false}
+            >
+              <NavItem
+                href="/dashboard/html-documents"
+                icon={<FileText size={16} />}
+                label="文档管理"
+              />
+              <NavItem
+                href="/dashboard/html-categories"
+                icon={<ListFilter size={16} />}
+                label="分类管理"
+              />
+            </NavGroup>
             
             <NavGroup
               icon={<ChefHat size={18} />}

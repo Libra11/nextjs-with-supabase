@@ -17,6 +17,7 @@ import {
   FileCode,
   Menu,
   UtensilsCrossed,
+  CreditCard,
 } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
@@ -55,6 +56,14 @@ const menuItems = [
     gradient:
       "radial-gradient(circle, rgba(124,58,237,0.15) 0%, rgba(109,40,217,0.06) 50%, rgba(91,33,182,0) 100%)",
     iconColor: "text-purple-500",
+  },
+  {
+    icon: CreditCard,
+    label: "卡片",
+    href: "/html-documents",
+    gradient:
+      "radial-gradient(circle, rgba(236,72,153,0.15) 0%, rgba(219,39,119,0.06) 50%, rgba(190,24,93,0) 100%)",
+    iconColor: "text-pink-500",
   },
   {
     icon: UtensilsCrossed,

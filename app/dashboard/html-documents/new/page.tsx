@@ -1,0 +1,333 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, Save, Eye, icons } from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { HtmlCategory, CreateHtmlDocumentInput } from "@/types/html-document";
+import { getHtmlCategories, createHtmlDocument } from "@/lib/html-document";
+import { uploadFile, getPublicUrl } from "@/lib/bucket";
+import { BUCKET_NAME } from "@/const";
+import Image from "next/image";
+
+// 动态图标组件
+const DynamicIcon = ({ name, size = 16, className = "" }: { name?: string; size?: number; className?: string }) => {
+  if (!name) return null;
+  
+  const IconComponent = (icons as any)[name];
+  if (!IconComponent) {
+    return <span className={`text-muted-foreground ${className}`} style={{ fontSize: size }}>?</span>;
+  }
+  
+  return <IconComponent size={size} className={className} />;
+};
+
+// HTML预览组件，支持script执行
+const HtmlPreview = ({ html }: { html: string }) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (iframeRef.current && html) {
+      const iframe = iframeRef.current;
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      
+      if (doc) {
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+                body { 
+                  margin: 0; 
+                  padding: 16px; 
+                  font-family: system-ui, -apple-system, sans-serif;
+                  background: white;
+                }
+              </style>
+            </head>
+            <body>
+              ${html}
+            </body>
+          </html>
+        `);
+        doc.close();
+      }
+    }
+  }, [html]);
+
+  return (
+    <iframe
+      ref={iframeRef}
+      className="w-full min-h-[400px] border rounded-md bg-white"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="HTML预览"
+    />
+  );
+};
+
+export default function NewHtmlDocumentPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<HtmlCategory[]>([]);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState("");
+  
+  const [formData, setFormData] = useState<CreateHtmlDocumentInput>({
+    title: "",
+    content: "",
+    category_id: undefined,
+    cover_image_url: "",
+  });
+
+  // 加载分类
+  const loadCategories = async () => {
+    try {
+      const categoriesData = await getHtmlCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error("加载分类失败:", error);
+      toast.error("加载分类失败");
+    }
+  };
+
+  // 提交表单
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.title.trim()) {
+      toast.error("请输入标题");
+      return;
+    }
+    
+    if (!formData.content.trim()) {
+      toast.error("请输入内容");
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const submitData = {
+        ...formData,
+        category_id: formData.category_id || undefined,
+        cover_image_url: formData.cover_image_url || undefined,
+      };
+      
+      const result = await createHtmlDocument(submitData);
+      
+      if (result) {
+        toast.success("HTML文档创建成功");
+        router.push("/dashboard/html-documents");
+      } else {
+        toast.error("创建失败");
+      }
+    } catch (error) {
+      console.error("创建失败:", error);
+      toast.error("创建失败");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 更新表单数据
+  const updateFormData = (field: keyof CreateHtmlDocumentInput, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // 处理图片上传
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadLoading(true);
+      const data = await uploadFile(BUCKET_NAME, `html-covers/${file.name}`, file, {
+        upsert: true,
+      });
+      const url = await getPublicUrl(BUCKET_NAME, data.path);
+      setPreviewUrl(url || "");
+      updateFormData("cover_image_url", url || "");
+    } catch (error) {
+      console.error("上传失败:", error);
+      toast.error("图片上传失败");
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {/* 页面标题 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Link href="/dashboard/html-documents">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              返回列表
+            </Button>
+          </Link>
+          <h1 className="text-2xl font-bold">新建HTML文档</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setPreviewMode(!previewMode)}
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            {previewMode ? "编辑模式" : "预览模式"}
+          </Button>
+          <Button onClick={handleSubmit} disabled={loading}>
+            <Save className="mr-2 h-4 w-4" />
+            {loading ? "保存中..." : "保存文档"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 主要内容区 */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>文档内容</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="title">标题 *</Label>
+                <Input
+                  id="title"
+                  placeholder="请输入文档标题"
+                  value={formData.title}
+                  onChange={(e) => updateFormData("title", e.target.value)}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="content">HTML内容 *</Label>
+                {previewMode ? (
+                  <HtmlPreview html={formData.content} />
+                ) : (
+                  <Textarea
+                    id="content"
+                    placeholder="请输入HTML内容"
+                    value={formData.content}
+                    onChange={(e) => updateFormData("content", e.target.value)}
+                    className="min-h-[400px] font-mono text-sm"
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 侧边栏 */}
+        <div className="space-y-6">
+          {/* 基本设置 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>基本设置</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="category">分类</Label>
+                <Select
+                  value={formData.category_id?.toString() || "none"}
+                  onValueChange={(value) => 
+                    updateFormData("category_id", value === "none" ? undefined : parseInt(value))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="选择分类" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">无分类</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id.toString()}>
+                        <div className="flex items-center gap-2">
+                          <DynamicIcon name={category.icon} size={14} />
+                          <span>{category.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="cover_image">封面图片</Label>
+                <div className="space-y-4">
+                  <Input
+                    id="cover_image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadLoading}
+                  />
+                  <Input
+                    placeholder="或直接输入图片URL"
+                    value={formData.cover_image_url || ""}
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      updateFormData("cover_image_url", url);
+                      setPreviewUrl(url);
+                    }}
+                  />
+                  {previewUrl && (
+                    <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden border">
+                      <Image
+                        src={previewUrl}
+                        alt="封面预览"
+                        fill
+                        className="object-cover"
+                        onError={() => setPreviewUrl("")}
+                      />
+                    </div>
+                  )}
+                  {uploadLoading && (
+                    <div className="text-sm text-muted-foreground">上传中...</div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 操作提示 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>操作提示</CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground space-y-2">
+              <p>• 标题和内容为必填项</p>
+              <p>• 可以输入完整的HTML代码</p>
+              <p>• 使用预览模式查看渲染效果</p>
+              <p>• 封面图将显示在文档列表中</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
