@@ -10,14 +10,7 @@ import { useState, useEffect } from "react";
 import { HtmlDocumentWithCategory, HtmlCategory } from "@/types/html-document";
 import { getHtmlDocuments, getHtmlCategories } from "@/lib/html-document";
 import { Button } from "@/components/ui/button";
-import {
-  Globe,
-  Eye,
-  Calendar,
-  Filter,
-  X,
-  CreditCard,
-} from "lucide-react";
+import { Globe, Eye, Calendar, Filter, X, CreditCard } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -56,21 +49,21 @@ const DynamicIcon = ({
 
   const IconComponent = loadedIcons[name];
   return (
-    <div 
-      className={`inline-flex items-center justify-center ${className}`} 
-      style={{ 
-        width: size, 
+    <div
+      className={`inline-flex items-center justify-center ${className}`}
+      style={{
+        width: size,
         height: size,
-        flexShrink: 0 
+        flexShrink: 0,
       }}
     >
-      <IconComponent 
-        style={{ 
-          width: '100%', 
-          height: '100%',
+      <IconComponent
+        style={{
+          width: "100%",
+          height: "100%",
           maxWidth: size,
-          maxHeight: size
-        }} 
+          maxHeight: size,
+        }}
       />
     </div>
   );
@@ -90,18 +83,18 @@ const DocumentSkeleton = () => {
             <div className="w-8 h-3 bg-muted/60 rounded animate-pulse"></div>
           </div>
         </div>
-        
+
         {/* 内容区域骨架 */}
         <div className="flex-1 px-1 py-2 space-y-3">
           {/* 标题区域 */}
           <div className="h-5 bg-muted/40 rounded animate-pulse"></div>
-          
+
           {/* 描述区域 */}
           <div className="space-y-1">
             <div className="h-3 bg-muted/30 rounded w-3/4 animate-pulse"></div>
             <div className="h-3 bg-muted/30 rounded w-1/2 animate-pulse"></div>
           </div>
-          
+
           {/* 元数据区域 */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
@@ -180,7 +173,9 @@ const DocumentCard = ({
                       className="text-white"
                       loadedIcons={loadedIcons}
                     />
-                    <span className="text-[10px] font-medium">{mainCategory.name}</span>
+                    <span className="text-[10px] font-medium">
+                      {mainCategory.name}
+                    </span>
                   </div>
                 )}
               </div>
@@ -210,7 +205,9 @@ const DocumentCard = ({
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-3 h-3" />
-                      <span className="text-xs">{document.view_count} 次浏览</span>
+                      <span className="text-xs">
+                        {document.view_count} 次浏览
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -247,7 +244,9 @@ const DocumentCard = ({
                       className="text-white"
                       loadedIcons={loadedIcons}
                     />
-                    <span className="text-[10px] font-medium">{mainCategory.name}</span>
+                    <span className="text-[10px] font-medium">
+                      {mainCategory.name}
+                    </span>
                   </div>
                 )}
               </div>
@@ -272,7 +271,9 @@ const DocumentCard = ({
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-3 h-3" />
-                      <span className="text-xs">{document.view_count} 次浏览</span>
+                      <span className="text-xs">
+                        {document.view_count} 次浏览
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -350,7 +351,6 @@ export default function HtmlDocumentsPage() {
     loadDocuments(1, id);
   };
 
-
   // 获得已选分类名称
   const getSelectedCategoryName = () => {
     if (selectedCategory === "all") return "全部分类";
@@ -408,7 +408,7 @@ export default function HtmlDocumentsPage() {
   const isDark = currentTheme === "dark";
 
   return (
-    <div className="mx-auto max-w-[1200px] px-4 space-y-8">
+    <div className="mx-auto max-w-[1200px] space-y-8">
       {/* 添加动画样式 */}
       <style jsx global>
         {animationStyles}

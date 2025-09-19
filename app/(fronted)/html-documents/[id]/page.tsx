@@ -221,9 +221,6 @@ const HtmlRenderer = ({
                   height: auto !important;
                   min-height: auto !important;
                 }
-                body {
-                  padding: 20px;
-                }
                 * {
                   box-sizing: border-box;
                 }

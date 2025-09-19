@@ -131,31 +131,32 @@ export function CustomHeader() {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 w-full py-3 px-5 flex justify-between items-center">
-      <AnimatedLogo href="/" className="ml-1" />
+    <div>
+      <div className="fixed top-0 left-0 z-50 w-full py-3 px-5 flex justify-between items-center bg-background/80 backdrop-blur-lg">
+        <AnimatedLogo href="/" className="ml-1" />
 
-      {/* 桌面端菜单 - 在中等屏幕以上显示 */}
-      <div className="hidden md:block">
-        <MenuBar
-          items={menuItems}
-          activeItem={activeItem}
-          onItemClick={handleItemClick}
-        />
+        {/* 桌面端菜单 - 在中等屏幕以上显示 */}
+        <div className="hidden md:block">
+          <MenuBar
+            items={menuItems}
+            activeItem={activeItem}
+            onItemClick={handleItemClick}
+          />
+        </div>
+
+        {/* 搜索框 */}
+        <div className="flex items-center gap-2">
+          <SearchBox />
+        </div>
+
+        {/* 移动端菜单按钮 - 仅在小屏幕显示 */}
+        <button
+          className="md:hidden ml-2 p-2 rounded-full bg-background/80 backdrop-blur-lg border border-border/40"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          <Menu className="h-5 w-5 text-foreground" />
+        </button>
       </div>
-
-      {/* 搜索框 */}
-      <div className="flex items-center gap-2">
-        <SearchBox />
-      </div>
-
-      {/* 移动端菜单按钮 - 仅在小屏幕显示 */}
-      <button
-        className="md:hidden ml-2 p-2 rounded-full bg-background/80 backdrop-blur-lg border border-border/40"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      >
-        <Menu className="h-5 w-5 text-foreground" />
-      </button>
-
       {/* 移动端菜单抽屉 - 使用组件 */}
       <MobileDrawer
         isOpen={mobileMenuOpen}

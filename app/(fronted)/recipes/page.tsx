@@ -59,7 +59,7 @@ export default async function RecipesPage({
 
   return (
     <div className="min-h-screen">
-      <div className="container mx-auto py-8 md:py-12 px-4 md:px-6">
+      <div className="container mx-auto py-8 md:py-12 px-0 md:px-6">
         <div className="mb-8">
           <h1 className="title-gradient">美食菜谱</h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
