@@ -18,6 +18,7 @@ import {
   Menu,
   UtensilsCrossed,
   CreditCard,
+  Code2,
 } from "lucide-react";
 import { SearchBox } from "@/components/ui/search-box/index";
 import { usePathname, useRouter } from "next/navigation";
@@ -80,6 +81,14 @@ const menuItems = [
     gradient:
       "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
     iconColor: "text-green-500",
+  },
+  {
+    icon: Code2,
+    label: "LeetCode",
+    href: "/leetcode",
+    gradient:
+      "radial-gradient(circle, rgba(245,158,11,0.15) 0%, rgba(217,119,6,0.06) 50%, rgba(180,83,9,0) 100%)",
+    iconColor: "text-amber-500",
   },
   {
     icon: User,
