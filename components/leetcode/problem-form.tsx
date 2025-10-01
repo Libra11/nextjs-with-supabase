@@ -58,7 +58,7 @@ export function ProblemForm({ initialData, mode }: ProblemFormProps) {
   const [spaceComplexity, setSpaceComplexity] = useState(
     initialData?.space_complexity || ""
   );
-  const [status, setStatus] = useState(initialData?.status || "draft");
+  const [status, setStatus] = useState<"draft" | "published">(initialData?.status || "draft");
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -257,7 +257,7 @@ export function ProblemForm({ initialData, mode }: ProblemFormProps) {
       {/* Status */}
       <div>
         <Label htmlFor="status">状态 *</Label>
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={(value) => setStatus(value as "draft" | "published")}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
