@@ -210,7 +210,7 @@ pre {
 }
 
 /* 代码行样式 */
-.code-line {
+.markdown-content .code-line {
   @apply min-w-full px-4 relative inline-block leading-5;
   @apply transition-all duration-200;
   @apply border-l-4 border-transparent;
@@ -218,7 +218,7 @@ pre {
 }
 
 /* 行号样式 */
-.numbered-code-line::before {
+.markdown-content .numbered-code-line::before {
   content: attr(data-line-number);
   @apply inline-block;
   @apply w-[2em] mr-4 -ml-2;
@@ -272,12 +272,12 @@ pre {
 }
 
 /* 代码高亮样式优化 */
-.highlighted-code-line {
+.markdown-content .highlighted-code-line {
   @apply bg-blue-500/10 border-l-4 border-blue-500;
   @apply relative overflow-hidden;
 }
 
-.highlighted-code-line::after {
+.markdown-content .highlighted-code-line::after {
   content: "";
   @apply absolute inset-0;
   @apply bg-gradient-to-r from-blue-500/20 to-transparent;
@@ -285,12 +285,12 @@ pre {
 }
 
 /* 插入/删除行样式优化 */
-.code-line.inserted {
+.markdown-content .code-line.inserted {
   @apply bg-green-500/10 border-l-4 border-green-500;
   @apply relative overflow-hidden;
 }
 
-.code-line.deleted {
+.markdown-content .code-line.deleted {
   @apply bg-red-500/10 border-l-4 border-red-500;
   @apply relative overflow-hidden;
 }

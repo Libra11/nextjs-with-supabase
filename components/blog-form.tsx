@@ -41,6 +41,11 @@ import { getTags } from "@/lib/blog";
 import { uploadFile, getSignedUrl, getPublicUrl } from "@/lib/bucket";
 import Image from "next/image";
 import { BUCKET_NAME } from "@/const";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 const formSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
@@ -132,7 +137,7 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleFormSubmit)}
-        className="space-y-8"
+        className="space-y-8 pb-0"
       >
         <FormField
           control={form.control}
@@ -173,11 +178,23 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
             <FormItem>
               <FormLabel>内容</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="请输入博客内容"
-                  className="min-h-[200px]"
-                  {...field}
-                />
+                <div data-color-mode="dark" className="w-full overflow-hidden">
+                  <MDEditor
+                    value={field.value}
+                    onChange={field.onChange}
+                    preview="live"
+                    height={500}
+                    visibleDragbar={false}
+                    textareaProps={{
+                      placeholder: "请输入博客内容（支持 Markdown 格式）",
+                    }}
+                    style={{
+                      width: "100%",
+                      maxHeight: "500px",
+                      fontFamily: "inherit",
+                    }}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

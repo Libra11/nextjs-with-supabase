@@ -206,6 +206,15 @@ h6 {
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
+/* MDEditor 编辑区字体 */
+.w-md-editor-text-pre,
+.w-md-editor-text-input,
+.w-md-editor-text-pre > code {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace !important;
+}
+
 @layer utilities {
   .tag-grid {
     display: grid;
