@@ -190,7 +190,6 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
                     }}
                     style={{
                       width: "100%",
-                      maxHeight: "500px",
                       fontFamily: "inherit",
                     }}
                   />
