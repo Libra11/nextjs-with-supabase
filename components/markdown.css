@@ -229,7 +229,7 @@ pre {
 }
 
 /* 语言标签 */
-.code-language {
+.markdown-content .code-language {
   @apply px-2 py-1 rounded-md;
   @apply text-xs font-mono;
   @apply bg-white/5;
