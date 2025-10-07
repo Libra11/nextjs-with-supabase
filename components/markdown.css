@@ -68,7 +68,7 @@
   }
 }
 
-.markdown-content li {
+.markdown-content li:not(:has(ul)):not(:has(ol)) {
   @apply text-gray-200 w-fit;
   @apply transition-all duration-300;
   @apply hover:translate-x-2;
