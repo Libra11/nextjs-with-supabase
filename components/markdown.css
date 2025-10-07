@@ -407,3 +407,7 @@ pre {
 .markdown-content a:active {
   @apply scale-95;
 }
+
+.markdown-content hr {
+  margin: 24px 0 !important;
+}
