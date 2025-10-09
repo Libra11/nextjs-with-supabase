@@ -35,6 +35,8 @@ export function ProblemForm({ initialData, mode }: ProblemFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form state
+  const [jsonInput, setJsonInput] = useState("");
+  const [jsonError, setJsonError] = useState<string | null>(null);
   const [title, setTitle] = useState(initialData?.title || "");
   const [leetcodeId, setLeetcodeId] = useState(
     initialData?.leetcode_id?.toString() || ""
@@ -65,10 +67,12 @@ export function ProblemForm({ initialData, mode }: ProblemFormProps) {
       setTags([...tags, tagInput.trim()]);
       setTagInput("");
     }
+    setJsonError(null);
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
     setTags(tags.filter((tag) => tag !== tagToRemove));
+    setJsonError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,8 +110,119 @@ export function ProblemForm({ initialData, mode }: ProblemFormProps) {
     }
   };
 
+  const handleJsonImport = () => {
+    if (!jsonInput.trim()) {
+      setJsonError("请输入有效的 JSON 内容。");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(jsonInput);
+
+      if (parsed.title !== undefined) setTitle(String(parsed.title));
+      if (parsed.leetcode_id !== undefined)
+        setLeetcodeId(
+          parsed.leetcode_id === null || parsed.leetcode_id === ""
+            ? ""
+            : String(parsed.leetcode_id)
+        );
+      if (parsed.difficulty !== undefined) {
+        const normalizedDifficulty = String(parsed.difficulty).toLowerCase();
+        if (["easy", "medium", "hard"].includes(normalizedDifficulty)) {
+          setDifficulty(normalizedDifficulty as Difficulty);
+        } else {
+          throw new Error("difficulty 字段必须是 easy、medium 或 hard。");
+        }
+      }
+      if (parsed.description !== undefined)
+        setDescription(String(parsed.description));
+      if (parsed.solution !== undefined) setSolution(String(parsed.solution));
+      if (parsed.code !== undefined) setCode(String(parsed.code));
+
+      if (parsed.tags !== undefined) {
+        if (!Array.isArray(parsed.tags)) {
+          throw new Error("tags 字段必须是字符串数组。");
+        }
+        setTags(parsed.tags.map((tag: unknown) => String(tag)));
+      }
+
+      if (parsed.animation_component !== undefined)
+        setAnimationComponent(
+          parsed.animation_component === null
+            ? ""
+            : String(parsed.animation_component)
+        );
+      if (parsed.time_complexity !== undefined)
+        setTimeComplexity(String(parsed.time_complexity));
+      if (parsed.space_complexity !== undefined)
+        setSpaceComplexity(String(parsed.space_complexity));
+
+      if (parsed.status !== undefined) {
+        const normalizedStatus = String(parsed.status).toLowerCase();
+        if (["draft", "published"].includes(normalizedStatus)) {
+          setStatus(normalizedStatus as "draft" | "published");
+        } else {
+          throw new Error("status 字段必须是 draft 或 published。");
+        }
+      }
+
+      setJsonError(null);
+    } catch (error) {
+      console.error("JSON 导入失败:", error);
+      setJsonError(
+        error instanceof Error
+          ? `JSON 导入失败：${error.message}`
+          : "JSON 导入失败，请检查格式。"
+      );
+    }
+  };
+
+  const handleJsonReset = () => {
+    setJsonInput("");
+    setJsonError(null);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* JSON Import */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="json_import">JSON 导入</Label>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleJsonReset}
+            >
+              清空
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleJsonImport}
+            >
+              导入 JSON
+            </Button>
+          </div>
+        </div>
+        <Textarea
+          id="json_import"
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          rows={6}
+          placeholder='粘贴题目 JSON，例如：{"title":"两数之和", ... }'
+          className="font-mono text-xs"
+        />
+        <p className="text-xs text-muted-foreground">
+          支持字段：title、leetcode_id、difficulty、description、solution、code、tags、
+          animation_component、time_complexity、space_complexity、status。
+        </p>
+        {jsonError && (
+          <p className="text-xs text-destructive">{jsonError}</p>
+        )}
+      </div>
+
       {/* Title */}
       <div>
         <Label htmlFor="title">题目标题 *</Label>
