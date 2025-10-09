@@ -23,7 +23,7 @@ export function AnimationLoader({ name, className }: AnimationLoaderProps) {
   // If no animation name is provided
   if (!name) {
     return (
-      <div className={`flex items-center justify-center h-[400px] bg-muted/20 rounded-lg ${className || ""}`}>
+      <div className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}>
         <p className="text-muted-foreground">暂无动画演示</p>
       </div>
     );
@@ -33,7 +33,7 @@ export function AnimationLoader({ name, className }: AnimationLoaderProps) {
   const Component = AnimationMap[name];
   if (!Component) {
     return (
-      <div className={`flex items-center justify-center h-[400px] bg-muted/20 rounded-lg ${className || ""}`}>
+      <div className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}>
         <p className="text-muted-foreground">动画组件 &ldquo;{name}&rdquo; 未找到</p>
       </div>
     );
@@ -42,7 +42,7 @@ export function AnimationLoader({ name, className }: AnimationLoaderProps) {
   return (
     <Suspense
       fallback={
-        <div className={`h-[400px] space-y-4 ${className || ""}`}>
+        <div className={`min-h-[520px] space-y-4 ${className || ""}`}>
           <Skeleton className="h-full w-full rounded-lg" />
         </div>
       }
