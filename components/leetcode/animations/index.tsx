@@ -11,6 +11,7 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "two-sum": lazy(() => import("./TwoSumAnimation")),
   "group-anagrams": lazy(() => import("./GroupAnagramsAnimation")),
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
+  "move-zeroes": lazy(() => import("./MoveZeroesAnimation")),
   // Add more animations here as you create them
   // "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   // "binary-search": lazy(() => import("./BinarySearchAnimation")),
