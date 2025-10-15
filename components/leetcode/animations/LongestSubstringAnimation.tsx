@@ -1,3 +1,10 @@
+/**
+ * Author: Libra
+ * Date: 2025-10-15 14:43:55
+ * LastEditTime: 2025-10-15 15:22:06
+ * LastEditors: Libra
+ * Description:
+ */
 "use client";
 
 import {
@@ -146,27 +153,24 @@ export default function LongestSubstringAnimation() {
   const [inputError, setInputError] = useState<string | null>(null);
   const processedStepRef = useRef(-1);
 
-  const initializeState = useCallback(
-    (value: string, autoPlay = false) => {
-      const normalized = value.replace(/\r?\n/g, "");
-      setActiveString(normalized);
-      setChars(normalized.split(""));
-      const nextSteps = buildAnimationSteps(normalized);
-      setSteps(nextSteps);
-      setStepIndex(0);
-      setWindowStart(0);
-      setWindowEnd(-1);
-      setPendingIndex(null);
-      setRemovedIndex(null);
-      setCurrentSet([]);
-      setMaxWindow({ start: 0, end: -1, length: 0 });
-      setLogs([]);
-      setIsPlaying(autoPlay && nextSteps.length > 0);
-      setInputValue(normalized);
-      processedStepRef.current = -1;
-    },
-    []
-  );
+  const initializeState = useCallback((value: string, autoPlay = false) => {
+    const normalized = value.replace(/\r?\n/g, "");
+    setActiveString(normalized);
+    setChars(normalized.split(""));
+    const nextSteps = buildAnimationSteps(normalized);
+    setSteps(nextSteps);
+    setStepIndex(0);
+    setWindowStart(0);
+    setWindowEnd(-1);
+    setPendingIndex(null);
+    setRemovedIndex(null);
+    setCurrentSet([]);
+    setMaxWindow({ start: 0, end: -1, length: 0 });
+    setLogs([]);
+    setIsPlaying(autoPlay && nextSteps.length > 0);
+    setInputValue(normalized);
+    processedStepRef.current = -1;
+  }, []);
 
   useEffect(() => {
     initializeState(DEFAULT_STRING);
@@ -288,9 +292,12 @@ export default function LongestSubstringAnimation() {
   return (
     <div className="w-full min-h-[520px] rounded-lg bg-gradient-to-br from-background via-background/70 to-muted/20 p-6">
       <div className="text-center mb-6">
-        <h3 className="text-xl font-bold">无重复字符的最长子串 - 滑动窗口演示</h3>
+        <h3 className="text-xl font-bold">
+          无重复字符的最长子串 - 滑动窗口演示
+        </h3>
         <p className="text-sm text-muted-foreground mt-1">
-          通过滑动窗口与哈希集合实时维护窗口内字符，保证每个字符只被访问两次，实现 O(n) 求解。
+          通过滑动窗口与哈希集合实时维护窗口内字符，保证每个字符只被访问两次，实现
+          O(n) 求解。
         </p>
       </div>
 
@@ -391,9 +398,11 @@ export default function LongestSubstringAnimation() {
                     isRemoved
                       ? "border-destructive bg-destructive/10 text-destructive"
                       : inWindow
-                      ? "border-primary/80 bg-primary/10 text-primary"
-                      : "border-muted bg-muted/30 text-foreground",
-                    isPending && !isRemoved ? "shadow-lg shadow-primary/25" : "",
+                        ? "border-primary/80 bg-primary/10 text-primary"
+                        : "border-muted bg-muted/30 text-foreground",
+                    isPending && !isRemoved
+                      ? "shadow-lg shadow-primary/25"
+                      : "",
                     inMaxWindow ? "ring-2 ring-amber-500/70" : ""
                   );
 
@@ -420,14 +429,18 @@ export default function LongestSubstringAnimation() {
                           </motion.span>
                         )}
                         {isRemoved && (
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-4 text-[10px] font-semibold text-destructive">
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-1 text-[10px] font-semibold text-destructive">
                             移除
                           </span>
                         )}
                         <motion.div
                           className={cellClasses}
                           animate={{ y: isPending && !isRemoved ? -10 : 0 }}
-                          transition={{ type: "spring", stiffness: 280, damping: 18 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 280,
+                            damping: 18,
+                          }}
                         >
                           {formatChar(char)}
                         </motion.div>
@@ -470,8 +483,7 @@ export default function LongestSubstringAnimation() {
                 {maxWindow.length ? `"${maxWindowChars}"` : "暂未找到"}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">
-                left ={" "}
-                {maxWindow.length ? maxWindow.start : "-"}, right ={" "}
+                left = {maxWindow.length ? maxWindow.start : "-"}, right ={" "}
                 {maxWindow.length ? maxWindow.end : "-"}
               </div>
               <div className="mt-1 text-sm text-muted-foreground/80">
