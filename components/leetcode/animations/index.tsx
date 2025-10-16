@@ -13,6 +13,7 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
   "longest-substring": lazy(() => import("./LongestSubstringAnimation")),
   "find-anagrams": lazy(() => import("./FindAnagramsAnimation")),
+  "subarray-sum": lazy(() => import("./SubarraySumAnimation")),
   "move-zeroes": lazy(() => import("./MoveZeroesAnimation")),
   "max-water": lazy(() => import("./MaxWaterAnimation")),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
