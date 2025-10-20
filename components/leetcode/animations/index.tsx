@@ -17,6 +17,9 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "sliding-window-max": lazy(() => import("./SlidingWindowMaxAnimation")),
   "move-zeroes": lazy(() => import("./MoveZeroesAnimation")),
   "max-water": lazy(() => import("./MaxWaterAnimation")),
+  "minimum-window-substring": lazy(
+    () => import("./MinimumWindowSubstringAnimation")
+  ),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   // Add more animations here as you create them
