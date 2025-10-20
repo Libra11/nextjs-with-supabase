@@ -20,6 +20,8 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "minimum-window-substring": lazy(
     () => import("./MinimumWindowSubstringAnimation")
   ),
+  "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
+  "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   // Add more animations here as you create them
