@@ -21,6 +21,7 @@ const AnimationMap: Record<string, ComponentType<any>> = {
     () => import("./MinimumWindowSubstringAnimation")
   ),
   "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
+  "rotate-array": lazy(() => import("./RotateArrayAnimation")),
   "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
