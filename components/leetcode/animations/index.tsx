@@ -23,6 +23,10 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
   "rotate-array": lazy(() => import("./RotateArrayAnimation")),
   "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
+  "product-except-self": lazy(() => import("./ProductExceptSelfAnimation")),
+  "first-missing-positive": lazy(
+    () => import("./FirstMissingPositiveAnimation")
+  ),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   // Add more animations here as you create them
