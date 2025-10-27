@@ -27,6 +27,9 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "first-missing-positive": lazy(
     () => import("./FirstMissingPositiveAnimation")
   ),
+  "set-zeroes": lazy(() => import("./SetZeroesAnimation")),
+  "spiral-order": lazy(() => import("./SpiralOrderAnimation")),
+  "rotate-image": lazy(() => import("./RotateImageAnimation")),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   // Add more animations here as you create them
