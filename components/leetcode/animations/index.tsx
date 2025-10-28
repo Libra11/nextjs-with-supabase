@@ -32,6 +32,7 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "rotate-image": lazy(() => import("./RotateImageAnimation")),
   "three-sum": lazy(() => import("./ThreeSumAnimation")),
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
+  "search-matrix-ii": lazy(() => import("./SearchMatrixIIAnimation")),
   // Add more animations here as you create them
   // "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   // "binary-search": lazy(() => import("./BinarySearchAnimation")),
