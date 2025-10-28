@@ -141,7 +141,10 @@ export function OverlappingCards<T>({
       {items.map((item, index) => (
         <motion.div
           key={index}
-          className={cn("absolute shadow-2xl shadow-black", cardClassName)}
+          className={cn(
+            "absolute shadow-[0_24px_48px_-30px_rgba(15,23,42,0.25)] dark:shadow-[0_30px_60px_-35px_rgba(2,6,23,0.75)]",
+            cardClassName
+          )}
           style={{
             ...baseCardStyle,
             perspective: "1000px",

@@ -12,7 +12,6 @@ import {
   LogOut,
   FileText,
   Tag,
-  Settings,
   LayoutDashboard,
   Image,
   Bell,
@@ -26,7 +25,11 @@ import {
   Code2,
 } from "lucide-react";
 import Link from "next/link";
-import { NavItem, NavSection, NavGroup } from "@/components/dashboard/nav-links";
+import {
+  NavItem,
+  NavSection,
+  NavGroup,
+} from "@/components/dashboard/nav-links";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -72,7 +75,7 @@ export default async function DashboardLayout({
           <div className="relative">
             <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted/50 border border-muted text-sm text-muted-foreground">
               <Bell size={16} />
-              <span>最近更新: 2025年04月08日</span>
+              <span>最近更新: 2025年10月27日</span>
             </div>
           </div>
         </div>
@@ -105,17 +108,17 @@ export default async function DashboardLayout({
             <NavItem
               href="/dashboard/leetcode"
               icon={<Code2 size={18} />}
-              label="LeetCode 题目"
+              label="算法管理"
             />
             <NavGroup
               icon={<Globe size={18} />}
-              label="HTML文档"
+              label="卡片管理"
               defaultOpen={false}
             >
               <NavItem
                 href="/dashboard/html-documents"
                 icon={<FileText size={16} />}
-                label="文档管理"
+                label="全部卡片"
               />
               <NavItem
                 href="/dashboard/html-categories"
@@ -123,16 +126,16 @@ export default async function DashboardLayout({
                 label="分类管理"
               />
             </NavGroup>
-            
+
             <NavGroup
               icon={<ChefHat size={18} />}
-              label="菜谱系统"
+              label="菜谱管理"
               defaultOpen={true}
             >
               <NavItem
                 href="/dashboard/recipes"
                 icon={<UtensilsCrossed size={16} />}
-                label="菜谱管理"
+                label="全部菜谱"
               />
               <NavItem
                 href="/dashboard/categories"
@@ -145,11 +148,11 @@ export default async function DashboardLayout({
                 label="调料分类"
               />
             </NavGroup>
-            
+
             <NavItem
               href="/dashboard/buckets"
               icon={<Image size={18} />}
-              label="存储桶管理"
+              label="存储管理"
             />
           </NavSection>
         </nav>

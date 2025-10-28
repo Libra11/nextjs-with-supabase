@@ -269,7 +269,7 @@ const SectionTitle = ({
 }) => (
   <div className="flex items-center gap-3">
     {Icon && (
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary">
+      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-600 dark:border-primary/20 dark:bg-primary/10 dark:text-primary">
         <Icon className="h-5 w-5" />
       </span>
     )}
@@ -280,7 +280,7 @@ const SectionTitle = ({
 export default function Resume() {
   return (
     <div className="mx-auto max-w-[1100px] px-0 md:px-6 lg:px-0 py-10 md:py-16 !pt-0 space-y-12">
-      <header className="relative overflow-hidden rounded-xl border border-primary/10 bg-gradient-to-br from-zinc-900/80 via-zinc-950 to-black shadow-xl">
+      <header className="relative overflow-hidden rounded-xl border border-slate-200/70 dark:border-primary/10 bg-gradient-to-br from-white via-slate-100 to-slate-200 dark:from-zinc-900/80 dark:via-zinc-950 dark:to-black shadow-[0_24px_50px_-30px_rgba(15,23,42,0.18)] dark:shadow-2xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(79,70,229,0.25),transparent_60%)]" />
         <div className="relative z-10 flex flex-col gap-6 p-8 md:p-10">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
@@ -294,19 +294,19 @@ export default function Resume() {
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant="outline"
-                  className="border-primary/40 text-primary"
+                  className="border-slate-300 text-slate-700 dark:border-primary/40 dark:text-primary"
                 >
                   7+ 年经验 · 前端 / 全栈
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="border-primary/40 text-primary"
+                  className="border-slate-300 text-slate-700 dark:border-primary/40 dark:text-primary"
                 >
                   架构设计 · 可访问性 · 性能优化
                 </Badge>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-3 text-sm md:text-base text-primary/90">
+            <div className="flex flex-wrap items-center gap-3 text-sm md:text-base text-slate-600 dark:text-primary/90">
               {contactItems.map((item) =>
                 item.href ? (
                   <a
@@ -318,20 +318,20 @@ export default function Resume() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 transition-colors hover:bg-primary/10"
+                    className="flex items-center gap-2 rounded-full border border-slate-300 bg-white/70 px-4 py-1.5 text-slate-600 transition-colors hover:bg-white dark:border-primary/30 dark:bg-primary/5 dark:text-primary dark:hover:bg-primary/10"
                   >
                     {item.icon && (
-                      <item.icon className="h-4 w-4 text-primary" />
+                      <item.icon className="h-4 w-4 text-slate-500 dark:text-primary" />
                     )}
                     {item.label}
                   </a>
                 ) : (
                   <span
                     key={item.label}
-                    className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5"
+                    className="flex items-center gap-2 rounded-full border border-slate-300 bg-white/70 px-4 py-1.5 text-slate-600 dark:border-primary/30 dark:bg-primary/5 dark:text-primary"
                   >
                     {item.icon && (
-                      <item.icon className="h-4 w-4 text-primary" />
+                      <item.icon className="h-4 w-4 text-slate-500 dark:text-primary" />
                     )}
                     {item.label}
                   </span>
@@ -362,12 +362,12 @@ export default function Resume() {
           {skillSections.map((section) => (
             <div
               key={section.title}
-              className="group relative overflow-hidden rounded-xl border border-primary/10 bg-card/60 p-6 transition-shadow hover:shadow-lg hover:shadow-primary/10"
+              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white/80 p-6 transition-shadow hover:shadow-lg hover:shadow-slate-400/20 dark:border-primary/10 dark:bg-card/60 dark:hover:shadow-primary/10"
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent" />
               <div className="relative z-10 space-y-4">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-primary">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 dark:border-primary/20 dark:bg-primary/10 dark:text-primary">
                     <section.icon className="h-5 w-5" />
                   </span>
                   <h3 className="text-lg font-semibold">{section.title}</h3>
@@ -388,7 +388,7 @@ export default function Resume() {
 
       <section className="space-y-6">
         <SectionTitle icon={GraduationCap}>教育背景</SectionTitle>
-        <div className="rounded-xl border border-primary/10 bg-gradient-to-br from-zinc-900/60 via-zinc-950 to-black p-6 md:p-8">
+        <div className="rounded-xl border border-slate-200/70 dark:border-primary/10 bg-gradient-to-br from-white via-slate-100 to-slate-200 dark:from-zinc-900/60 dark:via-zinc-950 dark:to-black p-6 md:p-8 shadow-[0_20px_45px_-28px_rgba(15,23,42,0.18)] dark:shadow-2xl">
           <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-4">
             <div>
               <h3 className="text-lg md:text-xl font-semibold">
@@ -398,7 +398,7 @@ export default function Resume() {
                 高考 580+ · 扎实的计算机与算法基础
               </p>
             </div>
-            <div className="text-sm md:text-base text-primary/80">
+            <div className="text-sm md:text-base text-slate-600 dark:text-primary/80">
               2014 — 2018
             </div>
           </div>
@@ -407,9 +407,9 @@ export default function Resume() {
 
       <section className="space-y-6">
         <SectionTitle icon={Award}>精选项目</SectionTitle>
-        <div className="overflow-hidden rounded-xl border border-primary/10 bg-card/80 backdrop-blur-lg">
-          <table className="min-w-full divide-y divide-primary/15 text-sm md:text-base">
-            <thead className="bg-primary/10 uppercase tracking-wide text-xs md:text-sm text-primary">
+        <div className="overflow-hidden rounded-xl border border-slate-200/70 dark:border-primary/10 bg-card/80 backdrop-blur-lg shadow-[0_20px_45px_-30px_rgba(15,23,42,0.16)] dark:shadow-2xl">
+          <table className="min-w-full divide-y divide-slate-200 text-sm md:text-base dark:divide-primary/15">
+            <thead className="bg-slate-100/80 uppercase tracking-wide text-xs md:text-sm text-slate-600 dark:bg-primary/10 dark:text-primary">
               <tr>
                 <th className="px-6 py-4 text-left font-medium">项目</th>
                 <th className="px-6 py-4 text-left font-medium">亮点</th>
@@ -417,16 +417,16 @@ export default function Resume() {
                 <th className="px-6 py-4 text-left font-medium">体验地址</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary/10 text-muted-foreground">
+            <tbody className="divide-y divide-slate-200 text-slate-600 dark:divide-primary/10 dark:text-muted-foreground">
               {selectedProjects.map((project) => (
                 <tr
                   key={project.name}
-                  className="transition-colors hover:bg-primary/5"
+                  className="transition-colors hover:bg-slate-100/70 dark:hover:bg-primary/5"
                 >
-                  <td className="px-6 py-4 font-medium text-foreground">
+                  <td className="px-6 py-4 font-medium text-slate-700 dark:text-foreground">
                     {project.name}
                   </td>
-                  <td className="px-6 py-4 text-foreground/80">
+                  <td className="px-6 py-4 text-slate-600 dark:text-foreground/80">
                     {project.highlight}
                   </td>
                   <td className="px-6 py-4">{project.stack}</td>
@@ -457,20 +457,20 @@ export default function Resume() {
           {personalProjects.map((project) => (
             <div
               key={project.name}
-              className="rounded-xl border border-primary/10 bg-card/70 p-6 md:p-7 space-y-4 transition-colors hover:border-primary/30"
+              className="rounded-xl border border-slate-200/70 bg-white/85 p-6 md:p-7 space-y-4 transition-colors hover:border-slate-400/60 dark:border-primary/10 dark:bg-card/70 dark:hover:border-primary/30"
             >
               <div className="flex flex-col gap-1">
                 <h3 className="text-lg md:text-xl font-semibold">
                   {project.name}
                 </h3>
-                <span className="text-xs md:text-sm uppercase tracking-wide text-primary/80">
+                <span className="text-xs md:text-sm uppercase tracking-wide text-slate-500 dark:text-primary/80">
                   {project.stack}
                 </span>
               </div>
               <ul className="space-y-2.5 text-sm text-muted-foreground leading-relaxed">
                 {project.bullets.map((bullet) => (
                   <li key={bullet} className="pl-5 relative">
-                    <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-primary/60" />
+                    <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-slate-400 dark:bg-primary/60" />
                     {bullet}
                   </li>
                 ))}
@@ -486,22 +486,22 @@ export default function Resume() {
           {companyProjects.map((project) => (
             <div
               key={project.name}
-              className="rounded-xl border border-primary/10 bg-gradient-to-br from-zinc-900/70 via-zinc-950 to-black p-6 md:p-8 space-y-5"
+              className="rounded-xl border border-slate-200/70 bg-gradient-to-br from-white via-slate-50 to-slate-200 p-6 md:p-8 space-y-5 shadow-[0_24px_50px_-32px_rgba(15,23,42,0.18)] dark:border-primary/10 dark:bg-gradient-to-br dark:from-zinc-900/70 dark:via-zinc-950 dark:to-black dark:shadow-2xl"
             >
               <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-3">
                 <h3 className="text-lg md:text-xl font-semibold">
                   {project.name}
                 </h3>
-                <span className="text-xs md:text-sm uppercase tracking-wide text-primary/70">
+                <span className="text-xs md:text-sm uppercase tracking-wide text-slate-500 dark:text-primary/70">
                   {project.stack}
                 </span>
               </div>
               {project.meta && project.meta.length > 0 && (
-                <div className="flex flex-wrap gap-2 text-xs md:text-sm text-primary/70">
+                <div className="flex flex-wrap gap-2 text-xs md:text-sm text-slate-500 dark:text-primary/70">
                   {project.meta.map((meta) => (
                     <span
                       key={meta}
-                      className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1"
+                      className="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-slate-600 dark:border-primary/20 dark:bg-primary/10 dark:text-primary/70"
                     >
                       {meta}
                     </span>
@@ -516,7 +516,7 @@ export default function Resume() {
               <ul className="space-y-2.5 text-sm md:text-base text-muted-foreground leading-relaxed">
                 {project.bullets.map((bullet) => (
                   <li key={bullet} className="pl-5 relative">
-                    <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-primary/60" />
+                    <span className="absolute left-0 top-2 h-2 w-2 rounded-full bg-slate-400 dark:bg-primary/60" />
                     {bullet}
                   </li>
                 ))}
@@ -524,15 +524,15 @@ export default function Resume() {
               {project.extraSections?.map((section) => (
                 <div
                   key={section.title}
-                  className="rounded-xl border border-primary/15 bg-primary/5 px-4 py-4 md:px-5 md:py-5 space-y-2.5"
+                  className="rounded-xl border border-slate-200 bg-slate-100/80 px-4 py-4 md:px-5 md:py-5 space-y-2.5 dark:border-primary/15 dark:bg-primary/5"
                 >
-                  <p className="text-xs md:text-sm font-semibold uppercase tracking-wide text-primary">
+                  <p className="text-xs md:text-sm font-semibold uppercase tracking-wide text-slate-600 dark:text-primary">
                     {section.title}
                   </p>
-                  <ul className="space-y-2 text-xs md:text-sm text-primary/80">
+                  <ul className="space-y-2 text-xs md:text-sm text-slate-600 dark:text-primary/80">
                     {section.items.map((item) => (
                       <li key={item} className="pl-4 relative">
-                        <span className="absolute left-0 top-2 h-1.5 w-1.5 rounded-full bg-primary/60" />
+                        <span className="absolute left-0 top-2 h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-primary/60" />
                         {item}
                       </li>
                     ))}
@@ -547,9 +547,9 @@ export default function Resume() {
       <section className="space-y-6">
         <SectionTitle icon={Languages}>个人信息</SectionTitle>
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl border border-primary/10 bg-card/70 p-5 space-y-3">
+          <div className="rounded-xl border border-slate-200/70 bg-white/80 p-5 space-y-3 dark:border-primary/10 dark:bg-card/70">
             <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              <Languages className="h-4 w-4 text-primary" />
+              <Languages className="h-4 w-4 text-slate-500 dark:text-primary" />
               语言
             </p>
             <div className="flex flex-wrap gap-2">
@@ -557,16 +557,16 @@ export default function Resume() {
                 <Badge
                   key={language}
                   variant="outline"
-                  className="border-primary/40 text-primary"
+                  className="border-slate-300 text-slate-700 dark:border-primary/40 dark:text-primary"
                 >
                   {language}
                 </Badge>
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-primary/10 bg-card/70 p-5 space-y-3">
+          <div className="rounded-xl border border-slate-200/70 bg-white/80 p-5 space-y-3 dark:border-primary/10 dark:bg-card/70">
             <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              <Heart className="h-4 w-4 text-primary" />
+              <Heart className="h-4 w-4 text-slate-500 dark:text-primary" />
               兴趣
             </p>
             <div className="flex flex-wrap gap-2">
@@ -574,22 +574,22 @@ export default function Resume() {
                 <Badge
                   key={interest}
                   variant="outline"
-                  className="border-primary/40 text-primary"
+                  className="border-slate-300 text-slate-700 dark:border-primary/40 dark:text-primary"
                 >
                   {interest}
                 </Badge>
               ))}
             </div>
           </div>
-          <div className="rounded-xl border border-primary/10 bg-card/70 p-5 space-y-3">
+          <div className="rounded-xl border border-slate-200/70 bg-white/80 p-5 space-y-3 dark:border-primary/10 dark:bg-card/70">
             <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              <Share2 className="h-4 w-4 text-primary" />
+              <Share2 className="h-4 w-4 text-slate-500 dark:text-primary" />
               社区 & 分享
             </p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               {personalInfo.community.map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-primary/60" />
+                  <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-primary/60" />
                   <span>{item}</span>
                 </li>
               ))}

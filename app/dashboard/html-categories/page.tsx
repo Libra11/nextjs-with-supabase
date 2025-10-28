@@ -33,7 +33,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { HtmlCategory, CreateHtmlCategoryInput, UpdateHtmlCategoryInput } from "@/types/html-document";
+import {
+  HtmlCategory,
+  CreateHtmlCategoryInput,
+  UpdateHtmlCategoryInput,
+} from "@/types/html-document";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   getHtmlCategories,
@@ -56,31 +60,36 @@ import {
 } from "@/components/ui/select";
 
 // 动态图标组件
-const DynamicIcon = ({ name, size = 16, className = "", loadedIcons }: { 
-  name?: string; 
-  size?: number; 
+const DynamicIcon = ({
+  name,
+  size = 16,
+  className = "",
+  loadedIcons,
+}: {
+  name?: string;
+  size?: number;
   className?: string;
   loadedIcons?: Record<string, any>;
 }) => {
   if (!name || !loadedIcons || !loadedIcons[name]) return null;
-  
+
   const IconComponent = loadedIcons[name];
   return (
-    <div 
-      className={`inline-flex items-center justify-center ${className}`} 
-      style={{ 
-        width: size, 
+    <div
+      className={`inline-flex items-center justify-center ${className}`}
+      style={{
+        width: size,
         height: size,
-        flexShrink: 0 
+        flexShrink: 0,
       }}
     >
-      <IconComponent 
-        style={{ 
-          width: '100%', 
-          height: '100%',
+      <IconComponent
+        style={{
+          width: "100%",
+          height: "100%",
           maxWidth: size,
-          maxHeight: size
-        }} 
+          maxHeight: size,
+        }}
       />
     </div>
   );
@@ -92,12 +101,14 @@ export default function HtmlCategoriesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
-  
+
   // 对话框状态
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<HtmlCategory | null>(null);
-  
+  const [editingCategory, setEditingCategory] = useState<HtmlCategory | null>(
+    null
+  );
+
   // 表单数据
   const [formData, setFormData] = useState<CreateHtmlCategoryInput>({
     name: "",
@@ -109,8 +120,16 @@ export default function HtmlCategoriesPage() {
 
   // 常用颜色选项
   const colorOptions = [
-    "#007bff", "#28a745", "#dc3545", "#ffc107", "#17a2b8",
-    "#6c757d", "#343a40", "#f8f9fa", "#e83e8c", "#fd7e14"
+    "#007bff",
+    "#28a745",
+    "#dc3545",
+    "#ffc107",
+    "#17a2b8",
+    "#6c757d",
+    "#343a40",
+    "#f8f9fa",
+    "#e83e8c",
+    "#fd7e14",
   ];
 
   // 加载分类列表
@@ -219,7 +238,7 @@ export default function HtmlCategoriesPage() {
         toast.success("删除成功");
         loadCategories();
       } else {
-        toast.error("删除失败，可能有文档正在使用该分类");
+        toast.error("删除失败，可能有卡片正在使用该分类");
       }
     } catch (error) {
       console.error("删除失败:", error);
@@ -230,10 +249,13 @@ export default function HtmlCategoriesPage() {
   };
 
   // 更新表单字段
-  const updateFormField = (field: keyof CreateHtmlCategoryInput, value: any) => {
-    setFormData(prev => ({
+  const updateFormField = (
+    field: keyof CreateHtmlCategoryInput,
+    value: any
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -251,21 +273,33 @@ export default function HtmlCategoriesPage() {
   }, []);
 
   // 使用useCallback优化事件处理函数
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormField("name", e.target.value);
-  }, []);
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFormField("name", e.target.value);
+    },
+    []
+  );
 
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormField("description", e.target.value);
-  }, []);
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFormField("description", e.target.value);
+    },
+    []
+  );
 
-  const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormField("color", e.target.value);
-  }, []);
+  const handleColorChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFormField("color", e.target.value);
+    },
+    []
+  );
 
-  const handleSortOrderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormField("sort_order", parseInt(e.target.value) || 0);
-  }, []);
+  const handleSortOrderChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFormField("sort_order", parseInt(e.target.value) || 0);
+    },
+    []
+  );
 
   const handleColorSelect = useCallback((color: string) => {
     updateFormField("color", color);
@@ -278,7 +312,13 @@ export default function HtmlCategoriesPage() {
   }, []);
 
   // 表单组件
-  const CategoryForm = ({ onSubmit, submitText }: { onSubmit: () => void; submitText: string }) => (
+  const CategoryForm = ({
+    onSubmit,
+    submitText,
+  }: {
+    onSubmit: () => void;
+    submitText: string;
+  }) => (
     <div className="space-y-4">
       <div>
         <Label htmlFor="name">分类名称 *</Label>
@@ -304,32 +344,47 @@ export default function HtmlCategoriesPage() {
         <Label htmlFor="icon">图标</Label>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Select value={formData.icon} onValueChange={(value) => updateFormField("icon", value)}>
+            <Select
+              value={formData.icon}
+              onValueChange={(value) => updateFormField("icon", value)}
+            >
               <SelectTrigger className="flex-1">
                 <SelectValue placeholder="选择图标" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 <SelectGroup>
-                  {Object.entries(loadedIcons).map(([iconName, IconComponent]) => (
-                    <SelectItem key={iconName} value={iconName}>
-                      <div className="flex items-center">
-                        <div className="w-6 h-6 mr-2 flex items-center justify-center">
-                          <IconComponent />
+                  {Object.entries(loadedIcons).map(
+                    ([iconName, IconComponent]) => (
+                      <SelectItem key={iconName} value={iconName}>
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 mr-2 flex items-center justify-center">
+                            <IconComponent />
+                          </div>
+                          {iconName}
                         </div>
-                        {iconName}
-                      </div>
-                    </SelectItem>
-                  ))}
+                      </SelectItem>
+                    )
+                  )}
                 </SelectGroup>
               </SelectContent>
             </Select>
             <div className="flex items-center justify-center w-10 h-10 border rounded bg-muted">
-              <DynamicIcon name={formData.icon} size={18} loadedIcons={loadedIcons} />
+              <DynamicIcon
+                name={formData.icon}
+                size={18}
+                loadedIcons={loadedIcons}
+              />
             </div>
           </div>
           {formData.icon && loadedIcons[formData.icon] && (
             <div className="text-sm text-muted-foreground">
-              预览: <DynamicIcon name={formData.icon} size={16} loadedIcons={loadedIcons} className="inline-block ml-1" />
+              预览:{" "}
+              <DynamicIcon
+                name={formData.icon}
+                size={16}
+                loadedIcons={loadedIcons}
+                className="inline-block ml-1"
+              />
             </div>
           )}
         </div>
@@ -347,7 +402,7 @@ export default function HtmlCategoriesPage() {
               onChange={handleColorChange}
               className="flex-1"
             />
-            <div 
+            <div
               className="w-10 h-10 rounded border border-border"
               style={{ backgroundColor: formData.color }}
             />
@@ -412,9 +467,7 @@ export default function HtmlCategoriesPage() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>新建分类</DialogTitle>
-              <DialogDescription>
-                创建一个新的HTML文档分类
-              </DialogDescription>
+              <DialogDescription>创建一个新的知识卡片分类</DialogDescription>
             </DialogHeader>
             <CategoryForm onSubmit={handleSubmitCreate} submitText="创建分类" />
           </DialogContent>
@@ -449,7 +502,10 @@ export default function HtmlCategoriesPage() {
                   </TableRow>
                 ) : categories.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    <TableCell
+                      colSpan={7}
+                      className="text-center py-8 text-muted-foreground"
+                    >
                       暂无分类，点击右上角创建第一个分类
                     </TableCell>
                   </TableRow>
@@ -458,7 +514,11 @@ export default function HtmlCategoriesPage() {
                     <TableRow key={category.id}>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
-                          <DynamicIcon name={category.icon} size={16} loadedIcons={loadedIcons} />
+                          <DynamicIcon
+                            name={category.icon}
+                            size={16}
+                            loadedIcons={loadedIcons}
+                          />
                           {category.name}
                         </div>
                       </TableCell>
@@ -470,8 +530,14 @@ export default function HtmlCategoriesPage() {
                       <TableCell>
                         {category.icon ? (
                           <div className="flex items-center gap-2">
-                            <DynamicIcon name={category.icon} size={20} loadedIcons={loadedIcons} />
-                            <span className="text-sm text-muted-foreground">{category.icon}</span>
+                            <DynamicIcon
+                              name={category.icon}
+                              size={20}
+                              loadedIcons={loadedIcons}
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              {category.icon}
+                            </span>
                           </div>
                         ) : (
                           <span className="text-muted-foreground">无</span>
@@ -479,11 +545,13 @@ export default function HtmlCategoriesPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <div 
+                          <div
                             className="w-6 h-6 rounded border border-border"
                             style={{ backgroundColor: category.color }}
                           />
-                          <span className="text-sm font-mono">{category.color}</span>
+                          <span className="text-sm font-mono">
+                            {category.color}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>{category.sort_order}</TableCell>
@@ -494,10 +562,15 @@ export default function HtmlCategoriesPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Dialog open={isEditOpen && editingCategory?.id === category.id} onOpenChange={setIsEditOpen}>
+                          <Dialog
+                            open={
+                              isEditOpen && editingCategory?.id === category.id
+                            }
+                            onOpenChange={setIsEditOpen}
+                          >
                             <DialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="sm"
                                 onClick={() => handleEdit(category)}
                               >
@@ -511,14 +584,17 @@ export default function HtmlCategoriesPage() {
                                   修改分类信息
                                 </DialogDescription>
                               </DialogHeader>
-                              <CategoryForm onSubmit={handleSubmitUpdate} submitText="保存更改" />
+                              <CategoryForm
+                                onSubmit={handleSubmitUpdate}
+                                submitText="保存更改"
+                              />
                             </DialogContent>
                           </Dialog>
 
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="sm"
                                 disabled={deleting === category.id}
                               >
@@ -529,7 +605,8 @@ export default function HtmlCategoriesPage() {
                               <AlertDialogHeader>
                                 <AlertDialogTitle>确认删除</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  确定要删除分类 "{category.name}" 吗？如果有文档正在使用该分类，删除将失败。
+                                  确定要删除分类 "{category.name}"
+                                  吗？如果有卡片正在使用该分类，删除将失败。
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

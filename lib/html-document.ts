@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-09-16
  * @LastEditors: Libra
- * @Description: HTML文档数据访问层
+ * @Description: 知识卡片数据访问层
  */
 
 import { createClient } from "@/utils/supabase/client";
@@ -20,9 +20,9 @@ import {
 
 const supabase = createClient();
 
-// ====================== HTML文档 CRUD ======================
+// ====================== 知识卡片 CRUD ======================
 
-// 获取HTML文档列表（支持分页和筛选）
+// 获取知识卡片列表（支持分页和筛选）
 export async function getHtmlDocuments(
   page = 1,
   pageSize = 8,
@@ -32,15 +32,13 @@ export async function getHtmlDocuments(
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    let query = supabase
-      .from("html_documents")
-      .select(
-        `
+    let query = supabase.from("html_documents").select(
+      `
         *,
         category:html_categories(*)
       `,
-        { count: "exact" }
-      );
+      { count: "exact" }
+    );
 
     // 应用筛选条件
     if (filters.category_id) {
@@ -56,7 +54,7 @@ export async function getHtmlDocuments(
       .range(from, to);
 
     if (error) {
-      console.error("获取HTML文档列表失败:", error);
+      console.error("获取知识卡片列表失败:", error);
       return { documents: [], count: 0 };
     }
 
@@ -70,8 +68,10 @@ export async function getHtmlDocuments(
   }
 }
 
-// 根据ID获取HTML文档
-export async function getHtmlDocumentById(id: number): Promise<HtmlDocumentWithCategory | null> {
+// 根据ID获取知识卡片
+export async function getHtmlDocumentById(
+  id: number
+): Promise<HtmlDocumentWithCategory | null> {
   try {
     const { data, error } = await supabase
       .from("html_documents")
@@ -85,7 +85,7 @@ export async function getHtmlDocumentById(id: number): Promise<HtmlDocumentWithC
       .single();
 
     if (error) {
-      console.error("获取HTML文档详情失败:", error);
+      console.error("获取知识卡片详情失败:", error);
       return null;
     }
 
@@ -96,8 +96,10 @@ export async function getHtmlDocumentById(id: number): Promise<HtmlDocumentWithC
   }
 }
 
-// 创建HTML文档
-export async function createHtmlDocument(data: CreateHtmlDocumentInput): Promise<HtmlDocument | null> {
+// 创建知识卡片
+export async function createHtmlDocument(
+  data: CreateHtmlDocumentInput
+): Promise<HtmlDocument | null> {
   try {
     const { data: document, error } = await supabase
       .from("html_documents")
@@ -106,7 +108,7 @@ export async function createHtmlDocument(data: CreateHtmlDocumentInput): Promise
       .single();
 
     if (error) {
-      console.error("创建HTML文档失败:", error);
+      console.error("创建知识卡片失败:", error);
       return null;
     }
 
@@ -117,7 +119,7 @@ export async function createHtmlDocument(data: CreateHtmlDocumentInput): Promise
   }
 }
 
-// 更新HTML文档
+// 更新知识卡片
 export async function updateHtmlDocument(
   id: number,
   data: Omit<UpdateHtmlDocumentInput, "id">
@@ -131,7 +133,7 @@ export async function updateHtmlDocument(
       .single();
 
     if (error) {
-      console.error("更新HTML文档失败:", error);
+      console.error("更新知识卡片失败:", error);
       return null;
     }
 
@@ -142,7 +144,7 @@ export async function updateHtmlDocument(
   }
 }
 
-// 删除HTML文档
+// 删除知识卡片
 export async function deleteHtmlDocument(id: number): Promise<boolean> {
   try {
     const { error } = await supabase
@@ -151,7 +153,7 @@ export async function deleteHtmlDocument(id: number): Promise<boolean> {
       .eq("id", id);
 
     if (error) {
-      console.error("删除HTML文档失败:", error);
+      console.error("删除知识卡片失败:", error);
       return false;
     }
 
@@ -162,15 +164,17 @@ export async function deleteHtmlDocument(id: number): Promise<boolean> {
   }
 }
 
-// 增加HTML文档浏览量
-export async function incrementHtmlDocumentViewCount(id: number): Promise<boolean> {
+// 增加知识卡片浏览量
+export async function incrementHtmlDocumentViewCount(
+  id: number
+): Promise<boolean> {
   try {
     const { error } = await supabase.rpc("increment_html_document_view_count", {
       doc_id: id,
     });
 
     if (error) {
-      console.error("更新HTML文档浏览量失败:", error);
+      console.error("更新知识卡片浏览量失败:", error);
       return false;
     }
 
@@ -181,8 +185,10 @@ export async function incrementHtmlDocumentViewCount(id: number): Promise<boolea
   }
 }
 
-// 搜索HTML文档
-export async function searchHtmlDocuments(keyword: string): Promise<HtmlDocumentWithCategory[]> {
+// 搜索知识卡片
+export async function searchHtmlDocuments(
+  keyword: string
+): Promise<HtmlDocumentWithCategory[]> {
   try {
     if (!keyword.trim()) {
       return [];
@@ -201,7 +207,7 @@ export async function searchHtmlDocuments(keyword: string): Promise<HtmlDocument
       .limit(20);
 
     if (error) {
-      console.error("搜索HTML文档失败:", error);
+      console.error("搜索知识卡片失败:", error);
       return [];
     }
 
@@ -235,7 +241,9 @@ export async function getHtmlCategories(): Promise<HtmlCategory[]> {
 }
 
 // 根据ID获取HTML分类
-export async function getHtmlCategoryById(id: number): Promise<HtmlCategory | null> {
+export async function getHtmlCategoryById(
+  id: number
+): Promise<HtmlCategory | null> {
   try {
     const { data, error } = await supabase
       .from("html_categories")
@@ -256,7 +264,9 @@ export async function getHtmlCategoryById(id: number): Promise<HtmlCategory | nu
 }
 
 // 创建HTML分类
-export async function createHtmlCategory(data: CreateHtmlCategoryInput): Promise<HtmlCategory | null> {
+export async function createHtmlCategory(
+  data: CreateHtmlCategoryInput
+): Promise<HtmlCategory | null> {
   try {
     const { data: category, error } = await supabase
       .from("html_categories")
@@ -310,7 +320,7 @@ export async function updateHtmlCategory(
 // 删除HTML分类
 export async function deleteHtmlCategory(id: number): Promise<boolean> {
   try {
-    // 先检查是否有文档使用该分类
+    // 先检查是否有卡片使用该分类
     const { data: documents, error: checkError } = await supabase
       .from("html_documents")
       .select("id")
@@ -346,16 +356,16 @@ export async function deleteHtmlCategory(id: number): Promise<boolean> {
 
 // ====================== 统计功能 ======================
 
-// 获取HTML文档统计数据
+// 获取知识卡片统计数据
 export async function getHtmlDocumentStats(): Promise<HtmlDocumentStats> {
   try {
-    // 获取文档总数
+    // 获取卡片总数
     const { count: documentCount, error: docError } = await supabase
       .from("html_documents")
       .select("*", { count: "exact", head: true });
 
     if (docError) {
-      console.error("获取文档总数失败:", docError);
+      console.error("获取卡片总数失败:", docError);
     }
 
     // 获取分类总数
@@ -376,7 +386,8 @@ export async function getHtmlDocumentStats(): Promise<HtmlDocumentStats> {
       console.error("获取浏览量失败:", viewError);
     }
 
-    const totalViews = viewData?.reduce((sum, doc) => sum + (doc.view_count || 0), 0) || 0;
+    const totalViews =
+      viewData?.reduce((sum, doc) => sum + (doc.view_count || 0), 0) || 0;
 
     return {
       documentCount: documentCount || 0,

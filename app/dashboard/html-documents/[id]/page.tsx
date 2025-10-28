@@ -144,13 +144,13 @@ export default function EditHtmlDocumentPage() {
     cover_image_url: "",
   });
 
-  // 加载文档数据
+  // 加载卡片数据
   const loadDocument = async () => {
     setPageLoading(true);
     try {
       const doc = await getHtmlDocumentById(documentId);
       if (!doc) {
-        toast.error("文档不存在");
+        toast.error("卡片不存在");
         router.push("/dashboard/html-documents");
         return;
       }
@@ -169,8 +169,8 @@ export default function EditHtmlDocumentPage() {
         setPreviewUrl(doc.cover_image_url);
       }
     } catch (error) {
-      console.error("加载文档失败:", error);
-      toast.error("加载文档失败");
+      console.error("加载卡片失败:", error);
+      toast.error("加载卡片失败");
       router.push("/dashboard/html-documents");
     } finally {
       setPageLoading(false);
@@ -214,7 +214,7 @@ export default function EditHtmlDocumentPage() {
       const result = await updateHtmlDocument(documentId, submitData);
 
       if (result) {
-        toast.success("HTML文档更新成功");
+        toast.success("知识卡片更新成功");
         router.push("/dashboard/html-documents");
       } else {
         toast.error("更新失败");
@@ -289,7 +289,7 @@ export default function EditHtmlDocumentPage() {
   if (!document) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">文档不存在</p>
+        <p className="text-muted-foreground">卡片不存在</p>
         <Link href="/dashboard/html-documents">
           <Button className="mt-4">返回列表</Button>
         </Link>
@@ -308,7 +308,7 @@ export default function EditHtmlDocumentPage() {
               返回列表
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold">编辑HTML文档</h1>
+          <h1 className="text-2xl font-bold">编辑知识卡片</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -330,14 +330,14 @@ export default function EditHtmlDocumentPage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>文档内容</CardTitle>
+              <CardTitle>卡片内容</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="title">标题 *</Label>
                 <Input
                   id="title"
-                  placeholder="请输入文档标题"
+                  placeholder="请输入卡片标题"
                   value={formData.title || ""}
                   onChange={(e) => updateFormData("title", e.target.value)}
                 />
@@ -444,10 +444,10 @@ export default function EditHtmlDocumentPage() {
             </CardContent>
           </Card>
 
-          {/* 文档信息 */}
+          {/* 卡片信息 */}
           <Card>
             <CardHeader>
-              <CardTitle>文档信息</CardTitle>
+              <CardTitle>卡片信息</CardTitle>
             </CardHeader>
             <CardContent className="text-sm space-y-2">
               <div className="flex justify-between">
@@ -482,7 +482,7 @@ export default function EditHtmlDocumentPage() {
               <p>• 标题和内容为必填项</p>
               <p>• 可以输入完整的HTML代码</p>
               <p>• 使用预览模式查看渲染效果</p>
-              <p>• 封面图将显示在文档列表中</p>
+              <p>• 封面图将显示在卡片列表中</p>
             </CardContent>
           </Card>
         </div>

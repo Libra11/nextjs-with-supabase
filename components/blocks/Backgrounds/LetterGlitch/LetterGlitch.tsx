@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Author: Libra
  * Date: 2025-02-25 22:22:59
@@ -5,12 +7,13 @@
  * Description:
  */
 /*
-	jsrepo 1.40.1
-	Installed from https://reactbits.dev/ts/tailwind/
-	2-25-2025
+  jsrepo 1.40.1
+  Installed from https://reactbits.dev/ts/tailwind/
+  2-25-2025
 */
 
 import { useRef, useEffect } from "react";
+import { useTheme } from "next-themes";
 
 const LetterGlitch = ({
   glitchColors = ["#2b4539", "#61dca3", "#61b3dc"],
@@ -19,12 +22,24 @@ const LetterGlitch = ({
   outerVignette = true,
   smooth = true,
 }: {
-  glitchColors: string[];
-  glitchSpeed: number;
-  centerVignette: boolean;
-  outerVignette: boolean;
-  smooth: boolean;
+  glitchColors?: string[];
+  glitchSpeed?: number;
+  centerVignette?: boolean;
+  outerVignette?: boolean;
+  smooth?: boolean;
 }) => {
+  const { theme, resolvedTheme } = useTheme();
+  const currentTheme = resolvedTheme || theme;
+  const isDark = currentTheme === "dark";
+  const backgroundColor = isDark ? "#0f0f0f" : "#ffffff";
+  const outerVignetteColor = isDark
+    ? "rgba(15,15,15,0.85)"
+    : "rgba(148,163,184,0)";
+  const centerVignetteColor = isDark
+    ? "rgba(15,15,15,0.8)"
+    : "rgba(255,255,255,0.85)";
+  const transparentStop = isDark ? "rgba(15,15,15,0)" : "rgba(255,255,255,0)";
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
   const letters = useRef<
@@ -300,13 +315,26 @@ const LetterGlitch = ({
   }, [glitchSpeed, smooth]);
 
   return (
-    <div className="relative w-full h-full bg-[#0f0f0f] overflow-hidden">
+    <div
+      className="relative w-full h-full overflow-hidden"
+      style={{ backgroundColor }}
+    >
       <canvas ref={canvasRef} className="block w-full h-full" />
       {outerVignette && (
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(15,15,15,0)_60%,_rgba(15,15,15,1)_100%)]"></div>
+        <div
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, ${transparentStop} 60%, ${outerVignetteColor} 100%)`,
+          }}
+        ></div>
       )}
       {centerVignette && (
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(15,15,15,0.8)_0%,_rgba(15,15,15,0)_60%)]"></div>
+        <div
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, ${centerVignetteColor} 0%, ${transparentStop} 60%)`,
+          }}
+        ></div>
       )}
     </div>
   );

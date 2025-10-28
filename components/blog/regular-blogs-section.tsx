@@ -113,7 +113,7 @@ export function RegularBlogsSection() {
             <BlogCard
               key={blog.id}
               blog={blog}
-              bgClassName="shadow-[inset_0px_0px_25px_12px_#222222] overflow-hidden"
+              bgClassName="overflow-hidden border border-slate-200/80 dark:border-slate-800/70 bg-white/90 dark:bg-[#101223]/85 shadow-[0_24px_50px_-32px_rgba(15,23,42,0.28)] dark:shadow-[inset_0_0_25px_12px_rgba(12,12,18,0.65)]"
             />
           ));
         }, [allBlogs])}

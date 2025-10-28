@@ -85,7 +85,7 @@ export default function LeetCodePage() {
         {/* Header */}
         <div className="mb-8">
           <div className="relative inline-block">
-            <h2 className="title-gradient">LeetCode 刷题</h2>
+            <h2 className="title-gradient">算法刷题</h2>
           </div>
           <p className="text-lg text-muted-foreground">
             共 {totalCount} 道题目，配有算法动画演示

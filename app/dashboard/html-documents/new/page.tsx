@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Save, Eye, icons } from "lucide-react";
+import { ArrowLeft, Save, Eye } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -22,17 +22,42 @@ import { getHtmlCategories, createHtmlDocument } from "@/lib/html-document";
 import { uploadFile, getPublicUrl } from "@/lib/bucket";
 import { BUCKET_NAME } from "@/const";
 import Image from "next/image";
+import { icons } from "@/icons.config";
 
 // 动态图标组件
-const DynamicIcon = ({ name, size = 16, className = "" }: { name?: string; size?: number; className?: string }) => {
-  if (!name) return null;
-  
-  const IconComponent = (icons as any)[name];
-  if (!IconComponent) {
-    return <span className={`text-muted-foreground ${className}`} style={{ fontSize: size }}>?</span>;
-  }
-  
-  return <IconComponent size={size} className={className} />;
+const DynamicIcon = ({
+  name,
+  size = 16,
+  className = "",
+  loadedIcons,
+}: {
+  name?: string;
+  size?: number;
+  className?: string;
+  loadedIcons?: Record<string, any>;
+}) => {
+  if (!name || !loadedIcons || !loadedIcons[name]) return null;
+
+  const IconComponent = loadedIcons[name];
+  return (
+    <div
+      className={`inline-flex items-center justify-center ${className}`}
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+      }}
+    >
+      <IconComponent
+        style={{
+          width: "100%",
+          height: "100%",
+          maxWidth: size,
+          maxHeight: size,
+        }}
+      />
+    </div>
+  );
 };
 
 // HTML预览组件，支持script执行
@@ -43,7 +68,7 @@ const HtmlPreview = ({ html }: { html: string }) => {
     if (iframeRef.current && html) {
       const iframe = iframeRef.current;
       const doc = iframe.contentDocument || iframe.contentWindow?.document;
-      
+
       if (doc) {
         doc.open();
         doc.write(`
@@ -88,7 +113,8 @@ export default function NewHtmlDocumentPage() {
   const [previewMode, setPreviewMode] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
-  
+  const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
+
   const [formData, setFormData] = useState<CreateHtmlDocumentInput>({
     title: "",
     content: "",
@@ -110,30 +136,30 @@ export default function NewHtmlDocumentPage() {
   // 提交表单
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim()) {
       toast.error("请输入标题");
       return;
     }
-    
+
     if (!formData.content.trim()) {
       toast.error("请输入内容");
       return;
     }
 
     setLoading(true);
-    
+
     try {
       const submitData = {
         ...formData,
         category_id: formData.category_id || undefined,
         cover_image_url: formData.cover_image_url || undefined,
       };
-      
+
       const result = await createHtmlDocument(submitData);
-      
+
       if (result) {
-        toast.success("HTML文档创建成功");
+        toast.success("知识卡片创建成功");
         router.push("/dashboard/html-documents");
       } else {
         toast.error("创建失败");
@@ -148,9 +174,9 @@ export default function NewHtmlDocumentPage() {
 
   // 更新表单数据
   const updateFormData = (field: keyof CreateHtmlDocumentInput, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -161,9 +187,14 @@ export default function NewHtmlDocumentPage() {
 
     try {
       setUploadLoading(true);
-      const data = await uploadFile(BUCKET_NAME, `html-covers/${file.name}`, file, {
-        upsert: true,
-      });
+      const data = await uploadFile(
+        BUCKET_NAME,
+        `html-covers/${file.name}`,
+        file,
+        {
+          upsert: true,
+        }
+      );
       const url = await getPublicUrl(BUCKET_NAME, data.path);
       setPreviewUrl(url || "");
       updateFormData("cover_image_url", url || "");
@@ -177,6 +208,14 @@ export default function NewHtmlDocumentPage() {
 
   useEffect(() => {
     loadCategories();
+    Promise.all(
+      Object.entries(icons).map(async ([name, importFn]: any) => {
+        const icon = await importFn();
+        return [name, icon.default] as const;
+      })
+    ).then((loadedPairs) => {
+      setLoadedIcons(Object.fromEntries(loadedPairs));
+    });
   }, []);
 
   return (
@@ -190,7 +229,7 @@ export default function NewHtmlDocumentPage() {
               返回列表
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold">新建HTML文档</h1>
+          <h1 className="text-2xl font-bold">新建知识卡片</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -202,7 +241,7 @@ export default function NewHtmlDocumentPage() {
           </Button>
           <Button onClick={handleSubmit} disabled={loading}>
             <Save className="mr-2 h-4 w-4" />
-            {loading ? "保存中..." : "保存文档"}
+            {loading ? "保存中..." : "保存卡片"}
           </Button>
         </div>
       </div>
@@ -212,14 +251,14 @@ export default function NewHtmlDocumentPage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>文档内容</CardTitle>
+              <CardTitle>卡片内容</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="title">标题 *</Label>
                 <Input
                   id="title"
-                  placeholder="请输入文档标题"
+                  placeholder="请输入卡片标题"
                   value={formData.title}
                   onChange={(e) => updateFormData("title", e.target.value)}
                 />
@@ -255,8 +294,11 @@ export default function NewHtmlDocumentPage() {
                 <Label htmlFor="category">分类</Label>
                 <Select
                   value={formData.category_id?.toString() || "none"}
-                  onValueChange={(value) => 
-                    updateFormData("category_id", value === "none" ? undefined : parseInt(value))
+                  onValueChange={(value) =>
+                    updateFormData(
+                      "category_id",
+                      value === "none" ? undefined : parseInt(value)
+                    )
                   }
                 >
                   <SelectTrigger>
@@ -265,9 +307,16 @@ export default function NewHtmlDocumentPage() {
                   <SelectContent>
                     <SelectItem value="none">无分类</SelectItem>
                     {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
+                      <SelectItem
+                        key={category.id}
+                        value={category.id.toString()}
+                      >
                         <div className="flex items-center gap-2">
-                          <DynamicIcon name={category.icon} size={14} />
+                          <DynamicIcon
+                            name={category.icon}
+                            size={14}
+                            loadedIcons={loadedIcons}
+                          />
                           <span>{category.name}</span>
                         </div>
                       </SelectItem>
@@ -307,7 +356,9 @@ export default function NewHtmlDocumentPage() {
                     </div>
                   )}
                   {uploadLoading && (
-                    <div className="text-sm text-muted-foreground">上传中...</div>
+                    <div className="text-sm text-muted-foreground">
+                      上传中...
+                    </div>
                   )}
                 </div>
               </div>
@@ -323,7 +374,7 @@ export default function NewHtmlDocumentPage() {
               <p>• 标题和内容为必填项</p>
               <p>• 可以输入完整的HTML代码</p>
               <p>• 使用预览模式查看渲染效果</p>
-              <p>• 封面图将显示在文档列表中</p>
+              <p>• 封面图将显示在卡片列表中</p>
             </CardContent>
           </Card>
         </div>

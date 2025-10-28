@@ -1,4 +1,11 @@
 /**
+ * Author: Libra
+ * Date: 2025-10-02 00:44:21
+ * LastEditTime: 2025-10-27 23:43:17
+ * LastEditors: Libra
+ * Description: 
+*/
+/**
  * LeetCode Problems Management Page
  */
 "use client";
@@ -14,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import { LeetCodeProblem, Difficulty } from "@/types/leetcode";
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import {
   getProblems,
   deleteProblem,
@@ -51,6 +59,15 @@ import {
 } from "@/components/ui/dialog";
 import MarkdownContent from "@/components/markdown-content";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function LeetCodeManagementPage() {
   const [problems, setProblems] = useState<LeetCodeProblem[]>([]);
@@ -78,10 +95,17 @@ export default function LeetCodeManagementPage() {
     try {
       setIsLoading(true);
 
-      if (searchKeyword || searchStatus !== "all" || searchDifficulty !== "all") {
+      if (
+        searchKeyword ||
+        searchStatus !== "all" ||
+        searchDifficulty !== "all"
+      ) {
         const data = await searchProblemsAdmin(searchKeyword, {
           status: searchStatus !== "all" ? (searchStatus as any) : undefined,
-          difficulty: searchDifficulty !== "all" ? (searchDifficulty as Difficulty) : undefined,
+          difficulty:
+            searchDifficulty !== "all"
+              ? (searchDifficulty as Difficulty)
+              : undefined,
           page: currentPage,
           pageSize: pageSize,
         });
@@ -142,12 +166,137 @@ export default function LeetCodeManagementPage() {
     setIsPreviewOpen(true);
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (value: string) => {
+    setPageSize(Number(value));
+    setCurrentPage(1);
+  };
+
+  const renderPaginationItems = (): ReactNode[] => {
+    const items: ReactNode[] = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              onClick={() => handlePageChange(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+      return items;
+    }
+
+    items.push(
+      <PaginationItem key={1}>
+        <PaginationLink
+          onClick={() => handlePageChange(1)}
+          isActive={currentPage === 1}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    if (currentPage <= 3) {
+      for (let i = 2; i <= 4; i++) {
+        if (i <= totalPages) {
+          items.push(
+            <PaginationItem key={i}>
+              <PaginationLink
+                onClick={() => handlePageChange(i)}
+                isActive={currentPage === i}
+              >
+                {i}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+      }
+
+      if (totalPages > 4) {
+        items.push(
+          <PaginationItem key="ellipsis-start">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+    } else if (currentPage >= totalPages - 2) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+
+      for (let i = totalPages - 3; i < totalPages; i++) {
+        if (i > 1) {
+          items.push(
+            <PaginationItem key={i}>
+              <PaginationLink
+                onClick={() => handlePageChange(i)}
+                isActive={currentPage === i}
+              >
+                {i}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+      }
+    } else {
+      items.push(
+        <PaginationItem key="ellipsis-left">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              onClick={() => handlePageChange(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      items.push(
+        <PaginationItem key="ellipsis-right">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    items.push(
+      <PaginationItem key={totalPages}>
+        <PaginationLink
+          onClick={() => handlePageChange(totalPages)}
+          isActive={currentPage === totalPages}
+        >
+          {totalPages}
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    return items;
+  };
+
   const totalPages = Math.ceil(totalItems / pageSize);
 
   return (
     <div className="space-y-6 flex flex-col h-full">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">LeetCode 题目管理</h1>
+        <h1 className="text-2xl font-bold">算法题目管理</h1>
         <Link href="/dashboard/leetcode/new">
           <Button>新建题目</Button>
         </Link>
@@ -261,7 +410,11 @@ export default function LeetCodeManagementPage() {
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {problem.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {tag}
                           </Badge>
                         ))}
@@ -280,9 +433,13 @@ export default function LeetCodeManagementPage() {
                       )}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(problem.created_at), "yyyy-MM-dd HH:mm", {
-                        locale: zhCN,
-                      })}
+                      {format(
+                        new Date(problem.created_at),
+                        "yyyy-MM-dd HH:mm",
+                        {
+                          locale: zhCN,
+                        }
+                      )}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -318,10 +475,7 @@ export default function LeetCodeManagementPage() {
               <span className="text-sm text-gray-500">每页显示:</span>
               <Select
                 value={pageSize.toString()}
-                onValueChange={(value) => {
-                  setPageSize(Number(value));
-                  setCurrentPage(1);
-                }}
+                onValueChange={handlePageSizeChange}
               >
                 <SelectTrigger className="w-[80px]">
                   <SelectValue placeholder="10" />
@@ -337,6 +491,37 @@ export default function LeetCodeManagementPage() {
                 共 {totalItems} 道题目
               </span>
             </div>
+            {totalPages > 1 && (
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() =>
+                        handlePageChange(Math.max(1, currentPage - 1))
+                      }
+                      className={
+                        currentPage === 1
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                  {renderPaginationItems()}
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        handlePageChange(Math.min(totalPages, currentPage + 1))
+                      }
+                      className={
+                        currentPage === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
           </div>
         </div>
       )}

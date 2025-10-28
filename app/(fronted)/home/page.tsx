@@ -11,6 +11,7 @@ import GradientText from "@/components/blocks/TextAnimations/GradientText/Gradie
 import { Typewriter } from "@/components/ui/typewriter-text";
 import { Satisfy, Saira } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import VariableProximity from "@/components/blocks/TextAnimations/VariableProximity/VariableProximity";
 import Marquee from "react-fast-marquee";
 import { icons } from "@/icons.config";
@@ -28,9 +29,19 @@ const saira = Saira({
 export default function Home() {
   const containerRef = useRef(null);
   const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
+  const { theme, resolvedTheme } = useTheme();
+  const currentTheme = resolvedTheme || theme;
+  const isDark = currentTheme === "dark";
+  const glitchPalette = isDark
+    ? ["#2b4539", "#61dca3", "#61b3dc"]
+    : ["#2563eb", "#0ea5e9", "#22c55e"];
+  const marqueeBadgeClasses = isDark
+    ? "bg-slate-900/70 text-slate-100 border border-slate-700/60"
+    : "bg-white text-slate-700 border border-slate-200 shadow-sm";
+  const marqueeIconClasses = isDark ? "text-slate-100" : "text-slate-500";
+  const marqueeTextClasses = isDark ? "text-slate-200" : "text-slate-600";
 
   useEffect(() => {
-    console.log("nextjs 15");
     Promise.all(
       Object.entries(icons).map(async ([name, importFn]: any) => {
         const icon = await importFn();
@@ -92,7 +103,7 @@ export default function Home() {
             centerVignette={true}
             outerVignette={true}
             smooth={true}
-            glitchColors={["#2b4539", "#61dca3", "#61b3dc"]}
+            glitchColors={glitchPalette}
           />
         </div>
       </div>
@@ -101,14 +112,16 @@ export default function Home() {
       <div className="relative mt-8 md:mt-16">
         <div className="absolute left-0 w-16 md:w-32 h-full bg-gradient-to-r from-[hsl(var(--background))] to-transparent z-10"></div>
         <div className="absolute right-0 w-16 md:w-32 h-full bg-gradient-to-l from-[hsl(var(--background))] to-transparent z-10"></div>
-        <Marquee speed={40} className="py-2">
+        <Marquee speed={40} className={`py-2 ${marqueeTextClasses}`}>
           {Object.entries(loadedIcons).map(([icon, IconComponent]) => (
             <div
               key={icon}
-              className="mx-3 md:mx-4 flex items-center gap-1 md:gap-2 bg-gray-900 rounded-full px-3 md:px-5 py-1.5 md:py-2"
+              className={`mx-3 md:mx-4 flex items-center gap-1 md:gap-2 rounded-full px-3 md:px-5 py-1.5 md:py-2 transition-colors duration-200 ${marqueeBadgeClasses}`}
             >
-              <IconComponent className="w-5 h-5 md:w-6 md:h-6" />
-              <span className="text-xs md:text-sm">{icon}</span>
+              <IconComponent
+                className={`w-5 h-5 md:w-6 md:h-6 ${marqueeIconClasses}`}
+              />
+              <span className="text-xs md:text-sm font-medium">{icon}</span>
             </div>
           ))}
         </Marquee>

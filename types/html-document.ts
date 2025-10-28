@@ -2,7 +2,7 @@
  * @Author: Libra
  * @Date: 2025-09-16
  * @LastEditors: Libra
- * @Description: HTML文档类型定义
+ * @Description: 知识卡片类型定义
  */
 
 export interface HtmlCategory {
@@ -38,7 +38,8 @@ export interface CreateHtmlDocumentInput {
   cover_image_url?: string;
 }
 
-export interface UpdateHtmlDocumentInput extends Partial<CreateHtmlDocumentInput> {
+export interface UpdateHtmlDocumentInput
+  extends Partial<CreateHtmlDocumentInput> {
   id: number;
 }
 
@@ -50,7 +51,8 @@ export interface CreateHtmlCategoryInput {
   sort_order?: number;
 }
 
-export interface UpdateHtmlCategoryInput extends Partial<CreateHtmlCategoryInput> {
+export interface UpdateHtmlCategoryInput
+  extends Partial<CreateHtmlCategoryInput> {
   id: number;
 }
 
@@ -59,9 +61,9 @@ export interface HtmlDocumentFilters {
   title?: string;
 }
 
-// HTML文档统计数据类型
+// 知识卡片统计数据类型
 export interface HtmlDocumentStats {
-  documentCount: number; // 文档总数
+  documentCount: number; // 卡片总数
   categoryCount: number; // 分类总数
   viewCount: number; // 总阅读量
 }

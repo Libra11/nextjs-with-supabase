@@ -112,7 +112,7 @@ const DocumentSkeleton = () => {
   );
 };
 
-// 文档卡片组件 - 完全模仿博客卡片样式，但使用竖向图片布局
+// 卡片卡片组件 - 完全模仿博客卡片样式，但使用竖向图片布局
 const DocumentCard = ({
   document,
   index,
@@ -190,7 +190,7 @@ const DocumentCard = ({
 
                   {/* 描述 - 如果没有描述，显示分类名 */}
                   <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 h-8">
-                    {mainCategory?.name || "HTML文档"}
+                    {mainCategory?.name || "知识卡片"}
                   </p>
 
                   {/* 元数据信息 */}
@@ -258,7 +258,7 @@ const DocumentCard = ({
                     {document.title}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 h-8">
-                    {mainCategory?.name || "HTML文档"}
+                    {mainCategory?.name || "知识卡片"}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-muted-foreground">
                     <div className="flex items-center gap-1">
@@ -327,7 +327,7 @@ export default function HtmlDocumentsPage() {
       setTotalCount(count);
       setCurrentPage(page);
     } catch (error) {
-      console.error("加载HTML文档失败:", error);
+      console.error("加载知识卡片失败:", error);
     } finally {
       setLoading(false);
     }
@@ -425,7 +425,7 @@ export default function HtmlDocumentsPage() {
           <h2 className="title-gradient">HTML 卡片</h2>
         </div>
         <p className="text-muted-foreground mt-4">
-          探索精心收集的HTML文档集合，包含交互式演示、创意设计和实用工具。点击下方分类开始您的探索之旅。
+          探索精心收集的知识卡片集合，包含交互式演示、创意设计和实用工具。点击下方分类开始您的探索之旅。
         </p>
       </motion.div>
 
@@ -674,7 +674,7 @@ export default function HtmlDocumentsPage() {
         </motion.div>
       </AnimatePresence>
 
-      {/* 文档网格 - 使用动画和新的卡片设计 */}
+      {/* 卡片网格 - 使用动画和新的卡片设计 */}
       <AnimatePresence mode="wait">
         {loading ? (
           <motion.div
@@ -704,18 +704,18 @@ export default function HtmlDocumentsPage() {
                   <Globe className="h-10 w-10 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  暂无文档
+                  暂无卡片
                 </h3>
                 <p className="text-muted-foreground text-lg">
                   {selectedCategory !== "all"
-                    ? "未找到匹配的HTML文档"
-                    : "还没有HTML文档，敬请期待"}
+                    ? "未找到匹配的知识卡片"
+                    : "还没有知识卡片，敬请期待"}
                 </p>
               </div>
             </div>
           </motion.div>
         ) : (
-          // 文档列表 - 新的卡片设计
+          // 卡片列表 - 新的卡片设计
           <motion.div
             key="documents"
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"

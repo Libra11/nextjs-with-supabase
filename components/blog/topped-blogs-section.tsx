@@ -32,7 +32,7 @@ export function ToppedBlogsSection() {
             <BlogCard
               blog={blog}
               className={cn('border-none')}
-              bgClassName="bg-gradient-to-r from-[#222222] to-[#0d0d0d]"
+              bgClassName="bg-gradient-to-br from-white via-slate-50 to-slate-100 border border-slate-200/60 dark:from-[#222222] dark:via-[#141414] dark:to-[#0d0d0d] dark:border-transparent"
             />
           )}
         />

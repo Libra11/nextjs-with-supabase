@@ -298,7 +298,7 @@ const HtmlRenderer = ({
         border: "none",
       }}
       sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-      title="HTML文档预览"
+      title="知识卡片预览"
     />
   );
 };
@@ -335,7 +335,7 @@ export default function HtmlDocumentDetailPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loadedIcons, setLoadedIcons] = useState<Record<string, any>>({});
 
-  // 加载文档数据
+  // 加载卡片数据
   const loadDocument = async () => {
     if (!documentId) {
       router.push("/html-documents");
@@ -347,7 +347,7 @@ export default function HtmlDocumentDetailPage() {
       const doc = await getHtmlDocumentById(documentId);
 
       if (!doc) {
-        toast.error("文档不存在");
+        toast.error("卡片不存在");
         router.push("/html-documents");
         return;
       }
@@ -357,8 +357,8 @@ export default function HtmlDocumentDetailPage() {
       // 增加浏览量
       incrementHtmlDocumentViewCount(documentId).catch(console.error);
     } catch (error) {
-      console.error("加载文档失败:", error);
-      toast.error("加载文档失败");
+      console.error("加载卡片失败:", error);
+      toast.error("加载卡片失败");
       router.push("/html-documents");
     } finally {
       setLoading(false);
@@ -391,12 +391,12 @@ export default function HtmlDocumentDetailPage() {
     return (
       <div className="text-center py-12">
         <Globe className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-        <h3 className="text-lg font-semibold mb-2">文档不存在</h3>
+        <h3 className="text-lg font-semibold mb-2">卡片不存在</h3>
         <p className="text-muted-foreground mb-4">
-          您访问的HTML文档不存在或已被删除
+          您访问的知识卡片不存在或已被删除
         </p>
         <Link href="/html-documents">
-          <Button>返回文档列表</Button>
+          <Button>返回卡片列表</Button>
         </Link>
       </div>
     );
@@ -428,7 +428,7 @@ export default function HtmlDocumentDetailPage() {
         </Button>
       </div>
 
-      {/* 文档信息 */}
+      {/* 卡片信息 */}
       <div className="space-y-4">
         <div>
           <div className="relative inline-block">

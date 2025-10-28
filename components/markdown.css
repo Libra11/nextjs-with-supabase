@@ -69,15 +69,22 @@
 }
 
 .markdown-content li:not(:has(ul)):not(:has(ol)) {
-  @apply text-gray-200 w-fit;
+  @apply text-slate-700 w-fit;
   @apply transition-all duration-300;
   @apply hover:translate-x-2;
-  @apply hover:text-blue-400;
+  @apply hover:text-blue-600;
   @apply cursor-pointer;
   @apply backdrop-blur-sm;
   @apply rounded px-2 py-1;
+  @apply bg-slate-100/80;
+  @apply shadow-[0_6px_18px_-12px_rgba(15,23,42,0.18)];
+}
+
+.dark .markdown-content li:not(:has(ul)):not(:has(ol)) {
+  @apply text-gray-200;
+  @apply hover:text-blue-400;
   @apply bg-primary/5;
-  @apply shadow-[inset_0_0_5px_rgba(59,130,246,0.5)];
+  @apply shadow-[inset_0_0_5px_rgba(59,130,246,0.35)];
 }
 
 .markdown-content .hljs {
@@ -135,21 +142,30 @@
 }
 
 /* 代码块基础样式 */
-pre {
+.markdown-content pre {
   @apply relative overflow-x-auto;
-  @apply bg-[#1a1b26]/90 backdrop-blur-md;
+  @apply bg-card text-foreground backdrop-blur-md;
   @apply transition-all duration-500;
-  @apply my-4;
+  @apply my-4 rounded-md;
+  @apply border border-border;
+}
+
+.dark .markdown-content pre {
+  @apply bg-[#1a1b26]/90;
+  @apply border border-blue-500/20;
 }
 
 /* 代码块顶部工具栏 */
 .code-header {
   @apply flex items-center justify-between;
-  @apply px-4 py-3;
-  @apply bg-[#1a1b26]/95 backdrop-blur-md;
-  @apply border-b border-blue-500/10;
-  @apply rounded-t-xl;
+  @apply px-4 py-3 backdrop-blur-md;
+  @apply bg-card text-foreground;
+  @apply overflow-hidden;
   @apply transition-all duration-300;
+}
+
+.dark .code-header {
+  @apply bg-[#1a1b26]/95 text-slate-200;
 }
 
 /* 窗口按钮组 */
@@ -202,11 +218,17 @@ pre {
 /* 复制按钮样式 */
 .copy-button {
   @apply p-1.5 rounded-lg;
-  @apply text-gray-400 hover:text-white;
+  @apply text-slate-500 hover:text-slate-700;
   @apply transition-all duration-300;
+  @apply bg-slate-100/80 hover:bg-slate-200/80;
+  @apply border border-slate-200 hover:border-slate-300;
+  @apply flex items-center gap-2;
+}
+
+.dark .copy-button {
+  @apply text-gray-400 hover:text-white;
   @apply bg-white/5 hover:bg-white/10;
   @apply border border-transparent hover:border-white/20;
-  @apply flex items-center gap-2;
 }
 
 /* 代码行样式 */
@@ -214,6 +236,10 @@ pre {
   @apply min-w-full px-4 relative inline-block leading-5;
   @apply transition-all duration-200;
   @apply border-l-4 border-transparent;
+  @apply hover:bg-slate-100/70;
+}
+
+.dark .markdown-content .code-line {
   @apply hover:bg-white/5;
 }
 
@@ -222,20 +248,30 @@ pre {
   content: attr(data-line-number);
   @apply inline-block;
   @apply w-[2em] mr-4 -ml-2;
-  @apply text-gray-500 text-right;
+  @apply text-slate-400 text-right;
   @apply select-none;
   @apply transition-colors duration-200;
   @apply opacity-50 group-hover:opacity-100;
+}
+
+.dark .markdown-content .numbered-code-line::before {
+  @apply text-gray-500;
 }
 
 /* 语言标签 */
 .markdown-content .code-language {
   @apply px-2 py-1 rounded-md;
   @apply text-xs font-mono;
+  @apply bg-slate-100/80;
+  @apply text-slate-500;
+  @apply border border-slate-200;
+  @apply flex items-center;
+}
+
+.dark .markdown-content .code-language {
   @apply bg-white/5;
   @apply text-gray-400;
   @apply border border-white/10;
-  @apply flex items-center;
 }
 
 /* 添加动画关键帧 */
@@ -324,22 +360,36 @@ pre {
 /* 表格样式 */
 .markdown-content table {
   @apply w-full my-6 border-collapse;
-  @apply bg-primary/5 backdrop-blur-sm;
+  @apply bg-slate-100/80 backdrop-blur-sm;
   @apply overflow-hidden;
+  @apply shadow-[0_24px_50px_-32px_rgba(15,23,42,0.22)];
+}
+
+.dark .markdown-content table {
+  @apply bg-primary/5;
   @apply shadow-[0_0_15px_rgba(59,130,246,0.2)];
 }
 
 .markdown-content th {
-  @apply bg-gradient-to-r from-blue-500/20 to-purple-500/20;
+  @apply bg-gradient-to-r from-white to-slate-100;
   @apply px-4 py-3 text-left font-bold;
-  @apply border-b border-primary/20;
+  @apply border-b border-slate-200/70;
   @apply transition-all duration-300;
+}
+
+.dark .markdown-content th {
+  @apply bg-gradient-to-r from-blue-500/20 to-purple-500/20;
+  @apply border-b border-primary/20;
 }
 
 .markdown-content td {
   @apply px-4 py-3;
-  @apply border-b border-primary/10;
+  @apply border-b border-slate-200/60;
   @apply transition-all duration-300;
+}
+
+.dark .markdown-content td {
+  @apply border-b border-primary/10;
 }
 
 .markdown-content tr {
@@ -347,6 +397,10 @@ pre {
 }
 
 .markdown-content tr:hover {
+  @apply bg-blue-500/5;
+}
+
+.dark .markdown-content tr:hover {
   @apply bg-blue-500/10;
 }
 

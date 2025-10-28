@@ -90,11 +90,11 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
                     </button>
                   </div>
                 </div>
-                <pre className="group-hover:animate-glow">
+                <div className="group-hover:animate-glow pb-6">
                   <code {...rest} className={className}>
                     {children}
                   </code>
-                </pre>
+                </div>
               </div>
             ) : (
               <code {...rest} className={className}>
