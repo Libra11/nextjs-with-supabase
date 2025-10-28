@@ -30,7 +30,7 @@ const LetterGlitch = ({
 }) => {
   const { theme, resolvedTheme } = useTheme();
   const currentTheme = resolvedTheme || theme;
-  const isDark = currentTheme === "dark";
+  const isDark = currentTheme ? currentTheme === "dark" : true;
   const backgroundColor = isDark ? "#0f0f0f" : "#ffffff";
   const outerVignetteColor = isDark
     ? "rgba(15,15,15,0.85)"
