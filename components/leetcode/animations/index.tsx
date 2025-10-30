@@ -36,6 +36,7 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "intersection-linked-list": lazy(
     () => import("./IntersectionLinkedListAnimation")
   ),
+  "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   // Add more animations here as you create them
   // "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   // "binary-search": lazy(() => import("./BinarySearchAnimation")),

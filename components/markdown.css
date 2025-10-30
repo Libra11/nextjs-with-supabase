@@ -29,7 +29,7 @@
 
 /* 图片样式 */
 .markdown-content img {
-  @apply block my-4 rounded-lg shadow-md;
+  @apply block my-4 shadow-sm;
   @apply max-w-full h-auto;
   @apply transition-all duration-300;
 }

@@ -1,12 +1,12 @@
 /*
  * @Author: Libra
- * @Date: 2025-03-06 20:30:59
+ * @Date: 2025-03-10 11:35:56
+ * @LastEditTime: 2025-10-29 14:21:13
  * @LastEditors: Libra
  * @Description:
  */
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+// next.config.mjs
+const nextConfig = {
   output: "standalone",
   reactCompiler: true,
   webpack(config) {
@@ -20,7 +20,6 @@ const nextConfig: NextConfig = {
         test: /\.svg$/i,
         resourceQuery: /url/,
       },
-
       {
         test: /\.svg$/i,
         issuer: fileLoaderRule.issuer,
@@ -30,14 +29,15 @@ const nextConfig: NextConfig = {
     );
 
     fileLoaderRule.exclude = /\.svg$/i;
-
     return config;
   },
   images: {
+    unoptimized: process.env.NODE_ENV !== "production",
     remotePatterns: [
       {
         protocol: "https",
         hostname: "api.penlibra.xin",
+        pathname: "/**",
       },
     ],
   },
