@@ -59,7 +59,7 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
   const pushStep = (
     phase: Phase,
     description: string,
-    overrides?: Partial<StepState>,
+    overrides?: Partial<StepState>
   ) => {
     steps.push({
       index: steps.length + 1,
@@ -86,24 +86,29 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
     return steps;
   }
 
-  let slow = 0;
-  let fast = 0;
+  let slow: number | null = 0;
+  let fast: number | null = 0;
 
   pushStep(
     "init",
     `初始化：slow 与 fast 都指向头节点 ${formatNodeLabel(values, 0)}，准备寻找链表中点。`,
-    { slow, fast },
+    { slow, fast }
   );
 
-  while (
-    fast !== null &&
-    links[fast] !== null &&
-    links[links[fast] as number] !== null
-  ) {
-    const nextSlow = links[slow];
-    const nextFast = links[links[fast] as number];
+  while (true) {
+    if (fast === null) break;
+    const fastNext = links[fast];
+    if (fastNext === null) break;
+    const fastNextNext = links[fastNext];
+    if (fastNextNext === null) break;
 
-    if (nextSlow === null || nextFast === undefined) {
+    const nextSlow = slow !== null ? links[slow] : null;
+    const nextFast = fastNextNext;
+
+    if (
+      nextSlow === null ||
+      nextFast === null
+    ) {
       break;
     }
 
@@ -113,30 +118,29 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
     pushStep(
       "find-mid",
       `快指针向前移动两步到 ${formatNodeLabel(values, fast)}，慢指针移动一步到 ${formatNodeLabel(values, slow)}。`,
-      { slow, fast },
+      { slow, fast }
     );
   }
 
   pushStep(
     "find-mid",
     `快指针无法再前进，慢指针停在中点 ${formatNodeLabel(values, slow)}。`,
-    { slow, fast },
+    { slow, fast }
   );
 
-  const secondHalfStart = links[slow];
+  const secondHalfStart = slow !== null ? links[slow] : null;
   if (secondHalfStart === null) {
-    pushStep(
-      "done",
-      "链表仅有一个节点，天然是回文链表。",
-      { slow, palindromeSoFar: true },
-    );
+    pushStep("done", "链表仅有一个节点，天然是回文链表。", {
+      slow,
+      palindromeSoFar: true,
+    });
     return steps;
   }
 
   pushStep(
     "reverse",
     `开始反转后半部分，首个要处理的节点是 ${formatNodeLabel(values, secondHalfStart)}。`,
-    { slow, curr: secondHalfStart, prev: null, next: links[secondHalfStart] },
+    { slow, curr: secondHalfStart, prev: null, next: links[secondHalfStart] }
   );
 
   let prevIdx: number | null = null;
@@ -158,7 +162,7 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
         prev: newPrev,
         curr: newCurr,
         next: nextIdx,
-      },
+      }
     );
 
     prevIdx = newPrev;
@@ -166,7 +170,9 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
   }
 
   const secondHalfHead = prevIdx;
-  links[slow] = secondHalfHead;
+  if (slow !== null) {
+    links[slow] = secondHalfHead;
+  }
 
   pushStep(
     "reverse",
@@ -176,11 +182,11 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
       prev: secondHalfHead,
       curr: null,
       next: null,
-    },
+    }
   );
 
-  let left = 0;
-  let right = secondHalfHead;
+  let left: number | null = 0;
+  let right: number | null = secondHalfHead;
 
   while (right !== null && left !== null) {
     const match = values[left] === values[right];
@@ -188,14 +194,15 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
 
     pushStep(
       "compare",
-      `比较节点 ${formatNodeLabel(values, left)} 与 ${formatNodeLabel(values, right)}，${match ? "数值相同，继续移动两个指针。" : "数值不同，提前判定为非回文。"
+      `比较节点 ${formatNodeLabel(values, left)} 与 ${formatNodeLabel(values, right)}，${
+        match ? "数值相同，继续移动两个指针。" : "数值不同，提前判定为非回文。"
       }`,
       {
         slow,
         left,
         right,
         palindromeSoFar: palindrome && match,
-      },
+      }
     );
 
     if (!match) {
@@ -215,7 +222,7 @@ const buildPalindromeSteps = (values: number[]): StepState[] => {
     {
       slow,
       palindromeSoFar: palindrome,
-    },
+    }
   );
 
   return steps;
@@ -258,7 +265,7 @@ const parseValuesInput = (input: string): number[] => {
 export default function PalindromeLinkedListAnimation() {
   const [listInput, setListInput] = useState(DEFAULT_LIST.join(", "));
   const [animationData, setAnimationData] = useState<AnimationData>(() =>
-    buildAnimationData(DEFAULT_LIST),
+    buildAnimationData(DEFAULT_LIST)
   );
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -316,8 +323,7 @@ export default function PalindromeLinkedListAnimation() {
     return set;
   }, [currentStep]);
 
-  const palindromeResult =
-    steps[steps.length - 1]?.palindromeSoFar ?? true;
+  const palindromeResult = steps[steps.length - 1]?.palindromeSoFar ?? true;
 
   const handlePlayToggle = () => {
     if (isPlaying) {
@@ -407,9 +413,7 @@ export default function PalindromeLinkedListAnimation() {
                 slow
               </p>
               <p>
-                {currentStep
-                  ? formatNodeLabel(values, currentStep.slow)
-                  : "—"}
+                {currentStep ? formatNodeLabel(values, currentStep.slow) : "—"}
               </p>
             </div>
             <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
@@ -417,9 +421,7 @@ export default function PalindromeLinkedListAnimation() {
                 fast
               </p>
               <p>
-                {currentStep
-                  ? formatNodeLabel(values, currentStep.fast)
-                  : "—"}
+                {currentStep ? formatNodeLabel(values, currentStep.fast) : "—"}
               </p>
             </div>
             <div className="rounded-lg border border-border/70 bg-background/60 px-3 py-2">
@@ -468,9 +470,12 @@ export default function PalindromeLinkedListAnimation() {
                     if (isRight) badges.push("right");
 
                     const nextIndex =
-                      currentStep?.links?.[idx] ?? (idx < values.length - 1 ? idx + 1 : null);
+                      currentStep?.links?.[idx] ??
+                      (idx < values.length - 1 ? idx + 1 : null);
                     const nextLabel =
-                      nextIndex !== null && nextIndex >= 0 && nextIndex < values.length
+                      nextIndex !== null &&
+                      nextIndex >= 0 &&
+                      nextIndex < values.length
                         ? `${values[nextIndex]}`
                         : "null";
 
@@ -492,16 +497,22 @@ export default function PalindromeLinkedListAnimation() {
                                     ? "border-emerald-400/70 text-emerald-600 bg-emerald-400/10"
                                     : isReversed
                                       ? "border-amber-500/70 text-amber-600 bg-amber-500/10"
-                                      : "border-border/70 text-foreground bg-card/70",
+                                      : "border-border/70 text-foreground bg-card/70"
                     );
 
                     return (
-                      <motion.div key={`${value}-${idx}`} layout className={cardClass}>
+                      <motion.div
+                        key={`${value}-${idx}`}
+                        layout
+                        className={cardClass}
+                      >
                         <div className="flex flex-col items-center gap-1">
                           <span className="text-xs uppercase tracking-wide text-muted-foreground">
                             节点 {idx}
                           </span>
-                          <span className="text-2xl font-semibold">{value}</span>
+                          <span className="text-2xl font-semibold">
+                            {value}
+                          </span>
                         </div>
                         <div className="flex flex-col items-center gap-1 text-xs text-muted-foreground">
                           <span className="uppercase tracking-wide">next</span>
@@ -510,7 +521,7 @@ export default function PalindromeLinkedListAnimation() {
                               "px-2 py-0.5 rounded-full border text-[11px] font-medium",
                               nextLabel === "null"
                                 ? "border-slate-300 text-slate-400"
-                                : "border-primary/40 text-primary",
+                                : "border-primary/40 text-primary"
                             )}
                           >
                             {nextLabel}
@@ -522,12 +533,16 @@ export default function PalindromeLinkedListAnimation() {
                               key={badge}
                               className={cn(
                                 "px-2 py-0.5 rounded-full border",
-                                badge === "slow" && "border-violet-500/50 text-violet-600 bg-violet-500/15",
-                                badge === "fast" && "border-sky-500/50 text-sky-600 bg-sky-500/15",
-                                badge === "prev" && "border-emerald-500/40 text-emerald-600 bg-emerald-500/15",
-                                badge === "curr" && "border-blue-500/40 text-blue-600 bg-blue-500/15",
+                                badge === "slow" &&
+                                  "border-violet-500/50 text-violet-600 bg-violet-500/15",
+                                badge === "fast" &&
+                                  "border-sky-500/50 text-sky-600 bg-sky-500/15",
+                                badge === "prev" &&
+                                  "border-emerald-500/40 text-emerald-600 bg-emerald-500/15",
+                                badge === "curr" &&
+                                  "border-blue-500/40 text-blue-600 bg-blue-500/15",
                                 (badge === "left" || badge === "right") &&
-                                  "border-primary/40 text-primary bg-primary/15",
+                                  "border-primary/40 text-primary bg-primary/15"
                               )}
                             >
                               {badge}
@@ -656,7 +671,9 @@ export default function PalindromeLinkedListAnimation() {
                     <p className="text-xs font-semibold text-muted-foreground mb-1">
                       步骤 {step.index}
                     </p>
-                    <p className="text-sm text-foreground">{step.description}</p>
+                    <p className="text-sm text-foreground">
+                      {step.description}
+                    </p>
                   </motion.div>
                 ))}
               </AnimatePresence>
