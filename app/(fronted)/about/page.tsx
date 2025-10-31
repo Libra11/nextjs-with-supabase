@@ -46,43 +46,43 @@ const heroContact = [
 const stats = [
   {
     value: "7+",
-    label: "Years crafting web & desktop experiences",
+    label: "深耕 Web 与桌面端体验的年份",
   },
   {
     value: "20+",
-    label: "End-to-end products shipped across teams",
+    label: "跨团队端到端交付的产品数量",
   },
   {
     value: "3",
-    label: "Design systems brought from concept to production",
+    label: "主导落地的设计系统与组件库",
   },
   {
     value: "2s",
-    label: "Target ship time for critical user journeys",
+    label: "关键用户路径的目标首屏时间",
   },
 ];
 
 const focusAreas = [
   {
-    title: "Interface Engineering",
+    title: "界面工程",
     description:
       "为复杂信息架构落地 pixel-perfect 体验，沉迷于动画、微交互与语义化组件。",
     icon: Sparkles,
   },
   {
-    title: "Performance & Reliability",
+    title: "性能与可靠性",
     description:
       "以性能预算、监控与 DevOps 流程保障高并发场景稳定，持续打磨体验基线。",
     icon: Rocket,
   },
   {
-    title: "Design Systems & DX",
+    title: "设计系统与开发体验",
     description:
       "搭建组件库、脚手架与规范，帮助团队在强类型与自动化测试体系下高效协作。",
     icon: Layers,
   },
   {
-    title: "Learning & Sharing",
+    title: "学习与分享",
     description:
       "乐于在博客与社区输出，整理知识地图，助力更多人拥抱现代前端与全栈能力。",
     icon: BookOpen,
@@ -92,7 +92,7 @@ const focusAreas = [
 const journey = [
   {
     period: "2021 — 至今",
-    role: "国考云 · 前端技术负责人",
+    role: "前端技术负责人",
     summary:
       "主导 Vue 3 + Electron 客户端架构，保障国家级考试场景的可靠性、性能与安全合规。",
     highlights: [
@@ -126,24 +126,24 @@ const journey = [
 ];
 
 const nowPlaying = [
-  "Researching multi-tenant design systems & theming pipelines",
-  "Experimenting with RSC-first workflows in Next.js 15 + Supabase",
-  "Learning more about observability stacks (OpenTelemetry + ClickHouse)",
+  "研究多租户设计系统与主题管线的搭建与演进",
+  "尝试 Next.js 15 + Supabase 的 RSC 优先工作流",
+  "持续学习以 OpenTelemetry + ClickHouse 为核心的可观测方案",
 ];
 
 export default function About() {
   return (
-    <div className="mx-auto max-w-[1100px] px-4 md:px-6 lg:px-0 py-16 md:py-20 space-y-16">
+    <div className="mx-auto max-w-[1100px] px-4 md:px-6 lg:px-0 pt-4 pb-16 md:pt-4 md:pb-20 space-y-16">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-3xl border border-slate-200/70 dark:border-primary/15 bg-gradient-to-br from-white via-slate-100 to-slate-200 dark:from-[#0b1120] dark:via-[#0f172a] dark:to-[#020617] shadow-[0_24px_60px_-32px_rgba(15,23,42,0.2)] dark:shadow-[0_40px_70px_-35px_rgba(15,23,42,0.55)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(79,70,229,0.18),transparent_55%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(79,70,229,0.25),transparent_55%)]" />
+      <section className="relative overflow-hidden rounded-3xl border border-slate-200/70 dark:border-primary/15 bg-gradient-to-br from-white via-slate-100 to-slate-200 dark:from-zinc-900/80 dark:via-zinc-950 dark:to-black shadow-[0_24px_60px_-32px_rgba(15,23,42,0.2)] dark:shadow-[0_40px_70px_-35px_rgba(15,23,42,0.55)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.15),transparent_55%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.22),transparent_55%)]" />
         <div className="relative z-10 flex flex-col gap-10 px-6 pt-10 pb-14 md:px-12 md:pt-14 md:pb-16 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-6 max-w-2xl">
             <Badge
               variant="outline"
-              className="border-slate-300 text-slate-600 bg-white/80 dark:border-primary/30 dark:text-primary dark:bg-primary/5"
+              className="border-slate-300 text-slate-600 bg-white/80 dark:border-amber-400/30 dark:text-amber-200 dark:bg-amber-500/10"
             >
-              Libra · Frontend / Full-stack Engineer
+              Libra · 前端 / 全栈工程师
             </Badge>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white">
               Libra
@@ -163,10 +163,10 @@ export default function About() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="rounded-full border-slate-300 bg-white/80 text-slate-700 hover:bg-white dark:border-primary/40 dark:bg-transparent dark:text-primary"
+                  className="rounded-full border-slate-300 bg-white/80 text-slate-700 hover:bg-white dark:border-amber-400/40 dark:bg-transparent dark:text-amber-200 dark:hover:bg-amber-500/10"
                 >
                   <Github className="w-4 h-4 mr-2" />
-                  GitHub
+                  访问 GitHub
                 </Button>
               </Link>
             </div>
@@ -183,7 +183,7 @@ export default function About() {
                         ? "noopener noreferrer"
                         : undefined
                     }
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 transition hover:border-slate-400 hover:text-slate-800 dark:border-primary/20 dark:bg-white/5 dark:text-slate-200 dark:hover:border-primary/40"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 transition hover:border-slate-400 hover:text-slate-800 dark:border-amber-400/30 dark:bg-amber-500/5 dark:text-slate-100 dark:hover:border-amber-400/60"
                   >
                     {Icon && <Icon className="w-4 h-4" />}
                     {label}
@@ -191,7 +191,7 @@ export default function About() {
                 ) : (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 dark:border-primary/20 dark:bg-white/5"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 px-4 py-1.5 dark:border-amber-400/30 dark:bg-amber-500/5"
                   >
                     {Icon && <Icon className="w-4 h-4" />}
                     {label}
@@ -207,7 +207,7 @@ export default function About() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative mx-auto"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-slate-500/20 blur-3xl" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-400/25 via-orange-300/20 to-transparent blur-3xl" />
             <div className="relative rounded-full border-4 border-white shadow-[0_30px_60px_-35px_rgba(15,23,42,0.35)] dark:border-slate-950">
               <Image
                 src="https://api.penlibra.xin/storage/v1/object/public/libra-bucket/covers/z0rzlcz3q5w4.jpg"
@@ -227,7 +227,7 @@ export default function About() {
         {stats.map((item) => (
           <div
             key={item.label}
-            className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.22)] dark:border-primary/15 dark:bg-slate-900/60"
+            className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-[0_18px_40px_-30px_rgba(15,23,42,0.22)] dark:border-amber-400/20 dark:bg-zinc-900/70 dark:shadow-[0_22px_55px_-35px_rgba(15,15,15,0.65)]"
           >
             <p className="text-3xl font-semibold text-slate-900 dark:text-white">
               {item.value}
@@ -242,7 +242,7 @@ export default function About() {
       {/* Focus areas */}
       <section className="space-y-6">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-5 h-5 text-primary" />
+          <Sparkles className="w-5 h-5 text-amber-400" />
           <h2 className="title-gradient text-xl md:text-2xl !m-0">
             我关注的方向
           </h2>
@@ -251,10 +251,10 @@ export default function About() {
           {focusAreas.map(({ title, description, icon: Icon }) => (
             <div
               key={title}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-6 transition hover:-translate-y-1 hover:border-slate-400/70 hover:shadow-[0_25px_50px_-32px_rgba(15,23,42,0.28)] dark:border-primary/15 dark:bg-slate-900/60 dark:hover:border-primary/30"
+              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-6 transition hover:-translate-y-1 hover:border-slate-400/70 hover:shadow-[0_25px_50px_-32px_rgba(15,23,42,0.28)] dark:border-amber-400/25 dark:bg-zinc-900/70 dark:hover:border-amber-400/40"
             >
               <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:bg-primary/10 dark:text-primary">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-600 dark:bg-amber-500/15 dark:text-amber-200">
                   <Icon className="w-6 h-6" />
                 </span>
                 <div className="space-y-2">
@@ -274,7 +274,7 @@ export default function About() {
       {/* Journey */}
       <section className="space-y-6">
         <div className="flex items-center gap-3">
-          <Code className="w-5 h-5 text-primary" />
+          <Code className="w-5 h-5 text-amber-400" />
           <h2 className="title-gradient text-xl md:text-2xl !m-0">
             历程与影响
           </h2>
@@ -283,10 +283,10 @@ export default function About() {
           {journey.map(({ period, role, summary, highlights }) => (
             <div
               key={role}
-              className="rounded-2xl border border-slate-200 bg-white/85 p-6 md:p-7 shadow-[0_24px_45px_-32px_rgba(15,23,42,0.2)] dark:border-primary/15 dark:bg-slate-900/60"
+              className="rounded-2xl border border-slate-200 bg-white/85 p-6 md:p-7 shadow-[0_24px_45px_-32px_rgba(15,23,42,0.2)] dark:border-amber-400/25 dark:bg-zinc-900/70"
             >
               <div className="flex flex-col gap-3 md:flex-row md:items-baseline md:justify-between">
-                <span className="text-sm font-medium uppercase tracking-wide text-blue-600 dark:text-blue-300">
+                <span className="text-sm font-medium uppercase tracking-wide text-amber-600 dark:text-amber-300">
                   {period}
                 </span>
                 <h3 className="text-lg md:text-xl font-semibold text-slate-900 dark:text-white">
@@ -299,7 +299,7 @@ export default function About() {
               <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
                 {highlights.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-blue-500 dark:bg-primary" />
+                    <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-amber-400" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -311,9 +311,9 @@ export default function About() {
 
       {/* Current focus */}
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 md:p-7 dark:border-primary/15 dark:bg-slate-900/60">
+        <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 md:p-7 dark:border-amber-400/20 dark:bg-zinc-900/70">
           <div className="flex items-center gap-3">
-            <Rocket className="w-5 h-5 text-primary" />
+            <Rocket className="w-5 h-5 text-amber-400" />
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               Now · 正在专注
             </h2>
@@ -321,16 +321,16 @@ export default function About() {
           <ul className="mt-4 space-y-3 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
             {nowPlaying.map((item) => (
               <li key={item} className="flex items-start gap-2">
-                <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-purple-400 dark:bg-primary" />
+                <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-amber-400 dark:bg-amber-300" />
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-transparent p-6 md:p-7 dark:border-primary/20 dark:from-blue-500/20 dark:via-purple-500/20">
+        <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-amber-400/15 via-orange-300/10 to-transparent p-6 md:p-7 dark:border-amber-400/25 dark:from-amber-400/25 dark:via-amber-500/10">
           <div className="flex items-center gap-3">
-            <BookOpen className="w-5 h-5 text-primary" />
+            <BookOpen className="w-5 h-5 text-amber-400" />
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
               想了解更多？
             </h2>
@@ -343,7 +343,7 @@ export default function About() {
             <Link href="/blogs">
               <Button
                 variant="outline"
-                className="rounded-full border-primary/40 text-primary hover:bg-primary/10"
+                className="rounded-full border-amber-400/40 text-amber-300 hover:bg-amber-500/10"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 阅读最新博文

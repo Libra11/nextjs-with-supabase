@@ -82,14 +82,14 @@ const menuItems = [
       "radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.06) 50%, rgba(4,120,87,0) 100%)",
     iconColor: "text-emerald-500",
   },
-  {
-    icon: Briefcase,
-    label: "简历",
-    href: "/resume",
-    gradient:
-      "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
-    iconColor: "text-green-500",
-  },
+  // {
+  //   icon: Briefcase,
+  //   label: "简历",
+  //   href: "/resume",
+  //   gradient:
+  //     "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(22,163,74,0.06) 50%, rgba(21,128,61,0) 100%)",
+  //   iconColor: "text-green-500",
+  // },
   {
     icon: User,
     label: "关于",
