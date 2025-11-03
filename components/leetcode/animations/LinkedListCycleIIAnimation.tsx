@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -606,7 +606,7 @@ export default function LinkedListCycleIIAnimation() {
                       nodeClass = "border-emerald-300 text-emerald-500 bg-emerald-500/5";
                     }
 
-                    const badgeItems: Array<{ label: string; className: string; icon?: JSX.Element }> = [];
+                    const badgeItems: Array<{ label: string; className: string; icon?: ReactNode }> = [];
 
                     if (isSlow) {
                       badgeItems.push({
