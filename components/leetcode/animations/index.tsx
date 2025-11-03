@@ -23,6 +23,9 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
   "rotate-array": lazy(() => import("./RotateArrayAnimation")),
   "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
+  "merge-two-sorted-lists": lazy(
+    () => import("./MergeTwoSortedListsAnimation")
+  ),
   "product-except-self": lazy(() => import("./ProductExceptSelfAnimation")),
   "first-missing-positive": lazy(
     () => import("./FirstMissingPositiveAnimation")
@@ -36,6 +39,8 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "intersection-linked-list": lazy(
     () => import("./IntersectionLinkedListAnimation")
   ),
+  "linked-list-cycle": lazy(() => import("./LinkedListCycleAnimation")),
+  "linked-list-cycle-ii": lazy(() => import("./LinkedListCycleIIAnimation")),
   "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   "palindrome-linked-list": lazy(
     () => import("./PalindromeLinkedListAnimation")
