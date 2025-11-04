@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Animation component registry
 const AnimationMap: Record<string, ComponentType<any>> = {
   "two-sum": lazy(() => import("./TwoSumAnimation")),
+  "add-two-numbers": lazy(() => import("./AddTwoNumbersAnimation")),
   "group-anagrams": lazy(() => import("./GroupAnagramsAnimation")),
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
   "longest-substring": lazy(() => import("./LongestSubstringAnimation")),
@@ -18,17 +19,17 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "move-zeroes": lazy(() => import("./MoveZeroesAnimation")),
   "max-water": lazy(() => import("./MaxWaterAnimation")),
   "minimum-window-substring": lazy(
-    () => import("./MinimumWindowSubstringAnimation")
+    () => import("./MinimumWindowSubstringAnimation"),
   ),
   "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
   "rotate-array": lazy(() => import("./RotateArrayAnimation")),
   "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
   "merge-two-sorted-lists": lazy(
-    () => import("./MergeTwoSortedListsAnimation")
+    () => import("./MergeTwoSortedListsAnimation"),
   ),
   "product-except-self": lazy(() => import("./ProductExceptSelfAnimation")),
   "first-missing-positive": lazy(
-    () => import("./FirstMissingPositiveAnimation")
+    () => import("./FirstMissingPositiveAnimation"),
   ),
   "set-zeroes": lazy(() => import("./SetZeroesAnimation")),
   "spiral-order": lazy(() => import("./SpiralOrderAnimation")),
@@ -37,13 +38,13 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   "search-matrix-ii": lazy(() => import("./SearchMatrixIIAnimation")),
   "intersection-linked-list": lazy(
-    () => import("./IntersectionLinkedListAnimation")
+    () => import("./IntersectionLinkedListAnimation"),
   ),
   "linked-list-cycle": lazy(() => import("./LinkedListCycleAnimation")),
   "linked-list-cycle-ii": lazy(() => import("./LinkedListCycleIIAnimation")),
   "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   "palindrome-linked-list": lazy(
-    () => import("./PalindromeLinkedListAnimation")
+    () => import("./PalindromeLinkedListAnimation"),
   ),
   // Add more animations here as you create them
   // "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
@@ -59,7 +60,9 @@ export function AnimationLoader({ name, className }: AnimationLoaderProps) {
   // If no animation name is provided
   if (!name) {
     return (
-      <div className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}>
+      <div
+        className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}
+      >
         <p className="text-muted-foreground">暂无动画演示</p>
       </div>
     );
@@ -69,8 +72,12 @@ export function AnimationLoader({ name, className }: AnimationLoaderProps) {
   const Component = AnimationMap[name];
   if (!Component) {
     return (
-      <div className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}>
-        <p className="text-muted-foreground">动画组件 &ldquo;{name}&rdquo; 未找到</p>
+      <div
+        className={`flex items-center justify-center min-h-[520px] bg-muted/20 rounded-lg ${className || ""}`}
+      >
+        <p className="text-muted-foreground">
+          动画组件 &ldquo;{name}&rdquo; 未找到
+        </p>
       </div>
     );
   }
