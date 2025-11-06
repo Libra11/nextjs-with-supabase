@@ -46,6 +46,9 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "palindrome-linked-list": lazy(
     () => import("./PalindromeLinkedListAnimation"),
   ),
+  "swap-nodes-in-pairs": lazy(
+    () => import("./SwapPairsAnimation"),
+  ),
   "remove-nth-node-from-end-of-list": lazy(
     () => import("./RemoveNthFromEndAnimation"),
   ),
