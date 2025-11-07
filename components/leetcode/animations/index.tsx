@@ -49,6 +49,9 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "swap-nodes-in-pairs": lazy(
     () => import("./SwapPairsAnimation"),
   ),
+  "reverse-nodes-in-k-group": lazy(
+    () => import("./ReverseKGroupAnimation"),
+  ),
   "remove-nth-node-from-end-of-list": lazy(
     () => import("./RemoveNthFromEndAnimation"),
   ),
