@@ -42,6 +42,14 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   ),
   "linked-list-cycle": lazy(() => import("./LinkedListCycleAnimation")),
   "linked-list-cycle-ii": lazy(() => import("./LinkedListCycleIIAnimation")),
+  "copy-list-with-random-pointer": lazy(
+    () => import("./CopyRandomListAnimation"),
+  ),
+  "copy-random-list": lazy(() => import("./CopyRandomListAnimation")),
+  "lru-cache": lazy(() => import("./LRUCacheAnimation")),
+  "merge-k-sorted-lists": lazy(() => import("./MergeKListsAnimation")),
+  "merge-k-lists": lazy(() => import("./MergeKListsAnimation")),
+  "sort-list": lazy(() => import("./SortListAnimation")),
   "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   "palindrome-linked-list": lazy(
     () => import("./PalindromeLinkedListAnimation"),
