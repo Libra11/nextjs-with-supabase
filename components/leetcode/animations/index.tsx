@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 const AnimationMap: Record<string, ComponentType<any>> = {
   "two-sum": lazy(() => import("./TwoSumAnimation")),
   "add-two-numbers": lazy(() => import("./AddTwoNumbersAnimation")),
+  "binary-tree-max-depth": lazy(() => import("./BinaryTreeMaxDepthAnimation")),
+  "max-depth-binary-tree": lazy(() => import("./BinaryTreeMaxDepthAnimation")),
   "binary-tree-inorder-traversal": lazy(
     () => import("./BinaryTreeInorderTraversalAnimation"),
   ),
