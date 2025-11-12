@@ -10,6 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 const AnimationMap: Record<string, ComponentType<any>> = {
   "two-sum": lazy(() => import("./TwoSumAnimation")),
   "add-two-numbers": lazy(() => import("./AddTwoNumbersAnimation")),
+  "binary-tree-inorder-traversal": lazy(
+    () => import("./BinaryTreeInorderTraversalAnimation"),
+  ),
+  "inorder-traversal": lazy(
+    () => import("./BinaryTreeInorderTraversalAnimation"),
+  ),
   "group-anagrams": lazy(() => import("./GroupAnagramsAnimation")),
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
   "longest-substring": lazy(() => import("./LongestSubstringAnimation")),
