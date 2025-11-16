@@ -18,6 +18,26 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "inorder-traversal": lazy(
     () => import("./BinaryTreeInorderTraversalAnimation"),
   ),
+  "binary-tree-level-order-traversal": lazy(
+    () => import("./BinaryTreeLevelOrderAnimation"),
+  ),
+  "level-order-traversal": lazy(
+    () => import("./BinaryTreeLevelOrderAnimation"),
+  ),
+  "invert-binary-tree": lazy(
+    () => import("./InvertBinaryTreeAnimation"),
+  ),
+  "invert-tree": lazy(() => import("./InvertBinaryTreeAnimation")),
+  "symmetric-tree": lazy(() => import("./SymmetricTreeAnimation")),
+  "symmetric-binary-tree": lazy(
+    () => import("./SymmetricTreeAnimation"),
+  ),
+  "diameter-of-binary-tree": lazy(
+    () => import("./BinaryTreeDiameterAnimation"),
+  ),
+  "binary-tree-diameter": lazy(
+    () => import("./BinaryTreeDiameterAnimation"),
+  ),
   "group-anagrams": lazy(() => import("./GroupAnagramsAnimation")),
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
   "longest-substring": lazy(() => import("./LongestSubstringAnimation")),
