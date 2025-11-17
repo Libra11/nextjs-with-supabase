@@ -1,7 +1,7 @@
 /**
  * Author: Libra
  * Date: 2025-10-02 01:04:08
- * LastEditTime: 2025-10-09 14:26:45
+ * LastEditTime: 2025-11-17 14:09:29
  * LastEditors: Libra
  * Description:
  */
@@ -14,7 +14,7 @@ import Link from "next/link";
 import { LeetCodeProblem } from "@/types/leetcode";
 import { DifficultyBadge } from "./difficulty-badge";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Zap, Code2 } from "lucide-react";
+import { Clock, Zap, Code2, BookOpen, PlayCircle, FileText } from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -121,6 +121,20 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
   const headerStyle = generateUniqueHeaderStyle(problem);
   const { primary, secondary } = headerStyle.colors;
 
+  const difficultyIntensity =
+    problem.difficulty === "easy"
+      ? 0.14
+      : problem.difficulty === "medium"
+      ? 0.18
+      : 0.22;
+
+  const borderAlpha =
+    problem.difficulty === "easy"
+      ? 0.25
+      : problem.difficulty === "medium"
+      ? 0.35
+      : 0.45;
+
   // Helper function to create HSL color strings
   const hsl = (color: { h: number; s: number; l: number }, alpha?: number) => {
     return alpha !== undefined
@@ -140,25 +154,31 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
           <div
             className="relative w-full h-[140px] rounded-lg overflow-hidden flex items-center justify-center mb-3 transition-transform duration-300"
             style={{
-              background: theme === "dark"
-                ? `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, 0.15)}, ${hsl(secondary, 0.1)}, transparent)`
-                : `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, 0.20)}, ${hsl(secondary, 0.1)}, transparent)`,
+              background:
+                theme === "dark"
+                  ? `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, difficultyIntensity)}, ${hsl(secondary, difficultyIntensity - 0.04)}, transparent)`
+                  : `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, difficultyIntensity + 0.06)}, ${hsl(secondary, difficultyIntensity)}, transparent)`,
             }}
           >
-            <div className="absolute inset-0 rounded-lg border border-border/40"></div>
+            <div
+              className="absolute inset-0 rounded-lg border"
+              style={{
+                borderColor: hsl(primary, borderAlpha),
+              }}
+            ></div>
             <div
               className="absolute -top-16 -right-10 h-32 w-32 rounded-full blur-3xl opacity-70"
               style={{
-                backgroundColor: hsl(primary, 0.25),
+                backgroundColor: hsl(primary, difficultyIntensity + 0.12),
               }}
             ></div>
             <div
               className="absolute -bottom-14 -left-12 h-28 w-28 rounded-full blur-3xl opacity-60"
               style={{
-                backgroundColor: hsl(secondary, 0.25),
+                backgroundColor: hsl(secondary, difficultyIntensity + 0.1),
               }}
             ></div>
-            <div className="relative z-10 flex flex-col items-center gap-3 px-3 w-full">
+            <div className="relative z-10 flex flex-col items-center gap-2.5 px-3 w-full">
               {/* LeetCode Icon */}
               <div
                 className="flex items-center justify-center w-14 h-14 rounded-lg backdrop-blur-md shadow-sm transition-transform duration-300 group-hover:scale-105 border"
@@ -275,6 +295,29 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
                       {problem.space_complexity}
                     </span>
                   </div>
+                )}
+              </div>
+            )}
+
+            {(problem.solution || problem.code || problem.animation_component) && (
+              <div className="mt-3 flex items-center justify-end gap-2 text-[10px] text-muted-foreground">
+                {problem.solution && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
+                    <BookOpen className="h-3 w-3" />
+                    <span>题解</span>
+                  </span>
+                )}
+                {problem.code && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
+                    <FileText className="h-3 w-3" />
+                    <span>代码</span>
+                  </span>
+                )}
+                {problem.animation_component && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
+                    <PlayCircle className="h-3 w-3" />
+                    <span>动画</span>
+                  </span>
                 )}
               </div>
             )}
