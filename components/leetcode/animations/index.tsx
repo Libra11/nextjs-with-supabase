@@ -75,6 +75,16 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   ),
   "copy-random-list": lazy(() => import("./CopyRandomListAnimation")),
   "lru-cache": lazy(() => import("./LRUCacheAnimation")),
+  "convert-sorted-array-to-binary-search-tree": lazy(
+    () => import("./SortedArrayToBSTAnimation"),
+  ),
+  "sorted-array-to-bst": lazy(
+    () => import("./SortedArrayToBSTAnimation"),
+  ),
+  "validate-binary-search-tree": lazy(
+    () => import("./ValidateBSTAnimation"),
+  ),
+  "validate-bst": lazy(() => import("./ValidateBSTAnimation")),
   "merge-k-sorted-lists": lazy(() => import("./MergeKListsAnimation")),
   "merge-k-lists": lazy(() => import("./MergeKListsAnimation")),
   "sort-list": lazy(() => import("./SortListAnimation")),
@@ -91,9 +101,14 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "remove-nth-node-from-end-of-list": lazy(
     () => import("./RemoveNthFromEndAnimation"),
   ),
-  // Add more animations here as you create them
-  // "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
-  // "binary-search": lazy(() => import("./BinarySearchAnimation")),
+  "kth-smallest-element-in-a-bst": lazy(
+    () => import("./KthSmallestElementAnimation"),
+  ),
+  "kth-smallest-element": lazy(() => import("./KthSmallestElementAnimation")),
+  "binary-tree-right-side-view": lazy(
+    () => import("./BinaryTreeRightSideViewAnimation"),
+  ),
+  "right-side-view": lazy(() => import("./BinaryTreeRightSideViewAnimation")),
 };
 
 interface AnimationLoaderProps {
