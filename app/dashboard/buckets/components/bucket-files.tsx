@@ -96,7 +96,7 @@ export default function BucketFiles({ bucketId }: BucketFilesProps) {
   const [newFolderName, setNewFolderName] = useState("");
   const [moveDestination, setMoveDestination] = useState("");
   const [copyDestination, setCopyDestination] = useState("");
-  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
+  const [filesToUpload, setFilesToUpload] = useState<File[]>([]);
 
   // 定义isFolder函数，确保在loadFiles之前可用
   const isFolder = (file: FileObject) => {
@@ -138,20 +138,41 @@ export default function BucketFiles({ bucketId }: BucketFilesProps) {
   };
 
   const handleFileUpload = async () => {
-    if (!fileToUpload) return;
+    if (filesToUpload.length === 0) return;
 
     try {
-      const path = currentPath
-        ? `${currentPath}/${fileToUpload.name}`
-        : fileToUpload.name;
-      await uploadFileToStorage(bucketId, path, fileToUpload, { upsert: true });
-      toast.success("文件上传成功");
+      setLoading(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const file of filesToUpload) {
+        try {
+          const path = currentPath
+            ? `${currentPath}/${file.name}`
+            : file.name;
+          await uploadFileToStorage(bucketId, path, file, { upsert: true });
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to upload ${file.name}:`, error);
+          failCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        toast.success(`成功上传 ${successCount} 个文件`);
+      }
+      if (failCount > 0) {
+        toast.error(`${failCount} 个文件上传失败`);
+      }
+
       loadFiles();
       setIsUploadDialogOpen(false);
-      setFileToUpload(null);
+      setFilesToUpload([]);
     } catch (error) {
-      toast.error("文件上传失败");
+      toast.error("批量上传过程中发生错误");
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -563,13 +584,36 @@ export default function BucketFiles({ bucketId }: BucketFilesProps) {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="file">文件</Label>
+              <Label htmlFor="file">选择文件 (支持多选)</Label>
               <Input
                 id="file"
                 type="file"
-                onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
+                multiple
+                onChange={(e) => {
+                  if (e.target.files) {
+                    setFilesToUpload(Array.from(e.target.files));
+                  }
+                }}
               />
             </div>
+            {filesToUpload.length > 0 && (
+              <div className="space-y-2">
+                <Label>已选择 {filesToUpload.length} 个文件:</Label>
+                <div className="max-h-[150px] overflow-y-auto border rounded-md p-2 text-sm">
+                  <ul className="space-y-1">
+                    {filesToUpload.map((file, index) => (
+                      <li key={index} className="flex items-center text-gray-600 dark:text-gray-400">
+                        <FileIcon className="h-3 w-3 mr-2" />
+                        <span className="truncate">{file.name}</span>
+                        <span className="ml-auto text-xs text-gray-400">
+                          {formatFileSize(file.size)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
             <p className="text-sm text-gray-500">
               当前目录: {currentPath || "根目录"}
             </p>
@@ -579,13 +623,13 @@ export default function BucketFiles({ bucketId }: BucketFilesProps) {
               variant="outline"
               onClick={() => {
                 setIsUploadDialogOpen(false);
-                setFileToUpload(null);
+                setFilesToUpload([]);
               }}
             >
               取消
             </Button>
-            <Button onClick={handleFileUpload} disabled={!fileToUpload}>
-              上传
+            <Button onClick={handleFileUpload} disabled={filesToUpload.length === 0}>
+              {loading ? "上传中..." : `上传 ${filesToUpload.length > 0 ? `(${filesToUpload.length})` : ""}`}
             </Button>
           </DialogFooter>
         </DialogContent>
