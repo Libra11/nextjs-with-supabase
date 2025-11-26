@@ -1,7 +1,7 @@
 /**
  * Author: Libra
  * Date: 2025-10-02 01:04:08
- * LastEditTime: 2025-11-17 14:09:29
+ * LastEditTime: 2025-11-26 15:30:25
  * LastEditors: Libra
  * Description:
  */
@@ -14,7 +14,14 @@ import Link from "next/link";
 import { LeetCodeProblem } from "@/types/leetcode";
 import { DifficultyBadge } from "./difficulty-badge";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Zap, Code2, BookOpen, PlayCircle, FileText } from "lucide-react";
+import {
+  Clock,
+  Zap,
+  Code2,
+  BookOpen,
+  PlayCircle,
+  FileText,
+} from "lucide-react";
 import { MagicCard } from "@/components/magicui/magic-card";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -61,7 +68,7 @@ const hashString = (str: string): number => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
   return Math.abs(hash);
@@ -75,7 +82,9 @@ const getDisplayChar = (title: string): string => {
 };
 
 // Generate unique header style based on problem ID and title
-const generateUniqueHeaderStyle = (problem: LeetCodeProblem): HeaderStyle & {
+const generateUniqueHeaderStyle = (
+  problem: LeetCodeProblem
+): HeaderStyle & {
   colors: {
     primary: { h: number; s: number; l: number };
     secondary: { h: number; s: number; l: number };
@@ -110,7 +119,11 @@ const generateUniqueHeaderStyle = (problem: LeetCodeProblem): HeaderStyle & {
     subText,
     colors: {
       primary: { h: primaryColor.h, s: primaryColor.s, l: primaryColor.l },
-      secondary: { h: secondaryColor.h, s: secondaryColor.s, l: secondaryColor.l },
+      secondary: {
+        h: secondaryColor.h,
+        s: secondaryColor.s,
+        l: secondaryColor.l,
+      },
     },
     gradientDirection,
   };
@@ -125,15 +138,15 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
     problem.difficulty === "easy"
       ? 0.14
       : problem.difficulty === "medium"
-      ? 0.18
-      : 0.22;
+        ? 0.18
+        : 0.22;
 
   const borderAlpha =
     problem.difficulty === "easy"
       ? 0.25
       : problem.difficulty === "medium"
-      ? 0.35
-      : 0.45;
+        ? 0.35
+        : 0.45;
 
   // Helper function to create HSL color strings
   const hsl = (color: { h: number; s: number; l: number }, alpha?: number) => {
@@ -191,9 +204,10 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
                   className="w-7 h-7"
                   strokeWidth={2}
                   style={{
-                    color: theme === "dark"
-                      ? hsl({ ...primary, l: 80 })
-                      : hsl({ ...primary, l: 35 }),
+                    color:
+                      theme === "dark"
+                        ? hsl({ ...primary, l: 80 })
+                        : hsl({ ...primary, l: 35 }),
                   }}
                 />
               </div>
@@ -201,17 +215,19 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
               <h3
                 className="text-sm font-bold text-center line-clamp-2 leading-tight px-2"
                 style={{
-                  color: theme === "dark"
-                    ? hsl({ ...primary, l: 85 })
-                    : hsl({ ...primary, l: 30 }),
+                  color:
+                    theme === "dark"
+                      ? hsl({ ...primary, l: 85 })
+                      : hsl({ ...primary, l: 30 }),
                 }}
               >
                 <span
                   className="mr-2"
                   style={{
-                    color: theme === "dark"
-                      ? hsl({ ...primary, l: 75 })
-                      : hsl({ ...primary, l: 40 }),
+                    color:
+                      theme === "dark"
+                        ? hsl({ ...primary, l: 75 })
+                        : hsl({ ...primary, l: 40 }),
                   }}
                 >
                   {headerStyle.displayText}
@@ -299,7 +315,9 @@ export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
               </div>
             )}
 
-            {(problem.solution || problem.code || problem.animation_component) && (
+            {(problem.solution ||
+              problem.code ||
+              problem.animation_component) && (
               <div className="mt-3 flex items-center justify-end gap-2 text-[10px] text-muted-foreground">
                 {problem.solution && (
                   <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">

@@ -1,4 +1,11 @@
 /**
+ * Author: Libra
+ * Date: 2025-10-02 00:26:17
+ * LastEditTime: 2025-11-26 15:37:45
+ * LastEditors: Libra
+ * Description:
+ */
+/**
  * Animation Loader for LeetCode Problems
  */
 "use client";
@@ -13,31 +20,25 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "binary-tree-max-depth": lazy(() => import("./BinaryTreeMaxDepthAnimation")),
   "max-depth-binary-tree": lazy(() => import("./BinaryTreeMaxDepthAnimation")),
   "binary-tree-inorder-traversal": lazy(
-    () => import("./BinaryTreeInorderTraversalAnimation"),
+    () => import("./BinaryTreeInorderTraversalAnimation")
   ),
   "inorder-traversal": lazy(
-    () => import("./BinaryTreeInorderTraversalAnimation"),
+    () => import("./BinaryTreeInorderTraversalAnimation")
   ),
   "binary-tree-level-order-traversal": lazy(
-    () => import("./BinaryTreeLevelOrderAnimation"),
+    () => import("./BinaryTreeLevelOrderAnimation")
   ),
   "level-order-traversal": lazy(
-    () => import("./BinaryTreeLevelOrderAnimation"),
+    () => import("./BinaryTreeLevelOrderAnimation")
   ),
-  "invert-binary-tree": lazy(
-    () => import("./InvertBinaryTreeAnimation"),
-  ),
+  "invert-binary-tree": lazy(() => import("./InvertBinaryTreeAnimation")),
   "invert-tree": lazy(() => import("./InvertBinaryTreeAnimation")),
   "symmetric-tree": lazy(() => import("./SymmetricTreeAnimation")),
-  "symmetric-binary-tree": lazy(
-    () => import("./SymmetricTreeAnimation"),
-  ),
+  "symmetric-binary-tree": lazy(() => import("./SymmetricTreeAnimation")),
   "diameter-of-binary-tree": lazy(
-    () => import("./BinaryTreeDiameterAnimation"),
+    () => import("./BinaryTreeDiameterAnimation")
   ),
-  "binary-tree-diameter": lazy(
-    () => import("./BinaryTreeDiameterAnimation"),
-  ),
+  "binary-tree-diameter": lazy(() => import("./BinaryTreeDiameterAnimation")),
   "group-anagrams": lazy(() => import("./GroupAnagramsAnimation")),
   "longest-consecutive": lazy(() => import("./LongestConsecutiveAnimation")),
   "longest-substring": lazy(() => import("./LongestSubstringAnimation")),
@@ -47,17 +48,17 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "move-zeroes": lazy(() => import("./MoveZeroesAnimation")),
   "max-water": lazy(() => import("./MaxWaterAnimation")),
   "minimum-window-substring": lazy(
-    () => import("./MinimumWindowSubstringAnimation"),
+    () => import("./MinimumWindowSubstringAnimation")
   ),
   "max-subarray": lazy(() => import("./MaxSubarrayAnimation")),
   "rotate-array": lazy(() => import("./RotateArrayAnimation")),
   "merge-intervals": lazy(() => import("./MergeIntervalsAnimation")),
   "merge-two-sorted-lists": lazy(
-    () => import("./MergeTwoSortedListsAnimation"),
+    () => import("./MergeTwoSortedListsAnimation")
   ),
   "product-except-self": lazy(() => import("./ProductExceptSelfAnimation")),
   "first-missing-positive": lazy(
-    () => import("./FirstMissingPositiveAnimation"),
+    () => import("./FirstMissingPositiveAnimation")
   ),
   "set-zeroes": lazy(() => import("./SetZeroesAnimation")),
   "spiral-order": lazy(() => import("./SpiralOrderAnimation")),
@@ -66,49 +67,60 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "trap-rain-water": lazy(() => import("./TrappingRainWaterAnimation")),
   "search-matrix-ii": lazy(() => import("./SearchMatrixIIAnimation")),
   "intersection-linked-list": lazy(
-    () => import("./IntersectionLinkedListAnimation"),
+    () => import("./IntersectionLinkedListAnimation")
   ),
   "linked-list-cycle": lazy(() => import("./LinkedListCycleAnimation")),
   "linked-list-cycle-ii": lazy(() => import("./LinkedListCycleIIAnimation")),
   "copy-list-with-random-pointer": lazy(
-    () => import("./CopyRandomListAnimation"),
+    () => import("./CopyRandomListAnimation")
   ),
   "copy-random-list": lazy(() => import("./CopyRandomListAnimation")),
   "lru-cache": lazy(() => import("./LRUCacheAnimation")),
   "convert-sorted-array-to-binary-search-tree": lazy(
-    () => import("./SortedArrayToBSTAnimation"),
+    () => import("./SortedArrayToBSTAnimation")
   ),
-  "sorted-array-to-bst": lazy(
-    () => import("./SortedArrayToBSTAnimation"),
-  ),
-  "validate-binary-search-tree": lazy(
-    () => import("./ValidateBSTAnimation"),
-  ),
+  "sorted-array-to-bst": lazy(() => import("./SortedArrayToBSTAnimation")),
+  "validate-binary-search-tree": lazy(() => import("./ValidateBSTAnimation")),
   "validate-bst": lazy(() => import("./ValidateBSTAnimation")),
   "merge-k-sorted-lists": lazy(() => import("./MergeKListsAnimation")),
   "merge-k-lists": lazy(() => import("./MergeKListsAnimation")),
   "sort-list": lazy(() => import("./SortListAnimation")),
   "reverse-linked-list": lazy(() => import("./ReverseLinkedListAnimation")),
   "palindrome-linked-list": lazy(
-    () => import("./PalindromeLinkedListAnimation"),
+    () => import("./PalindromeLinkedListAnimation")
   ),
-  "swap-nodes-in-pairs": lazy(
-    () => import("./SwapPairsAnimation"),
-  ),
-  "reverse-nodes-in-k-group": lazy(
-    () => import("./ReverseKGroupAnimation"),
-  ),
+  "swap-nodes-in-pairs": lazy(() => import("./SwapPairsAnimation")),
+  "reverse-nodes-in-k-group": lazy(() => import("./ReverseKGroupAnimation")),
   "remove-nth-node-from-end-of-list": lazy(
-    () => import("./RemoveNthFromEndAnimation"),
+    () => import("./RemoveNthFromEndAnimation")
   ),
   "kth-smallest-element-in-a-bst": lazy(
-    () => import("./KthSmallestElementAnimation"),
+    () => import("./KthSmallestElementAnimation")
   ),
   "kth-smallest-element": lazy(() => import("./KthSmallestElementAnimation")),
   "binary-tree-right-side-view": lazy(
-    () => import("./BinaryTreeRightSideViewAnimation"),
+    () => import("./BinaryTreeRightSideViewAnimation")
   ),
   "right-side-view": lazy(() => import("./BinaryTreeRightSideViewAnimation")),
+  "flatten-binary-tree-to-linked-list": lazy(
+    () => import("./FlattenBinaryTreeAnimation")
+  ),
+  "flatten-binary-tree": lazy(() => import("./FlattenBinaryTreeAnimation")),
+  "construct-binary-tree-from-preorder-and-inorder-traversal": lazy(
+    () => import("./ConstructTreePreInAnimation")
+  ),
+  "construct-binary-tree-from-preorder-and-inorder": lazy(
+    () => import("./ConstructTreePreInAnimation")
+  ),
+  "path-sum-iii": lazy(() => import("./PathSumIIIAnimation")),
+  "lowest-common-ancestor-of-a-binary-tree": lazy(
+    () => import("./LCAAnimation")
+  ),
+  "lowest-common-ancestor": lazy(() => import("./LCAAnimation")),
+  "binary-tree-maximum-path-sum": lazy(() => import("./MaxPathSumAnimation")),
+  "max-path-sum": lazy(() => import("./MaxPathSumAnimation")),
+  "number-of-islands": lazy(() => import("./NumIslandsAnimation")),
+  "num-islands": lazy(() => import("./NumIslandsAnimation")),
 };
 
 interface AnimationLoaderProps {
