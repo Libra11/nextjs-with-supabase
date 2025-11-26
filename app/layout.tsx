@@ -7,8 +7,6 @@
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import { Suspense } from "react";
-import SplashCursor from "@/components/blocks/Animations/SplashCursor/SplashCursor";
 import { Toaster } from "@/components/ui/toaster";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -41,9 +39,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="main-container flex flex-col h-screen overflow-y-auto z-0">
-            <Suspense fallback={null}>
-              <SplashCursor />
-            </Suspense>
             {children}
             <Toaster />
           </div>
