@@ -8,7 +8,7 @@
 import React, { useEffect, useRef } from "react";
 
 // 添加全局初始化标志，防止重复初始化
-let isInitialized = false;
+// Removed global isInitialized
 
 interface ColorRGB {
   r: number;
@@ -79,17 +79,10 @@ export default function SplashCursor({
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   // 添加初始化状态引用
-  const hasInitializedRef = useRef(false);
+  // const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    // 如果已经初始化，则不再执行
-    if (isInitialized || hasInitializedRef.current) {
-      return;
-    }
-
-    // 设置初始化标志
-    isInitialized = true;
-    hasInitializedRef.current = true;
+    // Removed initialization check to allow proper React lifecycle management
 
     const canvas = canvasRef.current;
     if (!canvas) return; // Guard canvas early
@@ -1025,6 +1018,7 @@ export default function SplashCursor({
     let lastUpdateTime = Date.now();
     let colorUpdateTimer = 0.0;
 
+    let animationId: number;
     function updateFrame() {
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
@@ -1032,7 +1026,7 @@ export default function SplashCursor({
       applyInputs();
       step(dt);
       render(null);
-      requestAnimationFrame(updateFrame);
+      animationId = requestAnimationFrame(updateFrame);
     }
 
     function calcDeltaTime() {
@@ -1477,7 +1471,7 @@ export default function SplashCursor({
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
       const color = generateColor();
-      updateFrame();
+      if (!animationId) updateFrame();
       updatePointerMoveData(pointer, posX, posY, color);
       document.body.removeEventListener("mousemove", handleFirstMouseMove);
     }
@@ -1496,7 +1490,7 @@ export default function SplashCursor({
       for (let i = 0; i < touches.length; i++) {
         const posX = scaleByPixelRatio(touches[i].clientX);
         const posY = scaleByPixelRatio(touches[i].clientY);
-        updateFrame();
+        if (!animationId) updateFrame();
         updatePointerDownData(pointer, touches[i].identifier, posX, posY);
       }
       document.body.removeEventListener("touchstart", handleFirstTouchStart);
@@ -1541,14 +1535,7 @@ export default function SplashCursor({
 
     // 清理函数
     return () => {
-      // 只有在组件真正被卸载(而不是路由变化)时才清理
-      if (document.body.contains(canvas)) {
-        // 还在DOM中，可能只是路由变化，不清理全局状态
-        return;
-      }
-
-      // 组件真正卸载，重置状态
-      isInitialized = false;
+      cancelAnimationFrame(animationId);
 
       // 清理事件监听器
       window.removeEventListener("mousedown", onMouseDown);
