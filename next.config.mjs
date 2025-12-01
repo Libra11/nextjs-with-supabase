@@ -1,7 +1,7 @@
 /*
  * @Author: Libra
  * @Date: 2025-03-10 11:35:56
- * @LastEditTime: 2025-10-29 14:21:13
+ * @LastEditTime: 2025-12-01 15:42:49
  * @LastEditors: Libra
  * @Description:
  */
@@ -37,6 +37,16 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "api.penlibra.xin",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "steamcdn-a.akamaihd.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "shared.akamai.steamstatic.com",
         pathname: "/**",
       },
     ],

@@ -4,7 +4,14 @@ import { SessionList } from "@/components/games/session-list";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Clock, Trophy, Calendar, Building2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  Trophy,
+  Calendar,
+  Building2,
+  Play,
+} from "lucide-react";
 import { Game, PlaySession } from "@/types/games";
 import { format, parseISO } from "date-fns";
 import { getGameDetails } from "@/lib/steam";
@@ -47,10 +54,7 @@ export default async function GameDetailPage({ params }: PageProps) {
           publishers: details.publishers,
         };
 
-        // Update DB
         await supabase.from("games").update(updates).eq("id", id);
-
-        // Merge for current render
         game = { ...game, ...updates };
       }
     } catch (e) {
@@ -61,7 +65,7 @@ export default async function GameDetailPage({ params }: PageProps) {
   const typedGame = game as Game;
 
   // Fetch Sessions
-  const { data: sessions, error: sessionError } = await supabase
+  const { data: sessions } = await supabase
     .from("play_sessions")
     .select("*")
     .eq("game_id", id)
@@ -70,166 +74,235 @@ export default async function GameDetailPage({ params }: PageProps) {
   const typedSessions = (sessions || []) as PlaySession[];
 
   return (
-    <div className="min-h-screen w-full bg-[#0b0c10] text-white">
-      {/* Hero / Header */}
-      <div className="relative min-h-[50vh] w-full overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/60 to-transparent z-10" />
-        {/* Background Blur */}
-        {(typedGame.header_image || typedGame.icon_url) && (
+    <div className="min-h-screen w-full bg-[#0b0c10] text-white relative selection:bg-blue-500/30">
+      {/* Fullscreen Fixed Background */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {typedGame.header_image || typedGame.icon_url ? (
           <Image
             src={typedGame.header_image || typedGame.icon_url || ""}
             alt="Background"
             fill
-            className="object-cover opacity-30 blur-xl"
+            className="object-cover opacity-40 blur-md scale-105"
             priority
           />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-gray-900 to-black" />
         )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/80 to-black/40" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent to-[#0b0c10]/80" />
+      </div>
 
-        <div className="relative z-20 h-full flex flex-col justify-end p-8 max-w-7xl mx-auto w-full pt-32">
+      {/* Scrollable Content Layer */}
+      <div className="relative z-10 w-full min-h-screen flex flex-col">
+        {/* Top Navigation */}
+        <div className="p-8 pb-0">
           <Link
             href="/games"
-            className="mb-8 inline-flex items-center text-gray-400 hover:text-white transition-colors w-fit hover:bg-white/10 px-3 py-1.5 rounded-lg -ml-3"
+            className="inline-flex items-center text-white/60 hover:text-white transition-colors hover:bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/5"
           >
             <ArrowLeft size={20} className="mr-2" />
             Back to Library
           </Link>
+        </div>
 
-          <div className="flex flex-col md:flex-row items-end gap-8">
-            <div className="relative h-64 w-48 rounded-xl overflow-hidden border-2 border-white/20 shadow-2xl shrink-0 bg-black rotate-2 hover:rotate-0 transition-transform duration-500">
-              {typedGame.icon_url ? (
-                <Image
-                  src={typedGame.icon_url}
-                  alt={typedGame.name}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-2xl font-bold">
-                  ?
-                </div>
-              )}
-            </div>
-            <div className="mb-2 flex-1">
-              <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-6 drop-shadow-xl">
-                {typedGame.name}
-              </h1>
+        {/* Hero Header */}
+        <div className="w-full px-8 py-12 flex flex-col md:flex-row items-end gap-12 max-w-[1920px]">
+          {/* Cover Art */}
+          <div className="relative h-[400px] w-[267px] rounded-2xl overflow-hidden shadow-2xl shrink-0 ring-1 ring-white/10 group">
+            {typedGame.icon_url ? (
+              <Image
+                src={typedGame.icon_url}
+                alt={typedGame.name}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-800 text-4xl font-bold">
+                ?
+              </div>
+            )}
+          </div>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200 mb-8">
-                <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur border border-white/5 hover:bg-white/20 transition-colors">
-                  <Clock size={16} className="text-blue-400" />
-                  <span className="font-bold">
-                    {Math.round(typedGame.total_playtime_minutes / 60)}
-                  </span>{" "}
-                  Hours
-                </span>
-                <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur border border-white/5 capitalize">
-                  <Trophy size={16} className="text-yellow-400" />
+          {/* Main Info */}
+          <div className="flex-1 space-y-8 pb-4">
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <span
+                  className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-widest border ${typedGame.platform === "steam" ? "border-blue-500/30 bg-blue-500/10 text-blue-400" : "border-green-500/30 bg-green-500/10 text-green-400"}`}
+                >
                   {typedGame.platform}
                 </span>
-                <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur border border-white/5">
-                  <Calendar size={16} className="text-green-400" />
-                  Last Played:{" "}
-                  {format(parseISO(typedGame.updated_at), "yyyy/MM/dd")}
-                </span>
                 {typedGame.release_date && (
-                  <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur border border-white/5">
-                    <Calendar size={16} className="text-purple-400" />
-                    Released: {typedGame.release_date}
+                  <span className="text-white/40 text-sm font-medium tracking-wide">
+                    RELEASED {typedGame.release_date.toUpperCase()}
                   </span>
                 )}
               </div>
-
-              {/* Short Description */}
-              {typedGame.short_description && (
-                <div
-                  className="text-lg text-gray-300 max-w-3xl leading-relaxed drop-shadow-md border-l-4 border-blue-500 pl-4"
-                  dangerouslySetInnerHTML={{
-                    __html: typedGame.short_description,
-                  }}
-                />
-              )}
+              <h1 className="text-6xl md:text-7xl font-black tracking-tight text-white drop-shadow-2xl leading-none">
+                {typedGame.name}
+              </h1>
             </div>
+
+            {/* Stats Bar */}
+            <div className="flex items-center gap-12 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 w-fit">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-500/20 rounded-full text-blue-400">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-white">
+                    {Math.round(typedGame.total_playtime_minutes / 60)}
+                    <span className="text-sm font-normal text-white/50 ml-1">
+                      hrs
+                    </span>
+                  </div>
+                  <div className="text-xs font-medium text-white/40 uppercase tracking-wider">
+                    Time Played
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-px h-10 bg-white/10" />
+
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-green-500/20 rounded-full text-green-400">
+                  <Calendar size={24} />
+                </div>
+                <div>
+                  <div className="text-lg font-bold text-white">
+                    {format(parseISO(typedGame.updated_at), "MMM d, yyyy")}
+                  </div>
+                  <div className="text-xs font-medium text-white/40 uppercase tracking-wider">
+                    Last Session
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Short Description */}
+            {typedGame.short_description && (
+              <div
+                className="text-xl text-white/80 max-w-4xl leading-relaxed font-light"
+                dangerouslySetInnerHTML={{
+                  __html: typedGame.short_description,
+                }}
+              />
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Main Content Area */}
-        <div className="lg:col-span-2 space-y-12">
-          {/* Detailed Description */}
-          {typedGame.description && (
-            <div className="prose prose-invert prose-lg max-w-none">
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-8 shadow-xl">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                  About This Game
+        {/* Main Content Grid */}
+        <div className="px-8 pb-20 w-full grid grid-cols-1 xl:grid-cols-3 gap-12 max-w-[1920px]">
+          {/* Left Column: Description & Charts */}
+          <div className="xl:col-span-2 space-y-12">
+            {/* Detailed Description */}
+            {typedGame.description && (
+              <div className="rounded-3xl bg-[#1e2024]/80 backdrop-blur-md border border-white/5 p-10 shadow-2xl">
+                <h2 className="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+                  <div className="w-1 h-8 bg-blue-500 rounded-full" />
+                  ABOUT THIS GAME
                 </h2>
                 <div
-                  className="game-description text-gray-300 space-y-4"
+                  className="game-description prose prose-invert prose-lg max-w-none text-gray-300/90"
                   dangerouslySetInnerHTML={{ __html: typedGame.description }}
                 />
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-8 shadow-xl">
-            <h2 className="text-2xl font-bold mb-6">Playtime Activity</h2>
-            <SessionChart sessions={typedSessions} />
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-8">
-          {/* Game Info Card */}
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-6 shadow-xl">
-            <h3 className="text-lg font-bold mb-4 text-white/80 uppercase tracking-wider text-sm">
-              Game Info
-            </h3>
-            <div className="space-y-4">
-              {typedGame.developers && (
-                <div>
-                  <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
-                    <Building2 size={12} /> DEVELOPER
-                  </div>
-                  <div className="text-blue-400 hover:text-blue-300 transition-colors">
-                    {typedGame.developers.join(", ")}
-                  </div>
-                </div>
-              )}
-              {typedGame.publishers && (
-                <div>
-                  <div className="text-xs text-gray-500 mb-1 flex items-center gap-1">
-                    <Building2 size={12} /> PUBLISHER
-                  </div>
-                  <div className="text-blue-400 hover:text-blue-300 transition-colors">
-                    {typedGame.publishers.join(", ")}
-                  </div>
-                </div>
-              )}
+            {/* Chart */}
+            <div className="rounded-3xl bg-[#1e2024]/80 backdrop-blur-md border border-white/5 p-10 shadow-2xl">
+              <h2 className="text-2xl font-bold mb-8 text-white flex items-center gap-3">
+                <div className="w-1 h-8 bg-green-500 rounded-full" />
+                PLAYTIME HISTORY
+              </h2>
+              <div className="h-[400px] w-full">
+                <SessionChart sessions={typedSessions} />
+              </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-6 shadow-xl">
-            <h2 className="text-xl font-bold mb-4">Recent Sessions</h2>
-            <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-              <SessionList sessions={typedSessions} />
+          {/* Right Column: Sidebar info */}
+          <div className="space-y-8">
+            {/* Metadata Card */}
+            <div className="rounded-3xl bg-[#1e2024]/80 backdrop-blur-md border border-white/5 p-8 shadow-xl">
+              <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-6">
+                Game Info
+              </h3>
+              <div className="space-y-6">
+                {typedGame.developers && (
+                  <div>
+                    <div className="flex items-center gap-2 text-white/60 mb-1 text-sm">
+                      <Building2 size={14} /> DEVELOPER
+                    </div>
+                    <div className="text-blue-400 font-medium text-lg">
+                      {typedGame.developers.join(", ")}
+                    </div>
+                  </div>
+                )}
+                {typedGame.publishers && (
+                  <div>
+                    <div className="flex items-center gap-2 text-white/60 mb-1 text-sm">
+                      <Building2 size={14} /> PUBLISHER
+                    </div>
+                    <div className="text-blue-400 font-medium text-lg">
+                      {typedGame.publishers.join(", ")}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Recent Sessions Log */}
+            <div className="rounded-3xl bg-[#1e2024]/80 backdrop-blur-md border border-white/5 p-8 shadow-xl">
+              <h2 className="text-xl font-bold mb-6 text-white">
+                Recent Sessions
+              </h2>
+              <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                <SessionList sessions={typedSessions} />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom styles for the HTML content */}
+      {/* Styles for Steam Description Content */}
       <style>{`
         .game-description img {
           max-width: 100%;
           height: auto;
-          border-radius: 8px;
-          margin: 1rem 0;
+          border-radius: 12px;
+          margin: 1.5rem 0;
+          box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
         .game-description a {
           color: #60a5fa;
-          text-decoration: underline;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(96, 165, 250, 0.4);
+          transition: all 0.2s;
+        }
+        .game-description a:hover {
+          border-bottom-color: #60a5fa;
+          color: #93c5fd;
+        }
+        .game-description h1, .game-description h2, .game-description h3 {
+            color: #fff;
+            font-weight: 700;
+            margin-top: 2rem;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
         }
       `}</style>
     </div>
