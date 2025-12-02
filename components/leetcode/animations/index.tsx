@@ -1,7 +1,7 @@
 /**
  * Author: Libra
  * Date: 2025-10-02 00:26:17
- * LastEditTime: 2025-11-26 15:37:45
+ * LastEditTime: 2025-12-02 15:57:48
  * LastEditors: Libra
  * Description:
  */
@@ -121,6 +121,11 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "max-path-sum": lazy(() => import("./MaxPathSumAnimation")),
   "number-of-islands": lazy(() => import("./NumIslandsAnimation")),
   "num-islands": lazy(() => import("./NumIslandsAnimation")),
+  "course-schedule": lazy(() => import("./CourseScheduleAnimation")),
+  "rotting-oranges": lazy(() => import("./RottingOrangesAnimation")),
+  "implement-trie-prefix-tree": lazy(() => import("./TrieAnimation")),
+  "trie": lazy(() => import("./TrieAnimation")),
+  "permutations": lazy(() => import("./PermutationsAnimation")),
 };
 
 interface AnimationLoaderProps {
