@@ -32,8 +32,6 @@ import {
 } from "lucide-react";
 import { BlogWithTags } from "@/types/blog";
 import { searchBlogs } from "@/lib/blog";
-import { getPublicUrl } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -400,14 +398,10 @@ export function CommandSearch() {
       const blogs = await searchBlogs(debouncedKeyword);
 
       // 加载封面图片URL
-      const blogsWithCoverUrls = await Promise.all(
-        blogs.map(async (blog) => ({
-          ...blog,
-          coverImageUrl: blog.cover_image
-            ? await getPublicUrl(BUCKET_NAME, blog.cover_image)
-            : "",
-        }))
-      );
+      const blogsWithCoverUrls = blogs.map((blog) => ({
+        ...blog,
+        coverImageUrl: blog.cover_image || "",
+      }));
 
       setResults(blogsWithCoverUrls);
     } catch (error) {

@@ -7,8 +7,6 @@
 "use client";
 
 import { getBlogs, getTags } from "@/lib/blog";
-import { getPublicUrl } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
 import { InfiniteScroll } from "@/components/ui/infinite-scroll";
 import { BlogWithTags, Tag } from "@/types/blog";
 import { BlogCard } from "@/components/ui/blog-card";
@@ -122,12 +120,6 @@ export default function TagsPage() {
     setMounted(true);
   }, []);
 
-  // 获取封面图的公共URL
-  const getCoverImage = async (cover_image: string) => {
-    const url = await getPublicUrl(BUCKET_NAME, cover_image);
-    return url || "";
-  };
-
   // 加载初始数据
   useEffect(() => {
     // 确保组件已挂载
@@ -231,14 +223,10 @@ export default function TagsPage() {
       }
 
       // 处理新获取的博客封面图片
-      const blogsWithCoverUrls = await Promise.all(
-        newBlogs.map(async (blog) => ({
-          ...blog,
-          coverImageUrl: blog.cover_image
-            ? await getCoverImage(blog.cover_image)
-            : "",
-        }))
-      );
+      const blogsWithCoverUrls = newBlogs.map((blog) => ({
+        ...blog,
+        coverImageUrl: blog.cover_image || "",
+      }));
 
       // 更新数据
       if (isInitialLoad) {

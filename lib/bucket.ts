@@ -378,6 +378,13 @@ export async function getPublicUrl(
   }
 ) {
   try {
+    if (!path) {
+      return "";
+    }
+    if (/^https?:\/\//i.test(path)) {
+      return path;
+    }
+
     const { data } = supabase.storage.from(bucket).getPublicUrl(path, options);
     return data.publicUrl;
   } catch (error) {
@@ -407,6 +414,10 @@ export function getBatchPublicUrls(
     // 批量处理所有路径
     paths.forEach(path => {
       if (path) {
+        if (/^https?:\/\//i.test(path)) {
+          urls[path] = path;
+          return;
+        }
         const { data } = supabase.storage.from(bucket).getPublicUrl(path, options);
         urls[path] = data.publicUrl;
       }

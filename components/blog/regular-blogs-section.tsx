@@ -14,8 +14,6 @@ import { useRegularBlogs } from "@/hooks/use-blog-suspense";
 import { BlogCard } from "@/components/ui/blog-card";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { getBlogs } from "@/lib/blog";
-import { getBatchPublicUrls } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
 import { BlogWithTags } from "@/types/blog";
 import { InfiniteScroll } from "@/components/ui/infinite-scroll";
 
@@ -53,18 +51,9 @@ export function RegularBlogsSection() {
         return;
       }
 
-      // 批量获取封面图URLs
-      const coverImages = newBlogs
-        .map((blog) => blog.cover_image)
-        .filter((img): img is string => Boolean(img));
-      const urlMap =
-        coverImages.length > 0
-          ? getBatchPublicUrls(BUCKET_NAME, coverImages)
-          : {};
-
       const blogsWithCoverUrls = newBlogs.map((blog) => ({
         ...blog,
-        coverImageUrl: blog.cover_image ? urlMap[blog.cover_image] || "" : "",
+        coverImageUrl: blog.cover_image || "",
       }));
 
       setAllBlogs((prevBlogs) => {

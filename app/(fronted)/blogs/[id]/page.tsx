@@ -23,19 +23,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BlogContent from "@/components/blog-content";
-import { getPublicUrl } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
 import { TagBadge } from "@/components/ui/tag-badge";
 import readingTime from "reading-time";
 
 interface BlogPageProps {
   params: Promise<{ id: string }>;
 }
-
-const getCoverImage = async (cover_image: string) => {
-  const url = await getPublicUrl(BUCKET_NAME, cover_image);
-  return url || "";
-};
 
 export default async function BlogPage({ params }: BlogPageProps) {
   const { id } = await params;
@@ -49,9 +42,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       blog.tags[0].id,
       parseInt(id)
     );
-    coverImageUrl = blog.cover_image
-      ? await getCoverImage(blog.cover_image)
-      : "";
+    coverImageUrl = blog.cover_image || "";
     const stats = readingTime(blog.content);
     readTime = stats.text;
     wordCount = stats.words;

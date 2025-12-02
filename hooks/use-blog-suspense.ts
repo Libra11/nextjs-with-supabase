@@ -4,11 +4,9 @@
  * @LastEditors: Libra
  * @Description: Suspense-compatible blog data fetching hooks
  */
-import { getBlogs, getBlogStats } from '@/lib/blog';
-import { getBatchPublicUrls } from '@/lib/bucket';
-import { BUCKET_NAME } from '@/const';
-import { BlogWithTags, BlogStats } from '@/types/blog';
-import { useSuspenseData } from './use-suspense-data';
+import { getBlogs, getBlogStats } from "@/lib/blog";
+import { BlogWithTags, BlogStats } from "@/types/blog";
+import { useSuspenseData } from "./use-suspense-data";
 
 // Hook for fetching blog stats with Suspense
 export function useBlogStats(): BlogStats {
@@ -27,13 +25,9 @@ export function useToppedBlogs(): (BlogWithTags & { coverImageUrl: string })[] {
 
     if (!topped) return [];
 
-    // 批量获取封面图URLs
-    const coverImages = topped.map(blog => blog.cover_image).filter((img): img is string => Boolean(img));
-    const urlMap = coverImages.length > 0 ? getBatchPublicUrls(BUCKET_NAME, coverImages) : {};
-
-    return topped.map(blog => ({
+    return topped.map((blog) => ({
       ...blog,
-      coverImageUrl: blog.cover_image ? urlMap[blog.cover_image] || '' : '',
+      coverImageUrl: blog.cover_image || "",
     }));
   });
 }
@@ -51,13 +45,9 @@ export function useRegularBlogs(
 
     if (!newBlogs) return { blogs: [], count: 0 };
 
-    // 批量获取封面图URLs
-    const coverImages = newBlogs.map(blog => blog.cover_image).filter((img): img is string => Boolean(img));
-    const urlMap = coverImages.length > 0 ? getBatchPublicUrls(BUCKET_NAME, coverImages) : {};
-
-    const blogsWithCoverUrls = newBlogs.map(blog => ({
+    const blogsWithCoverUrls = newBlogs.map((blog) => ({
       ...blog,
-      coverImageUrl: blog.cover_image ? urlMap[blog.cover_image] || '' : '',
+      coverImageUrl: blog.cover_image || "",
     }));
 
     return { blogs: blogsWithCoverUrls, count };
