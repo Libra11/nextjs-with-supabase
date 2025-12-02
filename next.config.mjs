@@ -49,6 +49,11 @@ const nextConfig = {
         hostname: "shared.akamai.steamstatic.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "libra321.oss-cn-huhehaote.aliyuncs.com",
+        pathname: "/**",
+      },
     ],
   },
 };

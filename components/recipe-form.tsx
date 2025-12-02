@@ -57,8 +57,7 @@ import {
 } from "@/lib/recipe-client";
 import { Search, Plus, ChevronDown, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { uploadFile, getPublicUrl } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
+import { uploadToOSS } from "@/lib/oss-upload";
 
 // 表单验证schema
 const recipeFormSchema = z.object({
@@ -418,28 +417,14 @@ export default function RecipeForm({
     }
   };
 
-  // 上传图片到Supabase存储
-  const uploadImage = async (file: File): Promise<string | null> => {
+  // 上传图片到 OSS
+  const uploadImage = async (
+    file: File,
+    folder: string = "recipes"
+  ): Promise<string | null> => {
     try {
-      console.log("开始上传图片:", file.name);
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      const filePath = `recipes/${fileName}`;
-
-      console.log("上传到路径:", filePath);
-      const data = await uploadFile(BUCKET_NAME, filePath, file, {
-        upsert: true,
-      });
-
-      if (!data) {
-        console.error("上传失败，返回数据为空");
-        return null;
-      }
-
-      console.log("上传成功，获取公共URL");
-      const publicUrl = await getPublicUrl(BUCKET_NAME, filePath);
-      console.log("获取到公共URL:", publicUrl);
-      return publicUrl;
+      const { url } = await uploadToOSS(file, { folder });
+      return url;
     } catch (error) {
       console.error("Error uploading image:", error);
       return null;
@@ -456,7 +441,10 @@ export default function RecipeForm({
       let featuredImageUrl = data.featured_image_url;
       if (featuredImageFile) {
         console.log("准备上传特色图片");
-        const uploadedUrl = await uploadImage(featuredImageFile);
+        const uploadedUrl = await uploadImage(
+          featuredImageFile,
+          "recipes/featured"
+        );
         if (uploadedUrl) {
           console.log("特色图片上传成功，URL:", uploadedUrl);
           featuredImageUrl = uploadedUrl;
@@ -475,7 +463,9 @@ export default function RecipeForm({
           // 上传该步骤的新图片
           if (stepImageFiles[index] && stepImageFiles[index].length > 0) {
             const uploadedUrls = await Promise.all(
-              stepImageFiles[index].map((file) => uploadImage(file))
+              stepImageFiles[index].map((file) =>
+                uploadImage(file, "recipes/steps")
+              )
             );
 
             // 过滤掉上传失败的图片

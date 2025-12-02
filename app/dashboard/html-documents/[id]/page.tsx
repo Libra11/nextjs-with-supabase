@@ -33,8 +33,7 @@ import {
   updateHtmlDocument,
   getHtmlDocumentById,
 } from "@/lib/html-document";
-import { uploadFile, getPublicUrl } from "@/lib/bucket";
-import { BUCKET_NAME } from "@/const";
+import { uploadToOSS } from "@/lib/oss-upload";
 import Image from "next/image";
 import { icons } from "@/icons.config";
 
@@ -242,17 +241,9 @@ export default function EditHtmlDocumentPage() {
 
     try {
       setUploadLoading(true);
-      const data = await uploadFile(
-        BUCKET_NAME,
-        `html-covers/${file.name}`,
-        file,
-        {
-          upsert: true,
-        }
-      );
-      const url = await getPublicUrl(BUCKET_NAME, data.path);
-      setPreviewUrl(url || "");
-      updateFormData("cover_image_url", url || "");
+      const { url } = await uploadToOSS(file, { folder: "html-covers" });
+      setPreviewUrl(url);
+      updateFormData("cover_image_url", url);
     } catch (error) {
       console.error("上传失败:", error);
       toast.error("图片上传失败");

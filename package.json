@@ -27,6 +27,7 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@uiw/react-md-editor": "^4.0.8",
+    "ali-oss": "^6.23.0",
     "autoprefixer": "10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

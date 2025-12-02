@@ -38,12 +38,11 @@ import * as z from "zod";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { useEffect, useState } from "react";
 import { getTags } from "@/lib/blog";
-import { uploadFile, getSignedUrl, getPublicUrl } from "@/lib/bucket";
 import Image from "next/image";
-import { BUCKET_NAME } from "@/const";
 import dynamic from "next/dynamic";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
+import { uploadToOSS } from "@/lib/oss-upload";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
@@ -83,9 +82,7 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
 
   useEffect(() => {
     if (initialData?.cover_image) {
-      getPublicUrl(BUCKET_NAME, initialData.cover_image).then((url) => {
-        setPreviewUrl(url || "");
-      });
+      setPreviewUrl(initialData.cover_image);
     }
     loadTags();
   }, []);
@@ -119,13 +116,9 @@ export function BlogForm({ initialData, onSubmit }: BlogFormProps) {
 
     try {
       setUploadLoading(true);
-      const data = await uploadFile(BUCKET_NAME, `covers/${file.name}`, file, {
-        upsert: true,
-      });
-      const url = await getPublicUrl(BUCKET_NAME, data.path);
-      console.log(url, data);
-      setPreviewUrl(url || "");
-      form.setValue("cover_image", data.path || "");
+      const { url } = await uploadToOSS(file, { folder: "covers" });
+      setPreviewUrl(url);
+      form.setValue("cover_image", url);
     } catch (error) {
       console.error("上传失败:", error);
     } finally {
