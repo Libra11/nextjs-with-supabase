@@ -9,6 +9,7 @@ export interface Game {
   exe_name: string | null;
   icon_url: string | null;
   total_playtime_minutes: number;
+  is_shared?: boolean;
   description?: string;
   short_description?: string;
   header_image?: string;

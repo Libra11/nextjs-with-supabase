@@ -46,6 +46,7 @@ export async function POST(request: Request) {
             steam_appid: game.appid.toString(),
             icon_url: getSteamImage(game.appid, game.img_icon_url),
             total_playtime_minutes: game.playtime_forever,
+            is_shared: (game as any).is_shared || false,
             updated_at: new Date().toISOString(),
           },
           {

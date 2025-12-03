@@ -28,11 +28,63 @@ export async function resolveVanityURL(
 export async function getOwnedGames(steamId: string): Promise<SteamGame[]> {
   if (!STEAM_API_KEY) throw new Error("Missing Steam API Key");
 
-  const url = `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/?key=${STEAM_API_KEY}&steamid=${steamId}&include_appinfo=true&include_played_free_games=true&format=json`;
-  const res = await fetch(url);
-  const data = await res.json();
+  // Get family IDs from environment variable
+  const familyIds = process.env.STEAM_FAMILY_IDS
+    ? process.env.STEAM_FAMILY_IDS.split(",").map((id) => id.trim())
+    : [];
 
-  return data.response?.games || [];
+  // Combine main ID with family IDs, ensuring uniqueness
+  const targetIds = Array.from(new Set([steamId, ...familyIds])).filter(Boolean);
+
+  const fetchGamesForId = async (id: string) => {
+    try {
+      const url = `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/?key=${STEAM_API_KEY}&steamid=${id}&include_appinfo=true&include_played_free_games=true&include_free_sub=1&format=json`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return (data.response?.games || []) as SteamGame[];
+    } catch (error) {
+      console.error(`Failed to fetch games for Steam ID ${id}:`, error);
+      return [];
+    }
+  };
+
+  // Fetch all libraries in parallel
+  const results = await Promise.all(targetIds.map((id) => fetchGamesForId(id)));
+
+  // Merge games, deduplicating by appid
+  const gameMap = new Map<number, SteamGame & { is_shared?: boolean }>();
+  
+  // 1. Process main user's games
+  if (results.length > 0) {
+    const userGames = results[0];
+    userGames.forEach((game) => {
+      gameMap.set(game.appid, { ...game, is_shared: false });
+    });
+  }
+
+  // 2. Process family games
+  for (let i = 1; i < results.length; i++) {
+    const familyGames = results[i];
+    familyGames.forEach((game) => {
+      if (!gameMap.has(game.appid)) {
+        // User doesn't have it at all -> Add as shared, use owner's playtime
+        gameMap.set(game.appid, { ...game, is_shared: true });
+      } else {
+        // User has it (or Steam API returned it for user)
+        // If user's playtime is 0 but owner has playtime, it might be a shared game 
+        // where API didn't return playtime for borrower.
+        // In this case, we use owner's playtime but still mark it as shared/borrowed visually?
+        // User asked to "show owner's time" if we can't get theirs.
+        const existing = gameMap.get(game.appid)!;
+        if (existing.playtime_forever === 0 && game.playtime_forever > 0) {
+           // Update with owner's playtime and mark as shared so we can distinguish in UI
+           gameMap.set(game.appid, { ...game, is_shared: true });
+        }
+      }
+    });
+  }
+
+  return Array.from(gameMap.values());
 }
 
 export async function getPlayerSummaries(

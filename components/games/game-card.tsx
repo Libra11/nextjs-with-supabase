@@ -50,7 +50,12 @@ export function GameCard({ game }: GameCardProps) {
         </div>
 
         {/* Platform Badge (Always visible but subtle) */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-2 right-2 flex flex-col gap-1 items-end opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {game.is_shared && (
+            <div className="bg-purple-500/80 backdrop-blur px-1.5 py-0.5 rounded text-[10px] font-bold text-white border border-white/10 shadow-sm">
+              SHARED
+            </div>
+          )}
           {game.platform === "steam" && (
             <div className="bg-black/60 backdrop-blur px-1.5 py-0.5 rounded text-[10px] font-bold text-blue-400 border border-white/10">
               STEAM
