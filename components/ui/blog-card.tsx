@@ -39,15 +39,8 @@ export function BlogCard({
   const isDark = currentTheme === "dark";
 
   const cardBaseClasses = isDark
-    ? "bg-slate-950/60 border border-slate-800/70 shadow-[inset_0_0_25px_12px_rgba(12,12,18,0.65)]"
-    : "bg-white/90 border border-slate-200/80 shadow-[0_25px_45px_-30px_rgba(15,23,42,0.2)]";
-
-  const gradientConfig = {
-    gradientColor: isDark ? "rgba(30,41,59,0.55)" : "rgba(148,163,184,0.45)",
-    gradientFrom: isDark ? "#1f2937" : "#dbeafe",
-    gradientTo: isDark ? "#312e81" : "#fde68a",
-    gradientOpacity: isDark ? 0.85 : 0.65,
-  };
+    ? "bg-slate-950/60 shadow-[inset_0_0_25px_12px_rgba(12,12,18,0.65)]"
+    : "bg-white/90 shadow-[0_25px_45px_-30px_rgba(15,23,42,0.2)]";
 
   const pinnedBadgeClasses = isDark
     ? "bg-white/10 text-white"
@@ -56,10 +49,6 @@ export function BlogCard({
   return (
     <Link href={`/blogs/${blog.id}`} className="block group">
       <MagicCard
-        gradientColor={gradientConfig.gradientColor}
-        gradientFrom={gradientConfig.gradientFrom}
-        gradientTo={gradientConfig.gradientTo}
-        gradientOpacity={gradientConfig.gradientOpacity}
         backgroundClassName={cn(
           "backdrop-blur-xl transition-all duration-300",
           cardBaseClasses,
@@ -129,11 +118,11 @@ export function BlogCard({
                   <TooltipContent>
                     <p>{blog.description}</p>
                   </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <div className="flex items-center gap-3 mt-2 text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
+                </Tooltip>
+              </TooltipProvider>
+              <div className="flex items-center gap-3 mt-2 text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
                   <span className="text-xs">{formatDate(blog.created_at)}</span>
                 </div>
                 <div className="flex items-center gap-1">

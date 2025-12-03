@@ -2,15 +2,13 @@
  * Author: Libra
  * Date: 2025-03-22 11:24:26
  * LastEditors: Libra
- * Description:
+ * Description: Vibrant Glass StatCard
  */
 "use client";
 
 import { LucideIcon } from "lucide-react";
 import { NumberTicker } from "@/components/magicui/number-ticker";
-import { Meteors } from "@/components/ui/meteors";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
 
 interface StatCardProps {
   icon: LucideIcon;
@@ -20,79 +18,48 @@ interface StatCardProps {
   className?: string;
 }
 
-// 颜色方案映射
-const colorSchemeMap = {
+const colorStyles = {
   primary: {
-    gradientFrom: "from-primary/5",
-    gradientTo: "to-primary/10",
-    hoverGradientFrom: "hover:from-primary/10",
-    hoverGradientTo: "hover:to-primary/20",
-    iconColor: "text-primary",
-    iconHoverColor: "group-hover:text-primary/80",
-    circleBg: "bg-primary/10",
-    circleHoverBg: "group-hover:bg-primary/20",
-    border: "border-primary/10",
-    borderHover: "hover:border-primary/30",
+    bg: "bg-primary/20",
+    text: "text-primary",
+    glow: "shadow-[0_0_30px_-10px_rgba(var(--primary),0.3)]",
+    border: "group-hover:border-primary/50",
+    gradient: "from-primary/80 to-primary/40",
   },
   blue: {
-    gradientFrom: "from-blue-500/5",
-    gradientTo: "to-blue-500/10",
-    hoverGradientFrom: "hover:from-blue-500/10",
-    hoverGradientTo: "hover:to-blue-500/20",
-    iconColor: "text-blue-500",
-    iconHoverColor: "group-hover:text-blue-500/80",
-    circleBg: "bg-blue-500/10",
-    circleHoverBg: "group-hover:bg-blue-500/20",
-    border: "border-blue-500/10",
-    borderHover: "hover:border-blue-500/30",
+    bg: "bg-blue-500/20",
+    text: "text-blue-500",
+    glow: "shadow-[0_0_30px_-10px_rgba(59,130,246,0.5)]",
+    border: "group-hover:border-blue-500/50",
+    gradient: "from-blue-500/80 to-blue-400/40",
   },
   purple: {
-    gradientFrom: "from-purple-500/5",
-    gradientTo: "to-purple-500/10",
-    hoverGradientFrom: "hover:from-purple-500/10",
-    hoverGradientTo: "hover:to-purple-500/20",
-    iconColor: "text-purple-500",
-    iconHoverColor: "group-hover:text-purple-500/80",
-    circleBg: "bg-purple-500/10",
-    circleHoverBg: "group-hover:bg-purple-500/20",
-    border: "border-purple-500/10",
-    borderHover: "hover:border-purple-500/30",
+    bg: "bg-purple-500/20",
+    text: "text-purple-500",
+    glow: "shadow-[0_0_30px_-10px_rgba(168,85,247,0.5)]",
+    border: "group-hover:border-purple-500/50",
+    gradient: "from-purple-500/80 to-purple-400/40",
   },
   amber: {
-    gradientFrom: "from-amber-500/5",
-    gradientTo: "to-amber-500/10",
-    hoverGradientFrom: "hover:from-amber-500/10",
-    hoverGradientTo: "hover:to-amber-500/20",
-    iconColor: "text-amber-500",
-    iconHoverColor: "group-hover:text-amber-500/80",
-    circleBg: "bg-amber-500/10",
-    circleHoverBg: "group-hover:bg-amber-500/20",
-    border: "border-amber-500/10",
-    borderHover: "hover:border-amber-500/30",
+    bg: "bg-amber-500/20",
+    text: "text-amber-500",
+    glow: "shadow-[0_0_30px_-10px_rgba(245,158,11,0.5)]",
+    border: "group-hover:border-amber-500/50",
+    gradient: "from-amber-500/80 to-amber-400/40",
   },
   green: {
-    gradientFrom: "from-green-500/5",
-    gradientTo: "to-green-500/10",
-    hoverGradientFrom: "hover:from-green-500/10",
-    hoverGradientTo: "hover:to-green-500/20",
-    iconColor: "text-green-500",
-    iconHoverColor: "group-hover:text-green-500/80",
-    circleBg: "bg-green-500/10",
-    circleHoverBg: "group-hover:bg-green-500/20",
-    border: "border-green-500/10",
-    borderHover: "hover:border-green-500/30",
+    bg: "bg-green-500/20",
+    text: "text-green-500",
+    glow: "shadow-[0_0_30px_-10px_rgba(34,197,94,0.5)]",
+    border: "group-hover:border-green-500/50",
+    gradient: "from-green-500/80 to-green-400/40",
   },
   red: {
-    gradientFrom: "from-red-500/5",
-    gradientTo: "to-red-500/10",
-    hoverGradientFrom: "hover:from-red-500/10",
-    hoverGradientTo: "hover:to-red-500/20",
-    iconColor: "text-red-500",
-    iconHoverColor: "group-hover:text-red-500/80",
-    circleBg: "bg-red-500/10",
-    circleHoverBg: "group-hover:bg-red-500/20",
-    border: "border-red-500/10",
-    borderHover: "hover:border-red-500/30",
+    bg: "bg-red-500/20",
+    text: "text-red-500",
+    glow: "shadow-[0_0_30px_-10px_rgba(239,68,68,0.5)]",
+    border: "group-hover:border-red-500/50",
+    gradient: "from-red-500/80 to-red-400/40",
   },
 };
 
@@ -103,75 +70,49 @@ export function StatCard({
   colorScheme = "primary",
   className,
 }: StatCardProps) {
-  const colors = colorSchemeMap[colorScheme];
-  const [isMounted, setIsMounted] = useState(false);
-
-  // 确保 Meteors 组件只在客户端渲染
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const styles = colorStyles[colorScheme];
 
   return (
     <div
       className={cn(
-        "group relative overflow-hidden bg-gradient-to-br",
-        colors.gradientFrom,
-        colors.gradientTo,
-        colors.hoverGradientFrom,
-        colors.hoverGradientTo,
-        "rounded-lg shadow-sm transition-all duration-300 hover:shadow-md border",
-        colors.border,
-        colors.borderHover,
+        "group relative overflow-hidden rounded-[14px] border border-white/10 bg-white/5 p-6 transition-all duration-500 hover:bg-white/10 hover:-translate-y-1",
+        styles.border,
+        styles.glow,
         className
       )}
     >
+      {/* Ambient Background Glow */}
       <div
         className={cn(
-          "absolute -right-6 -top-6 w-16 md:w-24 h-16 md:h-24 rounded-full",
-          colors.circleBg,
-          colors.circleHoverBg,
-          "transition-all duration-500"
+          "absolute -right-10 -top-10 h-40 w-40 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-40",
+          styles.bg
         )}
-      ></div>
+      />
 
-      {/* 桌面端水平布局 */}
-      <div className="hidden md:block p-6 z-10 relative">
-        <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-xl bg-card flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-            <Icon
-              className={cn("h-7 w-7", colors.iconColor, colors.iconHoverColor)}
-            />
-          </div>
-          <div className="flex flex-col">
-            <div className="text-4xl font-bold tracking-tight group-hover:translate-x-1 transition-transform">
-              <NumberTicker value={value} />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
-              {label}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Glass Shine Effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-      {/* 移动端垂直居中布局 */}
-      <div className="md:hidden flex flex-col items-center justify-center text-center h-full p-4 z-10 relative">
-        <div className="h-12 w-12 rounded-lg bg-card flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform mb-2">
-          <Icon
-            className={cn("h-6 w-6", colors.iconColor, colors.iconHoverColor)}
-          />
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold tracking-tight group-hover:translate-y-1 transition-transform">
+      <div className="relative z-10 flex items-center justify-between gap-4">
+        <div className="flex flex-col">
+          <span className="text-4xl font-bold tracking-tight text-foreground/90 group-hover:text-foreground transition-colors">
             <NumberTicker value={value} />
-          </div>
-          <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors mt-1">
+          </span>
+          <span className="text-sm font-medium text-muted-foreground/80 mt-1 group-hover:text-muted-foreground transition-colors">
             {label}
-          </p>
+          </span>
+        </div>
+
+        {/* Vibrant Icon Container */}
+        <div
+          className={cn(
+            "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3",
+            "bg-gradient-to-br text-white",
+            styles.gradient
+          )}
+        >
+          <Icon className="h-7 w-7" />
         </div>
       </div>
-
-      {/* 只在客户端渲染 Meteors 组件 */}
-      {isMounted && <Meteors number={10} />}
     </div>
   );
 }
