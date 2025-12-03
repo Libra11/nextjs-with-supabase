@@ -104,8 +104,8 @@ export function GameLibrary({ initialGames }: GameLibraryProps) {
   return (
     <div className="space-y-8 w-full">
       {/* Toolbar */}
-      <div className="sticky top-24 z-30 w-full rounded-2xl border border-white/10 bg-[#1e2024]/80 backdrop-blur-xl p-4 shadow-2xl transition-all">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="w-full rounded-2xl border border-white/10 bg-[#1e2024]/80 backdrop-blur-xl p-3 md:p-4 shadow-2xl transition-all">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           {/* Search */}
           <div className="relative w-full md:w-96 group">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-400 transition-colors">
@@ -121,9 +121,9 @@ export function GameLibrary({ initialGames }: GameLibraryProps) {
           </div>
 
           {/* Filters & Sort */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 md:pb-0 custom-scrollbar no-scrollbar">
             {/* Platform Filter */}
-            <div className="flex items-center rounded-lg bg-black/40 p-1 border border-white/5">
+            <div className="flex items-center rounded-lg bg-black/40 p-1 border border-white/5 shrink-0">
               <button
                 onClick={() => setFilterPlatform("all")}
                 className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${
@@ -156,10 +156,10 @@ export function GameLibrary({ initialGames }: GameLibraryProps) {
               </button>
             </div>
 
-            <div className="h-8 w-px bg-white/10" />
+            <div className="h-8 w-px bg-white/10 shrink-0" />
 
             {/* Sort Dropdown (simplified as buttons for now for better touch targets) */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs font-bold text-gray-500 uppercase hidden md:block">
                 Sort By:
               </span>
@@ -201,7 +201,7 @@ export function GameLibrary({ initialGames }: GameLibraryProps) {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3 md:gap-6">
         {visibleGames.map((game) => (
           <GameCard key={game.id} game={game} />
         ))}
