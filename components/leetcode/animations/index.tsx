@@ -1,7 +1,7 @@
 /**
  * Author: Libra
  * Date: 2025-10-02 00:26:17
- * LastEditTime: 2025-12-02 15:57:48
+ * LastEditTime: 2025-12-04 14:31:31
  * LastEditors: Libra
  * Description:
  */
@@ -124,8 +124,12 @@ const AnimationMap: Record<string, ComponentType<any>> = {
   "course-schedule": lazy(() => import("./CourseScheduleAnimation")),
   "rotting-oranges": lazy(() => import("./RottingOrangesAnimation")),
   "implement-trie-prefix-tree": lazy(() => import("./TrieAnimation")),
-  "trie": lazy(() => import("./TrieAnimation")),
-  "permutations": lazy(() => import("./PermutationsAnimation")),
+  trie: lazy(() => import("./TrieAnimation")),
+  permutations: lazy(() => import("./PermutationsAnimation")),
+  subsets: lazy(() => import("./SubsetsAnimation")),
+  "letter-combinations": lazy(() => import("./LetterCombinationsAnimation")),
+  "combination-sum": lazy(() => import("./CombinationSumAnimation")),
+  "generate-parenthesis": lazy(() => import("./GenerateParenthesisAnimation")),
 };
 
 interface AnimationLoaderProps {

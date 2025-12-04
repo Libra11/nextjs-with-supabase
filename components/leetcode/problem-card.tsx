@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import {
   Clock,
   Zap,
-  Code2,
   BookOpen,
   PlayCircle,
   FileText,
@@ -37,308 +36,95 @@ interface ProblemCardProps {
   className?: string;
 }
 
-type HeaderStyle = {
-  displayText: string;
-  subText?: string;
-};
-
-// Color palette with HSL values for dynamic styling
-const COLOR_PALETTE = [
-  { name: "sky", h: 200, s: 80, l: 50 },
-  { name: "blue", h: 217, s: 85, l: 55 },
-  { name: "indigo", h: 239, s: 70, l: 58 },
-  { name: "violet", h: 258, s: 75, l: 60 },
-  { name: "purple", h: 276, s: 70, l: 58 },
-  { name: "fuchsia", h: 292, s: 85, l: 60 },
-  { name: "pink", h: 330, s: 80, l: 65 },
-  { name: "rose", h: 351, s: 85, l: 60 },
-  { name: "red", h: 0, s: 80, l: 55 },
-  { name: "orange", h: 24, s: 90, l: 55 },
-  { name: "amber", h: 38, s: 92, l: 50 },
-  { name: "yellow", h: 48, s: 96, l: 55 },
-  { name: "lime", h: 84, s: 85, l: 55 },
-  { name: "green", h: 142, s: 70, l: 45 },
-  { name: "emerald", h: 160, s: 80, l: 45 },
-  { name: "teal", h: 173, s: 80, l: 45 },
-  { name: "cyan", h: 189, s: 85, l: 50 },
-];
-
-// Generate a deterministic hash from string
-const hashString = (str: string): number => {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash);
-};
-
-// Extract the first character or number from title for display
-const getDisplayChar = (title: string): string => {
-  // Try to find first meaningful character (letter or number)
-  const match = title.match(/[A-Z0-9]/i);
-  return match ? match[0].toUpperCase() : "#";
-};
-
-// Generate unique header style based on problem ID and title
-const generateUniqueHeaderStyle = (
-  problem: LeetCodeProblem
-): HeaderStyle & {
-  colors: {
-    primary: { h: number; s: number; l: number };
-    secondary: { h: number; s: number; l: number };
-  };
-  gradientDirection: string;
-} => {
-  // Combine ID and title for uniqueness
-  const seed = `${problem.id}-${problem.title}`;
-  const hash = hashString(seed);
-
-  // Select two colors for gradient
-  const colorIndex1 = hash % COLOR_PALETTE.length;
-  const colorIndex2 = (hash + 7) % COLOR_PALETTE.length; // Use different offset for variety
-  const primaryColor = COLOR_PALETTE[colorIndex1];
-  const secondaryColor = COLOR_PALETTE[colorIndex2];
-
-  // Select gradient direction
-  const directions = ["135deg", "225deg", "45deg", "315deg"]; // br, bl, tr, tl
-  const directionIndex = (hash >> 8) % directions.length;
-  const gradientDirection = directions[directionIndex];
-
-  // Use leetcode ID or first character of title
-  const displayText = problem.leetcode_id
-    ? `#${problem.leetcode_id}`
-    : getDisplayChar(problem.title);
-
-  // Use first tag as subtext
-  const subText = problem.tags[0];
-
-  return {
-    displayText,
-    subText,
-    colors: {
-      primary: { h: primaryColor.h, s: primaryColor.s, l: primaryColor.l },
-      secondary: {
-        h: secondaryColor.h,
-        s: secondaryColor.s,
-        l: secondaryColor.l,
-      },
-    },
-    gradientDirection,
-  };
-};
-
 export function ProblemCard({ problem, className = "" }: ProblemCardProps) {
   const { theme } = useTheme();
-  const headerStyle = generateUniqueHeaderStyle(problem);
-  const { primary, secondary } = headerStyle.colors;
 
-  const difficultyIntensity =
+  // Difficulty-based color for the MagicCard gradient
+  const difficultyColor =
     problem.difficulty === "easy"
-      ? 0.14
+      ? theme === "dark"
+        ? "#10b981" // emerald-500
+        : "#059669" // emerald-600
       : problem.difficulty === "medium"
-        ? 0.18
-        : 0.22;
-
-  const borderAlpha =
-    problem.difficulty === "easy"
-      ? 0.25
-      : problem.difficulty === "medium"
-        ? 0.35
-        : 0.45;
-
-  // Helper function to create HSL color strings
-  const hsl = (color: { h: number; s: number; l: number }, alpha?: number) => {
-    return alpha !== undefined
-      ? `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha})`
-      : `hsl(${color.h}, ${color.s}%, ${color.l}%)`;
-  };
+        ? theme === "dark"
+          ? "#f59e0b" // amber-500
+          : "#d97706" // amber-600
+        : theme === "dark"
+          ? "#f43f5e" // rose-500
+          : "#e11d48"; // rose-600
 
   return (
-    <Link href={`/leetcode/${problem.id}`} className="block group">
+    <Link href={`/leetcode/${problem.id}`} className="block group h-full">
       <MagicCard
-        gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+        gradientColor={difficultyColor}
         backgroundClassName="bg-card"
-        className={cn("h-full w-full rounded-xl", className)}
+        className={cn(
+          "h-full w-full rounded-xl overflow-hidden transition-transform duration-300 hover:scale-[1.02]",
+          className
+        )}
       >
-        <div className="flex flex-col p-3 h-full">
-          {/* Header */}
-          <div
-            className="relative w-full h-[140px] rounded-lg overflow-hidden flex items-center justify-center mb-3 transition-transform duration-300"
-            style={{
-              background:
-                theme === "dark"
-                  ? `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, difficultyIntensity)}, ${hsl(secondary, difficultyIntensity - 0.04)}, transparent)`
-                  : `linear-gradient(${headerStyle.gradientDirection}, ${hsl(primary, difficultyIntensity + 0.06)}, ${hsl(secondary, difficultyIntensity)}, transparent)`,
-            }}
-          >
-            <div
-              className="absolute inset-0 rounded-lg border"
-              style={{
-                borderColor: hsl(primary, borderAlpha),
-              }}
-            ></div>
-            <div
-              className="absolute -top-16 -right-10 h-32 w-32 rounded-full blur-3xl opacity-70"
-              style={{
-                backgroundColor: hsl(primary, difficultyIntensity + 0.12),
-              }}
-            ></div>
-            <div
-              className="absolute -bottom-14 -left-12 h-28 w-28 rounded-full blur-3xl opacity-60"
-              style={{
-                backgroundColor: hsl(secondary, difficultyIntensity + 0.1),
-              }}
-            ></div>
-            <div className="relative z-10 flex flex-col items-center gap-2.5 px-3 w-full">
-              {/* LeetCode Icon */}
-              <div
-                className="flex items-center justify-center w-14 h-14 rounded-lg backdrop-blur-md shadow-sm transition-transform duration-300 group-hover:scale-105 border"
-                style={{
-                  borderColor: hsl({ ...primary, l: primary.l - 10 }, 0.3),
-                  backgroundColor: hsl(primary, 0.15),
-                }}
-              >
-                <Code2
-                  className="w-7 h-7"
-                  strokeWidth={2}
-                  style={{
-                    color:
-                      theme === "dark"
-                        ? hsl({ ...primary, l: 80 })
-                        : hsl({ ...primary, l: 35 }),
-                  }}
-                />
-              </div>
-              {/* ID + Title in one line */}
-              <h3
-                className="text-sm font-bold text-center line-clamp-2 leading-tight px-2"
-                style={{
-                  color:
-                    theme === "dark"
-                      ? hsl({ ...primary, l: 85 })
-                      : hsl({ ...primary, l: 30 }),
-                }}
-              >
-                <span
-                  className="mr-2"
-                  style={{
-                    color:
-                      theme === "dark"
-                        ? hsl({ ...primary, l: 75 })
-                        : hsl({ ...primary, l: 40 }),
-                  }}
-                >
-                  {headerStyle.displayText}
-                </span>
-                {problem.title}
-              </h3>
-            </div>
-            <div className="absolute top-2 right-2">
-              <DifficultyBadge difficulty={problem.difficulty} />
-            </div>
+        <div className="flex flex-col h-full min-h-[260px] p-5">
+          {/* Top Row: ID & Difficulty */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="font-mono text-xs font-medium px-2 py-1 rounded-md bg-muted text-muted-foreground border border-border/50">
+              #{problem.leetcode_id || problem.id}
+            </span>
+            <DifficultyBadge difficulty={problem.difficulty} />
           </div>
 
-          {/* Content */}
-          <div className="flex-1 px-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
-                    {problem.description.replace(/[#*`\n]/g, " ").slice(0, 150)}
-                    ...
-                  </p>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">
-                    {problem.description.replace(/[#*`\n]/g, " ").slice(0, 300)}
-                    ...
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          {/* Title */}
+          <h3 className="text-lg font-bold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+            {problem.title}
+          </h3>
 
-            {/* Tags */}
-            {problem.tags && problem.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {problem.tags.slice(0, 2).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className={cn(
-                      "text-[10px] px-2 py-0.5 h-5 font-medium",
-                      "bg-gradient-to-r from-amber-600/15 to-orange-600/15",
-                      "border border-amber-600/30",
-                      "hover:from-amber-600/25 hover:to-orange-600/25",
-                      "hover:border-amber-600/40 hover:scale-105",
-                      "transition-all duration-200"
-                    )}
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-                {problem.tags.length > 2 && (
-                  <Badge
-                    variant="secondary"
-                    className={cn(
-                      "text-[10px] px-2 py-0.5 h-5 font-medium",
-                      "bg-gradient-to-r from-amber-600/15 to-orange-600/15",
-                      "border border-amber-600/30"
-                    )}
-                  >
-                    +{problem.tags.length - 2}
-                  </Badge>
-                )}
-              </div>
-            )}
+          {/* Description */}
+          <p className="text-sm text-muted-foreground/80 line-clamp-3 leading-relaxed mb-6 flex-1">
+            {problem.description.replace(/[#*`\n]/g, " ").slice(0, 120)}...
+          </p>
 
-            {/* Complexity Info */}
+          {/* Footer: Stats & Tags */}
+          <div className="pt-4 border-t border-border/50 space-y-3">
+            {/* Complexity Stats */}
             {(problem.time_complexity || problem.space_complexity) && (
-              <div className="flex items-center gap-3 mt-2 text-muted-foreground">
+              <div className="flex items-center gap-4 text-xs font-mono text-muted-foreground">
                 {problem.time_complexity && (
-                  <div className="flex items-center gap-1" title="时间复杂度">
-                    <Clock className="w-3 h-3 opacity-70" />
-                    <span className="text-[10px]">
-                      {problem.time_complexity}
-                    </span>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>{problem.time_complexity}</span>
                   </div>
                 )}
                 {problem.space_complexity && (
-                  <div className="flex items-center gap-1" title="空间复杂度">
-                    <Zap className="w-3 h-3 opacity-70" />
-                    <span className="text-[10px]">
-                      {problem.space_complexity}
-                    </span>
+                  <div className="flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>{problem.space_complexity}</span>
                   </div>
                 )}
               </div>
             )}
 
-            {(problem.solution ||
-              problem.code ||
-              problem.animation_component) && (
-              <div className="mt-3 flex items-center justify-end gap-2 text-[10px] text-muted-foreground">
-                {problem.solution && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
-                    <BookOpen className="h-3 w-3" />
-                    <span>题解</span>
+            {/* Tags & Icons Row */}
+            <div className="flex items-center justify-between gap-2">
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1.5 overflow-hidden h-6">
+                {problem.tags?.slice(0, 2).map((tag) => (
+                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/50 text-secondary-foreground border border-border/50 whitespace-nowrap">
+                    {tag}
                   </span>
-                )}
-                {problem.code && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
-                    <FileText className="h-3 w-3" />
-                    <span>代码</span>
-                  </span>
-                )}
-                {problem.animation_component && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/60 px-2 py-0.5">
-                    <PlayCircle className="h-3 w-3" />
-                    <span>动画</span>
+                ))}
+                {problem.tags && problem.tags.length > 2 && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/50 text-secondary-foreground border border-border/50">
+                    +{problem.tags.length - 2}
                   </span>
                 )}
               </div>
-            )}
+
+              {/* Icons */}
+              <div className="flex items-center gap-2 text-muted-foreground/50">
+                {problem.solution && <BookOpen className="w-3.5 h-3.5" />}
+                {problem.code && <FileText className="w-3.5 h-3.5" />}
+                {problem.animation_component && <PlayCircle className="w-3.5 h-3.5 text-primary" />}
+              </div>
+            </div>
           </div>
         </div>
       </MagicCard>
