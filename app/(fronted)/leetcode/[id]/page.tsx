@@ -60,180 +60,137 @@ export default async function ProblemDetailPage({ params }: PageProps) {
           </Link>
         </div>
 
-        <div className="mb-8 lg:mb-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex-1 min-w-0">
-              <div className="mb-3 inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-amber-600">
-                LeetCode 题目
-              </div>
-              <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-                {problem.leetcode_id ? (
-                  <span className="mr-3 text-amber-600">#{problem.leetcode_id}</span>
-                ) : null}
-                {problem.title}
-              </h1>
-
-              <div className="mb-4 flex flex-wrap items-center gap-3">
-                <DifficultyBadge difficulty={problem.difficulty} />
-                {problem.tags &&
-                  problem.tags.length > 0 &&
-                  problem.tags.map((tag, idx) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="border-amber-600/20 bg-amber-600/10 hover:bg-amber-600/20"
-                      style={{ animationDelay: `${idx * 0.1}s` }}
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-              </div>
-
-              {(problem.time_complexity || problem.space_complexity) && (
-                <div className="flex flex-wrap gap-4 text-xs text-muted-foreground md:text-sm">
-                  {problem.time_complexity && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-amber-600" />
-                      <span>时间复杂度:</span>
-                      <span className="font-medium text-foreground">
-                        {problem.time_complexity}
-                      </span>
-                    </div>
-                  )}
-                  {problem.space_complexity && (
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-amber-600" />
-                      <span>空间复杂度:</span>
-                      <span className="font-medium text-foreground">
-                        {problem.space_complexity}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="w-full max-w-xs lg:max-w-sm">
-              <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-slate-950/95 via-slate-950/80 to-amber-950/60 p-4 shadow-xl">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <Code2 className="h-4 w-4 text-amber-300" />
-                    <p className="text-xs font-medium uppercase tracking-wide text-amber-100/80">
-                      刷题进阶
-                    </p>
-                  </div>
-                  <Badge className="border border-amber-500/40 bg-amber-500/20 text-amber-100">
-                    {problem.leetcode_id ? `#${problem.leetcode_id}` : "LeetCode"}
+        <div className="mb-10 lg:mb-14">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+              <DifficultyBadge difficulty={problem.difficulty} />
+              {problem.tags &&
+                problem.tags.length > 0 &&
+                problem.tags.map((tag, idx) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="border-amber-500/10 bg-amber-500/5 text-amber-600/80 hover:bg-amber-500/10"
+                    style={{ animationDelay: `${idx * 0.1}s` }}
+                  >
+                    {tag}
                   </Badge>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-muted-foreground">
-                  <div className="space-y-1">
-                    <p className="text-[11px] uppercase tracking-wide text-amber-200/70">
-                      难度
-                    </p>
-                    <p className="text-sm font-semibold text-amber-100">
-                      {problem.difficulty}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-[11px] uppercase tracking-wide text-amber-200/70">
-                      标签数
-                    </p>
-                    <p className="text-sm font-semibold text-amber-100">
-                      {problem.tags?.length ?? 0}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-2 text-[11px] text-amber-100/80">
-                  <PlayCircle className="h-3.5 w-3.5" />
-                  <span>
-                    通过阅读题解与动画演示，系统梳理本题的思路与实现。
-                  </span>
-                </div>
-              </div>
+                ))}
             </div>
+
+            <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+              {problem.leetcode_id ? (
+                <span className="mr-4 font-mono text-muted-foreground/40">
+                  #{problem.leetcode_id}
+                </span>
+              ) : null}
+              <span className="bg-gradient-to-br from-foreground to-muted-foreground bg-clip-text text-transparent">
+                {problem.title}
+              </span>
+            </h1>
+
+            {(problem.time_complexity || problem.space_complexity) && (
+              <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+                {problem.time_complexity && (
+                  <div className="flex items-center gap-2 rounded-full border border-border/40 bg-background/40 px-4 py-1.5 backdrop-blur-sm">
+                    <Clock className="h-4 w-4 text-amber-500/80" />
+                    <span>时间复杂度:</span>
+                    <span className="font-medium text-foreground/80">
+                      {problem.time_complexity}
+                    </span>
+                  </div>
+                )}
+                {problem.space_complexity && (
+                  <div className="flex items-center gap-2 rounded-full border border-border/40 bg-background/40 px-4 py-1.5 backdrop-blur-sm">
+                    <Zap className="h-4 w-4 text-amber-500/80" />
+                    <span>空间复杂度:</span>
+                    <span className="font-medium text-foreground/80">
+                      {problem.space_complexity}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="flex h-auto flex-wrap justify-start gap-2 rounded-xl border bg-muted/60 p-1 backdrop-blur">
-              <TabsTrigger
-                value="description"
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-              >
-                <FileText className="h-4 w-4" />
-                <span>题目描述</span>
-              </TabsTrigger>
-              {problem.solution && (
+            <div className="border-b border-border/40 pb-px">
+              <TabsList className="h-auto w-full justify-start gap-6 bg-transparent p-0">
                 <TabsTrigger
-                  value="solution"
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+                  value="description"
+                  className="relative rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-muted-foreground transition-all hover:text-foreground data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 data-[state=active]:shadow-none"
                 >
-                  <BookOpen className="h-4 w-4" />
-                  <span>题解</span>
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span>题目描述</span>
+                  </div>
                 </TabsTrigger>
-              )}
-              {problem.code && (
-                <TabsTrigger
-                  value="code"
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  <Code2 className="h-4 w-4" />
-                  <span>代码</span>
-                </TabsTrigger>
-              )}
-              {problem.animation_component && (
-                <TabsTrigger
-                  value="animation"
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm"
-                >
-                  <PlayCircle className="h-4 w-4" />
-                  <span>算法动画演示</span>
-                </TabsTrigger>
-              )}
-            </TabsList>
+                {problem.solution && (
+                  <TabsTrigger
+                    value="solution"
+                    className="relative rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-muted-foreground transition-all hover:text-foreground data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 data-[state=active]:shadow-none"
+                  >
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      <span>题解</span>
+                    </div>
+                  </TabsTrigger>
+                )}
+                {problem.code && (
+                  <TabsTrigger
+                    value="code"
+                    className="relative rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-muted-foreground transition-all hover:text-foreground data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 data-[state=active]:shadow-none"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Code2 className="h-4 w-4" />
+                      <span>代码</span>
+                    </div>
+                  </TabsTrigger>
+                )}
+                {problem.animation_component && (
+                  <TabsTrigger
+                    value="animation"
+                    className="relative rounded-none border-b-2 border-transparent px-2 py-3 text-sm font-medium text-muted-foreground transition-all hover:text-foreground data-[state=active]:border-amber-500 data-[state=active]:text-amber-500 data-[state=active]:shadow-none"
+                  >
+                    <div className="flex items-center gap-2">
+                      <PlayCircle className="h-4 w-4" />
+                      <span>算法动画演示</span>
+                    </div>
+                  </TabsTrigger>
+                )}
+              </TabsList>
+            </div>
 
-            <TabsContent value="description" className="mt-6">
-              <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-background/80 shadow-md backdrop-blur">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 via-orange-600/5 to-amber-400/5" />
-                <div className="relative z-10 p-6 md:p-8">
-                  <MarkdownContent content={problem.description} />
-                </div>
+            <TabsContent value="description" className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="relative overflow-hidden rounded-xl border border-border/40 bg-background/40 p-6 shadow-sm backdrop-blur-sm md:p-8">
+                <MarkdownContent content={problem.description} />
               </div>
             </TabsContent>
 
             {problem.solution && (
-              <TabsContent value="solution" className="mt-6">
-                <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-background/80 shadow-md backdrop-blur">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 via-orange-600/5 to-amber-400/5" />
-                  <div className="relative z-10 p-6 md:p-8">
-                    <MarkdownContent content={problem.solution} />
-                  </div>
+              <TabsContent value="solution" className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="relative overflow-hidden rounded-xl border border-border/40 bg-background/40 p-6 shadow-sm backdrop-blur-sm md:p-8">
+                  <MarkdownContent content={problem.solution} />
                 </div>
               </TabsContent>
             )}
 
             {problem.code && (
-              <TabsContent value="code" className="mt-6">
-                <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-background/80 shadow-md backdrop-blur">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 via-orange-600/5 to-amber-400/5" />
-                  <div className="relative z-10 p-6 md:p-8">
-                    <MarkdownContent
-                      content={`\`\`\`javascript\n${problem.code}\n\`\`\``}
-                    />
-                  </div>
+              <TabsContent value="code" className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="relative overflow-hidden rounded-xl border border-border/40 bg-background/40 p-6 shadow-sm backdrop-blur-sm md:p-8">
+                  <MarkdownContent
+                    content={`\`\`\`javascript\n${problem.code}\n\`\`\``}
+                  />
                 </div>
               </TabsContent>
             )}
 
             {problem.animation_component && (
-              <TabsContent value="animation" className="mt-6">
-                <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-background/80 shadow-md backdrop-blur">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 via-orange-600/5 to-amber-400/5" />
-                  <div className="relative z-10 p-6 md:p-8">
-                    <AnimationLoader name={problem.animation_component} />
-                  </div>
+              <TabsContent value="animation" className="mt-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="relative overflow-hidden rounded-xl border border-border/40 bg-background/40 p-6 shadow-sm backdrop-blur-sm md:p-8">
+                  <AnimationLoader name={problem.animation_component} />
                 </div>
               </TabsContent>
             )}

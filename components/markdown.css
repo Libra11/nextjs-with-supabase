@@ -34,7 +34,7 @@
   @apply transition-all duration-300;
 }
 
-.markdown-content img + p {
+.markdown-content img+p {
   @apply clear-none;
 }
 
@@ -63,6 +63,7 @@
   0% {
     transform: scaleX(0) translateY(-50%);
   }
+
   100% {
     transform: scaleX(1) translateY(-50%);
   }
@@ -77,14 +78,14 @@
   @apply backdrop-blur-sm;
   @apply rounded px-2 py-1;
   @apply bg-slate-100/80;
-  @apply shadow-[0_6px_18px_-12px_rgba(15,23,42,0.18)];
+  box-shadow: 0 6px 18px -12px rgba(15, 23, 42, 0.18);
 }
 
 .dark .markdown-content li:not(:has(ul)):not(:has(ol)) {
   @apply text-gray-200;
   @apply hover:text-blue-400;
   @apply bg-primary/5;
-  @apply shadow-[inset_0_0_5px_rgba(59,130,246,0.35)];
+  box-shadow: inset 0 0 5px rgba(59, 130, 246, 0.35);
 }
 
 .markdown-content .hljs {
@@ -96,12 +97,9 @@
   @apply border-primary/20;
   @apply relative;
   @apply transition-all duration-300;
-  border-image: linear-gradient(
-      to bottom,
+  border-image: linear-gradient(to bottom,
       theme(colors.blue.500) 0%,
-      theme(colors.purple.500) 100%
-    )
-    1;
+      theme(colors.purple.500) 100%) 1;
   @apply hover:bg-blue-500/10;
 }
 
@@ -109,11 +107,9 @@
   content: '"';
   @apply absolute -top-4 left-4;
   @apply text-6xl font-serif;
-  background: linear-gradient(
-    90deg,
-    theme(colors.blue.500/20) 0%,
-    theme(colors.purple.500/20) 100%
-  );
+  background: linear-gradient(90deg,
+      theme(colors.blue.500/20) 0%,
+      theme(colors.purple.500/20) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -122,11 +118,9 @@
   content: '"';
   @apply absolute -bottom-8 right-4;
   @apply text-6xl font-serif;
-  background: linear-gradient(
-    90deg,
-    theme(colors.blue.500/20) 0%,
-    theme(colors.purple.500/20) 100%
-  );
+  background: linear-gradient(90deg,
+      theme(colors.blue.500/20) 0%,
+      theme(colors.purple.500/20) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -142,30 +136,37 @@
 }
 
 /* 代码块基础样式 */
+/* 代码块基础样式 */
 .markdown-content pre {
   @apply relative overflow-x-auto;
-  @apply bg-card text-foreground backdrop-blur-md;
+  @apply bg-card/80 text-foreground backdrop-blur-md;
   @apply transition-all duration-500;
-  @apply my-4;
-  @apply border border-border;
+  @apply my-6;
+  @apply rounded-xl;
+  @apply border border-border/40;
+  @apply shadow-sm;
+  @apply p-0;
 }
 
 .dark .markdown-content pre {
-  @apply bg-[#1a1b26]/90;
-  @apply border border-blue-500/20;
+  @apply bg-[#1a1b26]/80;
+  @apply border-blue-500/10;
 }
 
 /* 代码块顶部工具栏 */
 .code-header {
   @apply flex items-center justify-between;
   @apply px-4 py-3 backdrop-blur-md;
-  @apply bg-card text-foreground;
+  @apply bg-card/90 text-foreground;
   @apply overflow-hidden;
   @apply transition-all duration-300;
+  @apply rounded-t-xl;
+  @apply border border-border/40;
 }
 
 .dark .code-header {
-  @apply bg-[#1a1b26]/95 text-slate-200;
+  @apply bg-[#1a1b26]/90 text-slate-200;
+  @apply border-blue-500/10;
 }
 
 /* 窗口按钮组 */
@@ -197,6 +198,7 @@
 .window-control.close {
   @apply bg-red-500;
 }
+
 .window-control.close::before {
   @apply bg-red-500/50;
 }
@@ -204,6 +206,7 @@
 .window-control.minimize {
   @apply bg-yellow-500;
 }
+
 .window-control.minimize::before {
   @apply bg-yellow-500/50;
 }
@@ -211,6 +214,7 @@
 .window-control.maximize {
   @apply bg-green-500;
 }
+
 .window-control.maximize::before {
   @apply bg-green-500/50;
 }
@@ -279,9 +283,11 @@
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -291,9 +297,11 @@
   0% {
     box-shadow: 0 0 5px theme(colors.blue.500/50);
   }
+
   50% {
     box-shadow: 0 0 20px theme(colors.purple.500/50);
   }
+
   100% {
     box-shadow: 0 0 5px theme(colors.blue.500/50);
   }
@@ -349,12 +357,10 @@
 .markdown-content h5::before,
 .markdown-content h6::before {
   @apply content-[''] absolute left-0 top-0 w-full h-full -z-10 opacity-20;
-  background: linear-gradient(
-    90deg,
-    theme(colors.blue.500) 0%,
-    theme(colors.purple.500) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      theme(colors.blue.500) 0%,
+      theme(colors.purple.500) 50%,
+      transparent 100%);
 }
 
 /* 表格样式 */
@@ -362,12 +368,12 @@
   @apply w-full my-6 border-collapse;
   @apply bg-slate-100/80 backdrop-blur-sm;
   @apply overflow-hidden;
-  @apply shadow-[0_24px_50px_-32px_rgba(15,23,42,0.22)];
+  box-shadow: 0 24px 50px -32px rgba(15, 23, 42, 0.22);
 }
 
 .dark .markdown-content table {
   @apply bg-primary/5;
-  @apply shadow-[0_0_15px_rgba(59,130,246,0.2)];
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
 .markdown-content th {
